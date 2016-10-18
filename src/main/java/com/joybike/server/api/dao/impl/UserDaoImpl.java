@@ -3,16 +3,28 @@ package com.joybike.server.api.dao.impl;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserDao;
 import com.joybike.server.api.model.User;
+import com.joybike.server.api.po.userInfo;
 import org.springframework.stereotype.Repository;
 
 /**
  * Created by 58 on 2016/10/12.
  */
 @Repository("userDao")
-public class UserDaoImpl extends Reository<User> implements UserDao {
+public class UserDaoImpl extends Reository<userInfo> implements UserDao {
 
-    public void test() {
-        User user = new User("lishaoyong",32,30);
-        save(user);
+    /**
+     * 用户注册
+     * @return
+     */
+    public int update() {
+
+        return 0;
     }
+
+//    public void test() {
+//        User user = new User("lishaoyong",32,30);
+//        save(user);
+//    }
+
+
 }

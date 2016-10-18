@@ -24,8 +24,12 @@ public class UserDaoUnitTest {
     @Test
     public void save()
     {
-        User user= new User("lpf",321,32);
-        userDao.save(user);
+
+        userDao.test();
+
+
+        //User user= new User("lpf",321,32);
+        //userDao.save(user);
     }
 
     @Test

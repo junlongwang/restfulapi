@@ -20,7 +20,7 @@ public class DemoRestController {
 
         Message message = new Message();
         message.setName(name);
-        message.setText("hello," + name+" "+userDao.findById(1L));
+        message.setText("hello," + name);
 
         userDao.test();
         return message;

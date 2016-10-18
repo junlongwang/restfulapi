@@ -1,6 +1,6 @@
 package daoUnitTest;
 
-import com.joybike.server.api.dao.UserDao;
+import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,16 +16,16 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/spring-mvc.xml")
-public class UserDaoUnitTest {
+public class UserInfoDaoUnitTest {
 
     @Autowired
-    private UserDao userDao;
+    private UserInfoDao userInfoDao;
 
     @Test
     public void save()
     {
 
-        userDao.test();
+//        userInfoDao.test();
 
 
         //User user= new User("lpf",321,32);
@@ -35,25 +35,25 @@ public class UserDaoUnitTest {
     @Test
     public void update()
     {
-        User user= new User("GJF",32,32);
-        user.setId(1);
-        System.out.println("update");
-        System.out.println(userDao);
-        userDao.update(user);
+//        User user= new User("GJF",32,32);
+//        user.setId(1);
+//        System.out.println("update");
+//        System.out.println(userInfoDao);
+//        userInfoDao.update();
     }
 
     @Test
     public void delete()
     {
-        userDao.delete(1L);
+        userInfoDao.delete(1L);
     }
     @Test
     public void findById()
     {
         User model = new User();
         model.setId(8);
-        User user=userDao.findById(model);
-        System.out.println(user);
+//        User user= userInfoDao.findById(model);
+//        System.out.println(user);
 
 //        User model=userDao.findById(8L);
 //        System.out.println(model);
@@ -63,17 +63,17 @@ public class UserDaoUnitTest {
     @Test
     public void find()
     {
-        List<User> list=userDao.query("select * from user", null);
-        System.out.println(list);
-
-        System.out.println("++++++++++++++++++++++++");
-
-        int count=userDao.getCount(null);
-        System.out.println(count);
-
-
-        List<User> users=userDao.getList("select * from user", new HashMap<String,Object>());
-        System.out.println(users);
+////        List<User> list= userInfoDao.query("select * from user", null);
+//        System.out.println(list);
+//
+//        System.out.println("++++++++++++++++++++++++");
+//
+//        int count= userInfoDao.getCount(null);
+//        System.out.println(count);
+//
+//
+//        List<User> users= userInfoDao.getList("select * from user", new HashMap<String,Object>());
+//        System.out.println(users);
 
 
     }

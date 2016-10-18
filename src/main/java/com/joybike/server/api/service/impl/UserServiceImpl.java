@@ -1,6 +1,6 @@
 package com.joybike.server.api.service.impl;
 
-import com.joybike.server.api.dao.UserDao;
+import com.joybike.server.api.dao.UserInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl {
 
     @Autowired
-    private UserDao userDao;
+    private UserInfoDao userInfoDao;
 
 
 }

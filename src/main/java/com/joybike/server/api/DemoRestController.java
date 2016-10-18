@@ -1,6 +1,6 @@
 package com.joybike.server.api;
 
-import com.joybike.server.api.dao.UserDao;
+import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class DemoRestController {
 
     @Autowired
-    private UserDao userDao;
+    private UserInfoDao userInfoDao;
 
     @RequestMapping("say/{name}")
     public Message say(@PathVariable String name) {

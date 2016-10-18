@@ -1,6 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class orderItem {
+import java.io.Serializable;
+
+public class orderItem implements Serializable {
     /** 
      * 
      *  @Author lisy

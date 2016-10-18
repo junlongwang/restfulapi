@@ -1,8 +1,9 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class vehicleOrder {
+public class vehicleOrder implements Serializable {
     /** 
      * 
      *  @Author lisy

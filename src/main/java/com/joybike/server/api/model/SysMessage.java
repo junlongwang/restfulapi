@@ -1,10 +1,12 @@
 package com.joybike.server.api.model;
 
+import java.io.Serializable;
+
 /**
  * 系统消息
  * Created by 58 on 2016/10/16.
  */
-public class SysMessage {
+public class SysMessage implements Serializable {
     private String title;
     private String content;
     private int createAt;

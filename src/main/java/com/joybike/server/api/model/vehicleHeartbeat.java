@@ -1,6 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class vehicleHeartbeat {
+import java.io.Serializable;
+
+public class vehicleHeartbeat implements Serializable {
     /** 
      * 
      *  @Author lisy

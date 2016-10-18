@@ -1,6 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class vehicleRepair {
+import java.io.Serializable;
+
+public class vehicleRepair implements Serializable {
     /** 
      * 
      *  @Author lisy

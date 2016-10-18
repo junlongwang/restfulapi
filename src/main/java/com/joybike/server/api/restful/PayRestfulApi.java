@@ -1,9 +1,6 @@
 package com.joybike.server.api.restful;
 
-import com.joybike.server.api.model.ConsumeLog;
-import com.joybike.server.api.model.DepositLog;
-import com.joybike.server.api.model.DepositOrder;
-import com.joybike.server.api.model.Message;
+import com.joybike.server.api.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +20,7 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "deposit",method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> deposit(@RequestBody DepositOrder depositOrder)
+    public ResponseEntity<Message<String>> deposit(@RequestBody bankDepositOrder depositOrder)
     {
         return ResponseEntity.ok(new Message<String>(true,null,"充值成功！"));
     }
@@ -34,8 +31,8 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "getConsumeLogs",method = RequestMethod.GET)
-    public ResponseEntity<Message<List<ConsumeLog>>> getConsumeLogs(@RequestParam("userId") long userId) {
-        return ResponseEntity.ok(new Message<List<ConsumeLog>>(true, null, new ArrayList<ConsumeLog>()));
+    public ResponseEntity<Message<List<bankConsumedOrder>>> getConsumeLogs(@RequestParam("userId") long userId) {
+        return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, null, new ArrayList<bankConsumedOrder>()));
     }
 
     /**
@@ -44,8 +41,8 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "getDepositLogs",method = RequestMethod.GET)
-    public ResponseEntity<Message<List<DepositLog>>> getDepositLogs(@RequestParam("userId") long userId) {
-        return ResponseEntity.ok(new Message<List<DepositLog>>(true, null, new ArrayList<DepositLog>()));
+    public ResponseEntity<Message<List<bankDepositOrder>>> getDepositLogs(@RequestParam("userId") long userId) {
+        return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, new ArrayList<bankDepositOrder>()));
     }
 
     @RequestMapping(value = "refund",method = RequestMethod.POST)

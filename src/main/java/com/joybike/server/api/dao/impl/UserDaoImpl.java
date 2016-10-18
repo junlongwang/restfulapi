@@ -2,8 +2,7 @@ package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserDao;
-import com.joybike.server.api.model.User;
-import com.joybike.server.api.po.userInfo;
+import com.joybike.server.api.model.userInfo;
 import org.springframework.stereotype.Repository;
 
 /**

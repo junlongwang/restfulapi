@@ -1,6 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class userInfo {
+import java.io.Serializable;
+
+public class userInfo implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -66,6 +68,8 @@ public class userInfo {
      *  @Author lisy
     **/
     private Integer authenStatus;
+
+    public userInfo(){}
 
     public userInfo(String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
         this.realName = realName;

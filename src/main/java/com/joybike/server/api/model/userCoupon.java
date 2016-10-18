@@ -1,8 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 
-public class coupon {
+public class userCoupon implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -10,16 +10,16 @@ public class coupon {
     private Long id;
 
     /** 
-     * 优惠券名称
+     * 代金券Id
      *  @Author lisy
     **/
-    private String name;
+    private Long couponId;
 
     /** 
-     * 描述信息
+     * 用户ID
      *  @Author lisy
     **/
-    private String descri;
+    private Long userId;
 
     /** 
      * 过期时间
@@ -28,10 +28,10 @@ public class coupon {
     private Integer expireAt;
 
     /** 
-     * 剩余优惠
+     * 状态:0:正常，1：已使用，2：已过期
      *  @Author lisy
     **/
-    private BigDecimal price;
+    private Integer status;
 
     /** 
      * 创建时间
@@ -39,11 +39,11 @@ public class coupon {
     **/
     private Integer createAt;
 
-    public coupon(String name, String descri, Integer expireAt, BigDecimal price, Integer createAt) {
-        this.name = name;
-        this.descri = descri;
+    public userCoupon(Long couponId, Long userId, Integer expireAt, Integer status, Integer createAt) {
+        this.couponId = couponId;
+        this.userId = userId;
         this.expireAt = expireAt;
-        this.price = price;
+        this.status = status;
         this.createAt = createAt;
     }
 
@@ -55,20 +55,20 @@ public class coupon {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Long getCouponId() {
+        return couponId;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setCouponId(Long couponId) {
+        this.couponId = couponId;
     }
 
-    public String getDescri() {
-        return descri;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setDescri(String descri) {
-        this.descri = descri == null ? null : descri.trim();
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Integer getExpireAt() {
@@ -79,12 +79,12 @@ public class coupon {
         this.expireAt = expireAt;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Integer getCreateAt() {

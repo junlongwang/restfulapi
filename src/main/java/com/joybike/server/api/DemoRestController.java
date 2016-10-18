@@ -22,7 +22,7 @@ public class DemoRestController {
         message.setName(name);
         message.setText("hello," + name);
 
-        userDao.test();
+        //userDao.test();
         return message;
     }
     @RequestMapping(value = "sayhi",method = RequestMethod.POST)
@@ -30,7 +30,7 @@ public class DemoRestController {
 
         Message message = new Message();
         message.setName(name);
-        message.setText("hello," + name + " " + userDao.findById(1L));
+        message.setText("hello," + name);
         return message;
     }
 

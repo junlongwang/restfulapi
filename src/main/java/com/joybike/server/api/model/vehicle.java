@@ -1,6 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class vehicle {
+import java.io.Serializable;
+
+public class vehicle implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -79,6 +81,10 @@ public class vehicle {
     **/
     private Integer updateAt;
 
+    public vehicle(){
+
+    }
+
     public vehicle(String vehicleId, String lockId, String bundlingPhone, Integer agentId, Integer status, Integer useStatus, String lastDimension, String lastLongitude, String vehicleImg, String remark, Integer createAt, Integer updateAt) {
         this.vehicleId = vehicleId;
         this.lockId = lockId;
@@ -92,6 +98,25 @@ public class vehicle {
         this.remark = remark;
         this.createAt = createAt;
         this.updateAt = updateAt;
+    }
+
+    @Override
+    public String toString() {
+        return "vehicle{" +
+                "id=" + id +
+                ", vehicleId='" + vehicleId + '\'' +
+                ", lockId='" + lockId + '\'' +
+                ", bundlingPhone='" + bundlingPhone + '\'' +
+                ", agentId=" + agentId +
+                ", status=" + status +
+                ", useStatus=" + useStatus +
+                ", lastDimension='" + lastDimension + '\'' +
+                ", lastLongitude='" + lastLongitude + '\'' +
+                ", vehicleImg='" + vehicleImg + '\'' +
+                ", remark='" + remark + '\'' +
+                ", createAt=" + createAt +
+                ", updateAt=" + updateAt +
+                '}';
     }
 
     public Long getId() {

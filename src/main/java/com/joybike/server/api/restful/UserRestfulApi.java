@@ -1,8 +1,6 @@
 package com.joybike.server.api.restful;
 
-import com.joybike.server.api.model.Message;
-import com.joybike.server.api.model.MyUser;
-import com.joybike.server.api.model.SysMessage;
+import com.joybike.server.api.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +20,9 @@ public class UserRestfulApi {
      * @return
      */
     @RequestMapping(value = "add",method = RequestMethod.POST)
-    public ResponseEntity<MyUser> add(@RequestBody MyUser user)
+    public ResponseEntity<userInfo> add(@RequestBody userInfo user)
     {
-        return ResponseEntity.ok(new MyUser());
+        return ResponseEntity.ok(new userInfo());
     }
 
     /**
@@ -33,9 +31,9 @@ public class UserRestfulApi {
      * @return
      */
     @RequestMapping(value = "update",method = RequestMethod.POST)
-    public ResponseEntity<MyUser> update(@RequestBody MyUser user)
+    public ResponseEntity<userInfo> update(@RequestBody userInfo user)
     {
-        return ResponseEntity.ok(new MyUser());
+        return ResponseEntity.ok(new userInfo());
     }
 
     /**

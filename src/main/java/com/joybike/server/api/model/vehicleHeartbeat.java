@@ -1,6 +1,9 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class vehicleHeartbeat {
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+public class vehicleHeartbeat implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -41,13 +44,13 @@ public class vehicleHeartbeat {
      * GPS的纬度
      *  @Author lisy
     **/
-    private String dimension;
+    private BigDecimal dimension;
 
     /** 
      * GPS的经度
      *  @Author lisy
     **/
-    private String longitude;
+    private BigDecimal longitude;
 
     /** 
      * 基站的锁内时间
@@ -127,7 +130,12 @@ public class vehicleHeartbeat {
     **/
     private Integer createAt;
 
-    public vehicleHeartbeat(Long lockId, String firmwareVersion, String allocation, String baseStationType, Integer gpsTime, String dimension, String longitude, Integer lockTime, String cellId, String stationId, String speed, String direction, Integer arousalType, String custom, Integer lockStatus, Integer batteryStatus, String batteryPercent, Integer unlockNumber, String orderCode, Integer createAt) {
+    public vehicleHeartbeat(){
+
+    }
+
+    public vehicleHeartbeat(Long id, Long lockId, String firmwareVersion, String allocation, String baseStationType, Integer gpsTime, BigDecimal dimension, BigDecimal longitude, Integer lockTime, String cellId, String stationId, String speed, String direction, Integer arousalType, String custom, Integer lockStatus, Integer batteryStatus, String batteryPercent, Integer unlockNumber, String orderCode, Integer createAt) {
+        this.id = id;
         this.lockId = lockId;
         this.firmwareVersion = firmwareVersion;
         this.allocation = allocation;
@@ -148,6 +156,33 @@ public class vehicleHeartbeat {
         this.unlockNumber = unlockNumber;
         this.orderCode = orderCode;
         this.createAt = createAt;
+    }
+
+    @Override
+    public String toString() {
+        return "vehicleHeartbeat{" +
+                "id=" + id +
+                ", lockId=" + lockId +
+                ", firmwareVersion='" + firmwareVersion + '\'' +
+                ", allocation='" + allocation + '\'' +
+                ", baseStationType='" + baseStationType + '\'' +
+                ", gpsTime=" + gpsTime +
+                ", dimension=" + dimension +
+                ", longitude=" + longitude +
+                ", lockTime=" + lockTime +
+                ", cellId='" + cellId + '\'' +
+                ", stationId='" + stationId + '\'' +
+                ", speed='" + speed + '\'' +
+                ", direction='" + direction + '\'' +
+                ", arousalType=" + arousalType +
+                ", custom='" + custom + '\'' +
+                ", lockStatus=" + lockStatus +
+                ", batteryStatus=" + batteryStatus +
+                ", batteryPercent='" + batteryPercent + '\'' +
+                ", unlockNumber=" + unlockNumber +
+                ", orderCode='" + orderCode + '\'' +
+                ", createAt=" + createAt +
+                '}';
     }
 
     public Long getId() {
@@ -198,20 +233,20 @@ public class vehicleHeartbeat {
         this.gpsTime = gpsTime;
     }
 
-    public String getDimension() {
+    public BigDecimal getDimension() {
         return dimension;
     }
 
-    public void setDimension(String dimension) {
-        this.dimension = dimension == null ? null : dimension.trim();
+    public void setDimension(BigDecimal dimension) {
+        this.dimension = dimension;
     }
 
-    public String getLongitude() {
+    public BigDecimal getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
-        this.longitude = longitude == null ? null : longitude.trim();
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
     }
 
     public Integer getLockTime() {

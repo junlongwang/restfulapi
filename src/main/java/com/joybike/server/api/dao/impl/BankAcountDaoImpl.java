@@ -2,7 +2,7 @@ package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankAcountDao;
-import com.joybike.server.api.po.bankAcount;
+import com.joybike.server.api.model.bankAcount;
 import org.springframework.stereotype.Repository;
 
 /**

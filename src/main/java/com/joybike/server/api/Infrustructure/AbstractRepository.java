@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by 58 on 2016/10/12.
  */
-public abstract class AbstractRepository<T> implements IRepository<T>{
+public abstract class AbstractRepository<T> implements IRepository<T> {
 
     protected Class<T> entityClass;
 
@@ -41,9 +41,9 @@ public abstract class AbstractRepository<T> implements IRepository<T>{
         entityClass = (Class<T>) type.getActualTypeArguments()[0];
         System.out.println("Dao实现类T是：" + entityClass.getName());
 
-       INSERT_SQL=makeSql(SQL_INSERT);
-        UPDATE_SQL=makeSql(SQL_UPDATE);
-        DELETE_SQL=makeSql(SQL_DELETE);
+        INSERT_SQL = makeSql(SQL_INSERT);
+        UPDATE_SQL = makeSql(SQL_UPDATE);
+        DELETE_SQL = makeSql(SQL_DELETE);
     }
 
     public abstract long save(T model);
@@ -52,20 +52,25 @@ public abstract class AbstractRepository<T> implements IRepository<T>{
 
     public abstract int update(String namedSql, T javaBean);
 
-    public abstract void delete(Long id) ;
+    public abstract void delete(Long id);
 
     public abstract int execSQL(String sql, Map map);
 
     public abstract T findById(Long id);
+
     public abstract T findById(T model);
 
     public abstract T getModel(String sql, Object[] params);
 
-    public abstract List<T> query(String sql,Object[] parms);
+    public abstract List<T> query(String sql, Object[] parms);
 
     public abstract List<T> getList(String sql, Map paramValue);
 
     public abstract int getCount(Map<String, String> where);
+
+    public abstract int getCount(String sql ,Map map);
+
+
 
     // 生成基础SQL
     private String makeSql(String sqlFlag) {
@@ -88,7 +93,7 @@ public abstract class AbstractRepository<T> implements IRepository<T>{
                 if (fields[i].getName().equals("id")) { // id 代表主键
                     continue;
                 }
-                sql.append(MessageFormat.format(":{0},",fields[i].getName()));
+                sql.append(MessageFormat.format(":{0},", fields[i].getName()));
 
                 //sql.append("?,");
             }

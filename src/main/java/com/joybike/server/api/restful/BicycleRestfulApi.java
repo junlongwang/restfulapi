@@ -1,9 +1,6 @@
 package com.joybike.server.api.restful;
 
-import com.joybike.server.api.model.BadBicycleForm;
-import com.joybike.server.api.model.Bicycle;
-import com.joybike.server.api.model.GPSData;
-import com.joybike.server.api.model.Message;
+import com.joybike.server.api.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,9 +58,9 @@ public class BicycleRestfulApi {
      * @return
      */
     @RequestMapping(value = "available",method = RequestMethod.GET)
-    public ResponseEntity<Message<List<Bicycle>>> getAvailable(float longitude ,float dimension)
+    public ResponseEntity<Message<List<vehicle>>> getAvailable(float longitude ,float dimension)
     {
-        return ResponseEntity.ok(new Message<List<Bicycle>>(true,null,new ArrayList<Bicycle>()));
+        return ResponseEntity.ok(new Message<List<vehicle>>(true,null,new ArrayList<vehicle>()));
     }
 
 
@@ -93,7 +90,7 @@ public class BicycleRestfulApi {
      * @param data
      */
     @RequestMapping(value = "send",method = RequestMethod.POST)
-    public void send(@RequestBody GPSData data)
+    public void send(@RequestBody vehicleHeartbeat data)
     {
 
     }
@@ -105,7 +102,7 @@ public class BicycleRestfulApi {
      * @return
      */
     @RequestMapping(value = "submit",method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> submit(@RequestBody BadBicycleForm form)
+    public ResponseEntity<Message<String>> submit(@RequestBody vehicleRepair form)
     {
         return ResponseEntity.ok(new Message<String>(true,null,"提交成功！"));
     }

@@ -1,6 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class userCoupon {
+import java.io.Serializable;
+
+public class userCoupon implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -43,6 +45,22 @@ public class userCoupon {
         this.expireAt = expireAt;
         this.status = status;
         this.createAt = createAt;
+    }
+
+    public userCoupon(){
+
+    }
+
+    @Override
+    public String toString() {
+        return "userCoupon{" +
+                "id=" + id +
+                ", couponId=" + couponId +
+                ", userId=" + userId +
+                ", expireAt=" + expireAt +
+                ", status=" + status +
+                ", createAt=" + createAt +
+                '}';
     }
 
     public Long getId() {

@@ -1,8 +1,9 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class bankDepositOrder {
+public class bankDepositOrder implements Serializable {
     /** 
      * 
      * @Author lisy
@@ -93,6 +94,10 @@ public class bankDepositOrder {
     **/
     private Integer createAt;
 
+    public bankDepositOrder(){
+
+    }
+
     public bankDepositOrder(Long userId, BigDecimal cash, BigDecimal award, Integer discountAt, BigDecimal residualCash, BigDecimal residualAward, Integer status, Integer payType, String payAcount, String payDocumentid, String merchantId, String remark, Integer payAt, Integer createAt) {
         this.userId = userId;
         this.cash = cash;
@@ -108,6 +113,27 @@ public class bankDepositOrder {
         this.remark = remark;
         this.payAt = payAt;
         this.createAt = createAt;
+    }
+
+    @Override
+    public String toString() {
+        return "bankDepositOrder{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", cash=" + cash +
+                ", award=" + award +
+                ", discountAt=" + discountAt +
+                ", residualCash=" + residualCash +
+                ", residualAward=" + residualAward +
+                ", status=" + status +
+                ", payType=" + payType +
+                ", payAcount='" + payAcount + '\'' +
+                ", payDocumentid='" + payDocumentid + '\'' +
+                ", merchantId='" + merchantId + '\'' +
+                ", remark='" + remark + '\'' +
+                ", payAt=" + payAt +
+                ", createAt=" + createAt +
+                '}';
     }
 
     public Long getId() {

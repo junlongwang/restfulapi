@@ -1,6 +1,9 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class orderItem {
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+public class orderItem implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -41,25 +44,25 @@ public class orderItem {
      * 骑行开始的纬度
      *  @Author lisy
     **/
-    private String beginDimension;
+    private BigDecimal beginDimension;
 
     /** 
      * 骑行开始的经度
      *  @Author lisy
     **/
-    private String beginLongitude;
+    private BigDecimal beginLongitude;
 
     /** 
      * 骑行结束的纬度
      *  @Author lisy
     **/
-    private String endDimension;
+    private BigDecimal endDimension;
 
     /** 
      * 骑行结束的经度
      *  @Author lisy
     **/
-    private String endLongitude;
+    private BigDecimal endLongitude;
 
     /** 
      * 骑行轨迹图
@@ -73,7 +76,12 @@ public class orderItem {
     **/
     private Integer createAt;
 
-    public orderItem(Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, String beginDimension, String beginLongitude, String endDimension, String endLongitude, String cyclingImg, Integer createAt) {
+    public orderItem(){
+
+    }
+
+    public orderItem(Long id, Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, String cyclingImg, Integer createAt) {
+        this.id = id;
         this.userId = userId;
         this.orderCode = orderCode;
         this.vehicleCode = vehicleCode;
@@ -135,36 +143,36 @@ public class orderItem {
         this.endAt = endAt;
     }
 
-    public String getBeginDimension() {
+    public void setBeginDimension(BigDecimal beginDimension) {
+        this.beginDimension = beginDimension;
+    }
+
+    public BigDecimal getBeginDimension() {
         return beginDimension;
     }
 
-    public void setBeginDimension(String beginDimension) {
-        this.beginDimension = beginDimension == null ? null : beginDimension.trim();
+    public void setBeginLongitude(BigDecimal beginLongitude) {
+        this.beginLongitude = beginLongitude;
     }
 
-    public String getBeginLongitude() {
+    public BigDecimal getBeginLongitude() {
         return beginLongitude;
     }
 
-    public void setBeginLongitude(String beginLongitude) {
-        this.beginLongitude = beginLongitude == null ? null : beginLongitude.trim();
+    public void setEndDimension(BigDecimal endDimension) {
+        this.endDimension = endDimension;
     }
 
-    public String getEndDimension() {
+    public BigDecimal getEndDimension() {
         return endDimension;
     }
 
-    public void setEndDimension(String endDimension) {
-        this.endDimension = endDimension == null ? null : endDimension.trim();
+    public void setEndLongitude(BigDecimal endLongitude) {
+        this.endLongitude = endLongitude;
     }
 
-    public String getEndLongitude() {
+    public BigDecimal getEndLongitude() {
         return endLongitude;
-    }
-
-    public void setEndLongitude(String endLongitude) {
-        this.endLongitude = endLongitude == null ? null : endLongitude.trim();
     }
 
     public String getCyclingImg() {

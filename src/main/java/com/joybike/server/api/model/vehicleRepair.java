@@ -1,6 +1,8 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class vehicleRepair {
+import java.io.Serializable;
+
+public class vehicleRepair implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -61,6 +63,10 @@ public class vehicleRepair {
     **/
     private Integer operateAt;
 
+    public vehicleRepair(){
+
+    }
+
     public vehicleRepair(Long vehicleId, String cause, String faultImg, Long createId, Integer createAt, Integer disposeStatus, String disposeDepict, Long operateId, Integer operateAt) {
         this.vehicleId = vehicleId;
         this.cause = cause;
@@ -71,6 +77,22 @@ public class vehicleRepair {
         this.disposeDepict = disposeDepict;
         this.operateId = operateId;
         this.operateAt = operateAt;
+    }
+
+    @Override
+    public String toString() {
+        return "vehicleRepair{" +
+                "id=" + id +
+                ", vehicleId=" + vehicleId +
+                ", cause='" + cause + '\'' +
+                ", faultImg='" + faultImg + '\'' +
+                ", createId=" + createId +
+                ", createAt=" + createAt +
+                ", disposeStatus=" + disposeStatus +
+                ", disposeDepict='" + disposeDepict + '\'' +
+                ", operateId=" + operateId +
+                ", operateAt=" + operateAt +
+                '}';
     }
 
     public Long getId() {

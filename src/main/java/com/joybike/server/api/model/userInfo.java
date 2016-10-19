@@ -1,11 +1,18 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
-public class userInfo {
+import java.io.Serializable;
+
+public class userInfo implements Serializable {
     /** 
      * 
      *  @Author lisy
     **/
     private Long id;
+
+    /**
+     * 电话
+     */
+    private String iphone;
 
     /** 
      * 用户姓名
@@ -14,25 +21,25 @@ public class userInfo {
     private String realName;
 
     /** 
-     * 
+     * 身份证编号
      *  @Author lisy
     **/
     private String idNumber;
 
     /** 
-     * 
+     * 国籍
      *  @Author lisy
     **/
     private String nationality;
 
     /** 
-     * 
+     * 头像
      *  @Author lisy
     **/
     private String photo;
 
     /** 
-     * 
+     * 身份证照片
      *  @Author lisy
     **/
     private String identityCardphoto;
@@ -62,12 +69,19 @@ public class userInfo {
     private Integer securityStatus;
 
     /** 
-     * 认证状态0：已认证，1：未认证
+     * 认证状态0：未认证 ，1：已认证
      *  @Author lisy
     **/
     private Integer authenStatus;
 
-    public userInfo(String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
+
+    public userInfo(){
+
+    }
+
+    public userInfo(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
+        this.id = id;
+        this.iphone = iphone;
         this.realName = realName;
         this.idNumber = idNumber;
         this.nationality = nationality;
@@ -78,6 +92,32 @@ public class userInfo {
         this.userImg = userImg;
         this.securityStatus = securityStatus;
         this.authenStatus = authenStatus;
+    }
+
+    @Override
+    public String toString() {
+        return "userInfo{" +
+                "id=" + id +
+                ", iphone='" + iphone + '\'' +
+                ", realName='" + realName + '\'' +
+                ", idNumber='" + idNumber + '\'' +
+                ", nationality='" + nationality + '\'' +
+                ", photo='" + photo + '\'' +
+                ", identityCardphoto='" + identityCardphoto + '\'' +
+                ", createAt=" + createAt +
+                ", updateAt=" + updateAt +
+                ", userImg='" + userImg + '\'' +
+                ", securityStatus=" + securityStatus +
+                ", authenStatus=" + authenStatus +
+                '}';
+    }
+
+    public String getIphone() {
+        return iphone;
+    }
+
+    public void setIphone(String iphone) {
+        this.iphone = iphone;
     }
 
     public Long getId() {

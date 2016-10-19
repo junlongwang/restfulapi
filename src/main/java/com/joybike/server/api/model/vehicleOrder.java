@@ -1,8 +1,9 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class vehicleOrder {
+public class vehicleOrder implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -69,6 +70,10 @@ public class vehicleOrder {
     **/
     private Integer exucuteAt;
 
+    public vehicleOrder(){
+
+    }
+
     public vehicleOrder(String orderCode, String userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String remark, String extension, Integer createAt, Integer exucuteAt) {
         this.orderCode = orderCode;
         this.userId = userId;
@@ -80,6 +85,23 @@ public class vehicleOrder {
         this.extension = extension;
         this.createAt = createAt;
         this.exucuteAt = exucuteAt;
+    }
+
+    @Override
+    public String toString() {
+        return "vehicleOrder{" +
+                "id=" + id +
+                ", orderCode='" + orderCode + '\'' +
+                ", userId='" + userId + '\'' +
+                ", beforePrice=" + beforePrice +
+                ", afterPrice=" + afterPrice +
+                ", payId=" + payId +
+                ", status=" + status +
+                ", remark='" + remark + '\'' +
+                ", extension='" + extension + '\'' +
+                ", createAt=" + createAt +
+                ", exucuteAt=" + exucuteAt +
+                '}';
     }
 
     public Long getId() {

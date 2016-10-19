@@ -1,9 +1,5 @@
-package com.joybike.server.api.dao;
+package com.joybike.server.api.service;
 
-
-
-
-import com.joybike.server.api.Infrustructure.IRepository;
 import com.joybike.server.api.model.userCoupon;
 
 import java.util.List;
@@ -12,8 +8,14 @@ import java.util.Map;
 /**
  * Created by lishaoyong on 16/10/18.
  */
-public interface UserCouponDao extends IRepository<userCoupon> {
+public interface UserCouponService {
 
+    /**
+     * 用户优惠券发放
+     * @param userCoupon
+     * @return
+     */
+    long insertUserCoupon(userCoupon userCoupon);
 
     /**
      * 删除用户的优惠券
@@ -36,11 +38,4 @@ public interface UserCouponDao extends IRepository<userCoupon> {
      * @return
      */
     List<userCoupon> getValidList(long userId,int useAt);
-
-    /**
-     * 获取用户有效的优惠券数量
-     * @param userId
-     * @return
-     */
-    int getValidCount(long userId ,int expireAt);
 }

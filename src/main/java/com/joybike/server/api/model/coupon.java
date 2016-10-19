@@ -1,8 +1,9 @@
-package com.joybike.server.api.po;
+package com.joybike.server.api.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class coupon {
+public class coupon implements Serializable {
     /** 
      * 
      *  @Author lisy
@@ -14,6 +15,12 @@ public class coupon {
      *  @Author lisy
     **/
     private String name;
+
+    /**
+     * 折扣金额
+     */
+    private BigDecimal discount;
+
 
     /** 
      * 描述信息
@@ -31,7 +38,7 @@ public class coupon {
      * 剩余优惠
      *  @Author lisy
     **/
-    private BigDecimal price;
+    private BigDecimal discountPrice;
 
     /** 
      * 创建时间
@@ -39,16 +46,51 @@ public class coupon {
     **/
     private Integer createAt;
 
-    public coupon(String name, String descri, Integer expireAt, BigDecimal price, Integer createAt) {
+    public coupon(){
+
+    }
+
+    public coupon(Long id, String name, BigDecimal discount, String descri, Integer expireAt, BigDecimal discountPrice, Integer createAt) {
+        this.id = id;
         this.name = name;
+        this.discount = discount;
         this.descri = descri;
         this.expireAt = expireAt;
-        this.price = price;
+        this.discountPrice = discountPrice;
         this.createAt = createAt;
+    }
+
+    @Override
+    public String toString() {
+        return "coupon{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", discount=" + discount +
+                ", descri='" + descri + '\'' +
+                ", expireAt=" + expireAt +
+                ", discountPrice=" + discountPrice +
+                ", createAt=" + createAt +
+                '}';
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setDiscountPrice(BigDecimal discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    public BigDecimal getDiscountPrice() {
+        return discountPrice;
+    }
+
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
+
+    public BigDecimal getDiscount() {
+        return discount;
     }
 
     public void setId(Long id) {
@@ -77,14 +119,6 @@ public class coupon {
 
     public void setExpireAt(Integer expireAt) {
         this.expireAt = expireAt;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
     }
 
     public Integer getCreateAt() {

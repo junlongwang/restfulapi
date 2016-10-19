@@ -41,4 +41,17 @@ public class UserInfoServiceImpl implements UserInfoService {
 
         return 0;
     }
+
+    @Override
+    public userInfo getUserInfoByMobile(String mobile) {
+        userInfo userInfo= userInfoDao.getUserInfoByMobile(mobile);
+        if(userInfo==null)
+        {
+            userInfo = new userInfo();
+            userInfo.setIphone(mobile);
+            long userId = userInfoDao.save(userInfo);
+            userInfo.setId(userId);
+        }
+        return userInfo;
+    }
 }

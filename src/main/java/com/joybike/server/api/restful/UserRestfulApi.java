@@ -1,11 +1,15 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
+import com.joybike.server.api.service.UserInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by 58 on 2016/10/16.
@@ -13,6 +17,10 @@ import java.util.List;
 //"/api/user"
 @RestController()
 public class UserRestfulApi {
+
+    @Autowired
+    private UserInfoService userInfoService;
+
 
     /**
      * 注册用户
@@ -22,6 +30,7 @@ public class UserRestfulApi {
     @RequestMapping(value = "add",method = RequestMethod.POST)
     public ResponseEntity<userInfo> add(@RequestBody userInfo user)
     {
+
         return ResponseEntity.ok(new userInfo());
     }
 
@@ -39,13 +48,20 @@ public class UserRestfulApi {
     /**
      * 获取手机验证码
      * @param mobile 手机号码
-     * @param machineUUID 机型唯一编码
      * @return
      */
     @RequestMapping(value = "getValidateCode",method = RequestMethod.GET)
-    public ResponseEntity<Message<String>> getValidateCode(@RequestParam("mobile") String mobile,@RequestParam("uuid") String machineUUID)
+    public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile)
     {
-        return ResponseEntity.ok(new Message<String>(true,null,"1234"));
+        try {
+            int randNo = new Random().nextInt(9999-1000+1)+1000;
+            //此处调用金峰的发送短信接口
+            userInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
+            LoginData loginData = new LoginData(String.valueOf(randNo),userInfo);
+            return ResponseEntity.ok(new Message<LoginData>(true,null,loginData));
+        }catch (Exception e){
+            return ResponseEntity.ok(new Message<LoginData>(false,"1001："+e.getMessage(),null));
+        }
     }
 
     /**

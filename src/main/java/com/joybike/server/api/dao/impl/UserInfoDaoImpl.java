@@ -33,10 +33,19 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
      */
     final String getUserInfoSql = "select * from userInfo where id = :userId";
 
+    final String getUserInfoByMobileSql = "select * from userInfo where iphone = :mobile";
+
     public userInfo getUserInfo(long userId) {
         Map map = new HashMap();
         map.put("userId", userId);
         return (userInfo) this.jdbcTemplate.queryForObject(getUserInfoSql, map, new BeanPropertyRowMapper(userInfo.class));
+    }
+
+    @Override
+    public userInfo getUserInfoByMobile(String mobile) {
+        Map map = new HashMap();
+        map.put("mobile", mobile);
+        return (userInfo) this.jdbcTemplate.queryForObject(getUserInfoByMobileSql, map, new BeanPropertyRowMapper(userInfo.class));
     }
 
 }

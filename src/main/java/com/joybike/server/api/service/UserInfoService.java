@@ -15,4 +15,12 @@ public interface UserInfoService {
      * @return
      */
     int updateUserInfo(userInfo user);
+
+
+    /**
+     * 根据用户电话号码获取用户信息
+     * @param mobile
+     * @return
+     */
+    userInfo getUserInfoByMobile(String mobile);
 }

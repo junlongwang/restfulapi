@@ -48,4 +48,10 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
         return (userInfo) this.jdbcTemplate.queryForObject(getUserInfoByMobileSql, map, new BeanPropertyRowMapper(userInfo.class));
     }
 
+    @Override
+    public double getUserAcountMoneyByuserId(long userId){
+        Map map = new HashMap();
+        map.put("userId",userId);
+        return 0.01;
+    }
 }

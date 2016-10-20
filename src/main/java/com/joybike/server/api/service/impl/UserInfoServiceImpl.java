@@ -54,4 +54,10 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
         return userInfo;
     }
+
+    @Override
+    public double getUserAcountMoneyByuserId(long userId){
+
+        return 0.01;
+    }
 }

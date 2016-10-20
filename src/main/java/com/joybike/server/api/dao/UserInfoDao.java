@@ -31,4 +31,11 @@ public interface UserInfoDao extends IRepository<userInfo> {
      */
     userInfo getUserInfoByMobile(String mobile);
 
+    /**
+     * 根据userId获取用户余额
+     * @param userId
+     * @return
+     */
+    double getUserAcountMoneyByuserId(long userId);
+
 }

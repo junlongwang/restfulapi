@@ -46,7 +46,7 @@ public class UserRestfulApi {
     }
 
     /**
-     * 获取手机验证码
+     * 获取手机验证码并登录
      * @param mobile 手机号码
      * @return
      */
@@ -61,6 +61,18 @@ public class UserRestfulApi {
             return ResponseEntity.ok(new Message<LoginData>(true,null,loginData));
         }catch (Exception e){
             return ResponseEntity.ok(new Message<LoginData>(false,"1001："+e.getMessage(),null));
+        }
+    }
+
+    @RequestMapping(value = "getAcountMoney",method = RequestMethod.GET)
+    public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") String userid)
+    {
+        try {
+            long user_id = Long.valueOf(userid);
+            double acountMoney = userInfoService.getUserAcountMoneyByuserId(user_id);
+            return ResponseEntity.ok(new Message<Double>(true,null,acountMoney));
+        }catch (Exception e){
+            return ResponseEntity.ok(new Message<Double>(false,"1001："+e.getMessage(),null));
         }
     }
 

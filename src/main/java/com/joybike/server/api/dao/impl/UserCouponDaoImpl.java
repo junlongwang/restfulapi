@@ -24,6 +24,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
      */
     final String deleteUserCouponSql = "delete from userCoupon where userId = :userId and couponId = :couponId";
 
+    @Override
     public long deleteUserCoupon(Map map) {
         return execSQL(deleteUserCouponSql, map);
     }
@@ -36,6 +37,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
      */
     final String updateCouponSql = "update userCoupon set status = :status where userId = :userId and couponId = :couponId ";
 
+    @Override
     public long updateCoupon(Map map) {
         return execSQL(updateCouponSql, map);
     }
@@ -48,6 +50,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
      */
     final String validCouponSql = "select * from userCoupon where userId = ? and expireAt >= ?";
 
+    @Override
     public List<userCoupon> getValidList(long userId, int useAt) {
         Object[] object = new Object[]{userId, useAt};
         List<userCoupon> list = this.jdbcTemplate.getJdbcOperations().query(validCouponSql, object, new BeanPropertyRowMapper(userCoupon.class));
@@ -63,6 +66,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
      */
     final String validCountSql = "select count(*) from userCoupon where userId = :userId and expireAt >= :expireAt and status = 0";
 
+    @Override
     public int getValidCount(long userId, int expireAt) {
         Map map = new HashMap();
         map.put("userId", userId);

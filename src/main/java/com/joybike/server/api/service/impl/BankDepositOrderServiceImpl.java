@@ -77,6 +77,7 @@ public class BankDepositOrderServiceImpl implements BankDepositOrderService {
 
     /**
      * 押金
+     *
      * @param depositOrder
      */
     public void depositRecharge(bankDepositOrder depositOrder) {
@@ -94,7 +95,6 @@ public class BankDepositOrderServiceImpl implements BankDepositOrderService {
         userInfo.setId(depositOrder.getUserId());
         userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
         userInfoService.updateUserInfo(userInfo);
-
 
 
     }

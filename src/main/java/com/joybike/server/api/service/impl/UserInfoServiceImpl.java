@@ -48,8 +48,8 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param phone
      * @return
      */
-    public userInfo getUserInfo(String phone) {
-        
+    public userInfo getUserInfoByMobile(String phone) {
+
         userInfo userInfo = userInfoDao.getInfoByPhone(phone);
         if (userInfo != null) {
             return userInfo;
@@ -66,22 +66,5 @@ public class UserInfoServiceImpl implements UserInfoService {
         }
     }
 
-    @Override
-    public userInfo getUserInfoByMobile(String mobile) {
-        userInfo userInfo= userInfoDao.getUserInfoByMobile(mobile);
-        if(userInfo==null)
-        {
-            userInfo = new userInfo();
-            userInfo.setIphone(mobile);
-            long userId = userInfoDao.save(userInfo);
-            userInfo.setId(userId);
-        }
-        return userInfo;
-    }
 
-    @Override
-    public double getUserAcountMoneyByuserId(long userId){
-
-        return 0.01;
-    }
 }

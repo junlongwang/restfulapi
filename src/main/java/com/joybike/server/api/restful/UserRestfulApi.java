@@ -2,6 +2,7 @@ package com.joybike.server.api.restful;
 
 import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
+import com.joybike.server.api.service.BankAcountService;
 import com.joybike.server.api.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,66 +22,74 @@ public class UserRestfulApi {
     @Autowired
     private UserInfoService userInfoService;
 
+    @Autowired
+    private BankAcountService bankAcountService;
 
     /**
      * 注册用户
+     *
      * @param user
      * @return
      */
-    @RequestMapping(value = "add",method = RequestMethod.POST)
-    public ResponseEntity<userInfo> add(@RequestBody userInfo user)
-    {
+    @RequestMapping(value = "add", method = RequestMethod.POST)
+    public ResponseEntity<userInfo> add(@RequestBody userInfo user) {
 
         return ResponseEntity.ok(new userInfo());
     }
 
     /**
      * 更新用户信息
+     *
      * @param user
      * @return
      */
-    @RequestMapping(value = "update",method = RequestMethod.POST)
-    public ResponseEntity<userInfo> update(@RequestBody userInfo user)
-    {
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public ResponseEntity<userInfo> update(@RequestBody userInfo user) {
         return ResponseEntity.ok(new userInfo());
     }
 
     /**
      * 获取手机验证码并登录
+     *
      * @param mobile 手机号码
      * @return
      */
-    @RequestMapping(value = "getValidateCode",method = RequestMethod.GET)
-    public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile)
-    {
+    @RequestMapping(value = "getValidateCode", method = RequestMethod.GET)
+    public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile) {
         try {
-            int randNo = new Random().nextInt(9999-1000+1)+1000;
+            int randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
             //此处调用金峰的发送短信接口
             userInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
-            LoginData loginData = new LoginData(String.valueOf(randNo),userInfo);
-            return ResponseEntity.ok(new Message<LoginData>(true,null,loginData));
-        }catch (Exception e){
-            return ResponseEntity.ok(new Message<LoginData>(false,"1001："+e.getMessage(),null));
+            LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
+            return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<LoginData>(false, "1001：" + e.getMessage(), null));
         }
     }
 
-    @RequestMapping(value = "getAcountMoney",method = RequestMethod.GET)
-    public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") String userid)
-    {
+    /**
+     * 获取用户账户余额
+     *
+     * @param userid
+     * @return
+     */
+    @RequestMapping(value = "getAcountMoney", method = RequestMethod.GET)
+    public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") String userid) {
         try {
             long user_id = Long.valueOf(userid);
-            double acountMoney = userInfoService.getUserAcountMoneyByuserId(user_id);
-            return ResponseEntity.ok(new Message<Double>(true,null,acountMoney));
-        }catch (Exception e){
-            return ResponseEntity.ok(new Message<Double>(false,"1001："+e.getMessage(),null));
+            double acountMoney = bankAcountService.getUserAcountMoneyByuserId(user_id);
+            return ResponseEntity.ok(new Message<Double>(true, null, acountMoney));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<Double>(false, "1001：" + e.getMessage(), null));
         }
     }
 
     /**
      * 获取系统推送信息
+     *
      * @return
      */
-    @RequestMapping(value = "getMessages",method = RequestMethod.GET)
+    @RequestMapping(value = "getMessages", method = RequestMethod.GET)
     public ResponseEntity<Message<List<SysMessage>>> getMessages() {
         return ResponseEntity.ok(new Message<List<SysMessage>>(true, null, new ArrayList<SysMessage>()));
     }

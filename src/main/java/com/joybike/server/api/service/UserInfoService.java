@@ -19,22 +19,10 @@ public interface UserInfoService {
 
 
     /**
-     * 根据用户电话号码获取用户信息
+     * 根据用户电话号码获取用户信息，判断用户是否存在,如果存在,获取用户信息直接返回，未存在则创建用户信息
      * @param mobile
      * @return
      */
     userInfo getUserInfoByMobile(String mobile);
 
-    /**
-     * 根据userId获取用户余额
-     * @param userId
-     * @return
-     */
-    double getUserAcountMoneyByuserId(long userId);
-    /**
-     * 判断用户是否存在,如果存在,获取用户信息直接返回，未存在则创建用户信息
-     *
-     * @return
-     */
-    userInfo getUserInfo(String phone);
 }

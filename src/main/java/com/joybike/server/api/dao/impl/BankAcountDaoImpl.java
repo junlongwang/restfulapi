@@ -31,6 +31,7 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
      */
     final String updateAcountSql = "update bankAcount set price = :price ,updateAt = :updateAt where userId = :userId and acountType = :acountType";
 
+    @Override
     public int updateAcount(long userId, AcountType acountType, BigDecimal price) {
         Map map = new HashMap();
         map.put("userId", userId);
@@ -41,18 +42,32 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
     }
 
     /**
-     * 获取用户账户余额
+     * 获取用户某个账户余额
      *
      * @param userId
      * @param acountType
      * @return
      */
     final String getAcountSql = "select * from bankAcount where userId = ? and acountType = ?";
-
+    @Override
     public bankAcount getAcount(long userId, AcountType acountType) {
         Object[] object = new Object[]{userId, acountType.getValue()};
         List<bankAcount> list = this.jdbcTemplate.getJdbcOperations().query(getAcountSql, object, new BeanPropertyRowMapper(bankAcount.class));
         if (list.size() > 0) return list.get(0);
         else return null;
+    }
+
+
+    /**
+     * 根据用户ID获取用户总余额
+     * @param userId
+     * @return
+     */
+    final String userAmountSql = "select sum(price) price from userInfo where userId = :userId group by userId";
+    @Override
+    public double getUserAmount(long userId) {
+        Map map = new HashMap();
+        map.put("userId", userId);
+        return getCount(userAmountSql, map);
     }
 }

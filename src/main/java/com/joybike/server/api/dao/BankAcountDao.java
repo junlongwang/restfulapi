@@ -23,11 +23,18 @@ public interface BankAcountDao extends IRepository<bankAcount> {
 
 
     /**
-     * 获取用户账户余额
+     * 获取用户某个账户余额
      * @param userId
      * @param acountType
      * @return
      */
     bankAcount getAcount(long userId ,AcountType acountType);
+
+    /**
+     * 获取用户账户总余额
+     * @param userId
+     * @return
+     */
+    double getUserAmount(long userId);
 
 }

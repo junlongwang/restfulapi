@@ -63,7 +63,7 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
      * @param userId
      * @return
      */
-    final String userAmountSql = "select sum(price) price from userInfo where userId = :userId group by userId";
+    final String userAmountSql = "select sum(price) price from bankAcount where userId = :userId group by userId";
     @Override
     public double getUserAmount(long userId) {
         Map map = new HashMap();

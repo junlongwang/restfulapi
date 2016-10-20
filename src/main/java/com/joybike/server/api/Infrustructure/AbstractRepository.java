@@ -20,14 +20,14 @@ public abstract class AbstractRepository<T> implements IRepository<T> {
     public NamedParameterJdbcTemplate jdbcTemplate;
 
 
-    public static final String SQL_INSERT = "insert";
-    public static final String SQL_UPDATE = "update";
-    public static final String SQL_DELETE = "delete";
+    public final String SQL_INSERT = "insert";
+    public final String SQL_UPDATE = "update";
+    public final String SQL_DELETE = "delete";
 
 
-    static String INSERT_SQL = null;
-    static String UPDATE_SQL = null;
-    static String DELETE_SQL = null;
+    String INSERT_SQL = null;
+    String UPDATE_SQL = null;
+    String DELETE_SQL = null;
 
     @Autowired
     public void init(DataSource dataSource) {

@@ -10,12 +10,6 @@ import com.joybike.server.api.model.userInfo;
  */
 public interface UserInfoDao extends IRepository<userInfo> {
 
-    /**
-     * 修改用户信息
-     * @param user
-     * @return
-     */
-    int updateUserInfo(userInfo user);
 
     /**
      * 获取用户基本信息
@@ -37,5 +31,13 @@ public interface UserInfoDao extends IRepository<userInfo> {
      * @return
      */
     double getUserAcountMoneyByuserId(long userId);
+
+    /*
+     * 根据用户号码获取用户信息
+     * @param phone
+     * @return
+     */
+    userInfo getInfoByPhone(String phone);
+
 
 }

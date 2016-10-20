@@ -26,7 +26,7 @@ public class bankMoneyFlow implements Serializable {
      * 来源类型1：支付宝，2：微信
      *  @Author lisy
     **/
-    private String sourceType;
+    private Integer sourceType;
 
     /** 
      * 充值ID
@@ -86,7 +86,7 @@ public class bankMoneyFlow implements Serializable {
 
     }
 
-    public bankMoneyFlow(Long userId, Integer dealType, String sourceType, Long depositId, String sourceOrderCode, Integer payAt, Long consumedId, BigDecimal cash, BigDecimal award, Integer status, Integer refundAt, Integer createAt) {
+    public bankMoneyFlow(Long userId, Integer dealType, Integer sourceType, Long depositId, String sourceOrderCode, Integer payAt, Long consumedId, BigDecimal cash, BigDecimal award, Integer status, Integer refundAt, Integer createAt) {
         this.userId = userId;
         this.dealType = dealType;
         this.sourceType = sourceType;
@@ -144,12 +144,12 @@ public class bankMoneyFlow implements Serializable {
         this.dealType = dealType;
     }
 
-    public String getSourceType() {
+    public Integer getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType == null ? null : sourceType.trim();
+    public void setSourceType(Integer sourceType) {
+        this.sourceType = sourceType;
     }
 
     public Long getDepositId() {

@@ -2,11 +2,13 @@ package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserInfoDao;
+import com.joybike.server.api.model.userCoupon;
 import com.joybike.server.api.model.userInfo;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,15 +17,6 @@ import java.util.Map;
 @Repository("userDao")
 public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao {
 
-    /**
-     * 修改用户数据
-     *
-     * @param user
-     * @return
-     */
-    public int updateUserInfo(userInfo user) {
-        return update(user);
-    }
 
     /**
      * 获取用户基本信息
@@ -54,4 +47,20 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
         map.put("userId",userId);
         return 0.01;
     }
+
+    /**
+     * 根据用户号码获取用户信息
+     *
+     * @param phone
+     * @return
+     */
+    final String getPhoneSql = "select * from userInfo where iphone = ?";
+
+    public userInfo getInfoByPhone(String phone) {
+        Object[] object = new Object[]{phone};
+        List<userInfo> list = this.jdbcTemplate.getJdbcOperations().query(getPhoneSql, object, new BeanPropertyRowMapper(userInfo.class));
+        if (list.size() > 0) return list.get(0);
+        else return null;
+    }
+
 }

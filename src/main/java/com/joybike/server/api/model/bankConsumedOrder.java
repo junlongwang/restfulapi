@@ -64,11 +64,26 @@ public class bankConsumedOrder implements Serializable {
     **/
     private Integer createAt;
 
+    /**
+     * 充值ID
+     */
+    private Long depositId;
+
+
+    public void setDepositId(Long depositId) {
+        this.depositId = depositId;
+    }
+
+    public Long getDepositId() {
+        return depositId;
+    }
+
     public bankConsumedOrder(){
 
     }
 
-    public bankConsumedOrder(Long userId, String orderCode, BigDecimal payAmount, BigDecimal depositAmount, Integer payAt, Integer status, Integer refundAt, String remark, Integer createAt) {
+    public bankConsumedOrder(Long id, Long userId, String orderCode, BigDecimal payAmount, BigDecimal depositAmount, Integer payAt, Integer status, Integer refundAt, String remark, Integer createAt, Long depositId) {
+        this.id = id;
         this.userId = userId;
         this.orderCode = orderCode;
         this.payAmount = payAmount;
@@ -78,6 +93,7 @@ public class bankConsumedOrder implements Serializable {
         this.refundAt = refundAt;
         this.remark = remark;
         this.createAt = createAt;
+        this.depositId = depositId;
     }
 
     @Override
@@ -93,6 +109,7 @@ public class bankConsumedOrder implements Serializable {
                 ", refundAt=" + refundAt +
                 ", remark='" + remark + '\'' +
                 ", createAt=" + createAt +
+                ", depositId=" + depositId +
                 '}';
     }
 

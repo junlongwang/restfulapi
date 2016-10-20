@@ -3,19 +3,25 @@ package com.joybike.server.api.Enum;
 /**
  * Created by 58 on 2016/10/16.
  */
-public enum PayType {
+public enum AcountType {
+
     /**
-     * 微信
+     * 押金
      */
-    weixin(0),
+    deposit(-1),
     /**
-     * 支付宝
+     * 现金余额
      */
-    Alipay(1);
+    cash(0),
+
+    /**
+     * 赠送优惠
+     */
+    balance(1);
 
     private int value;
 
-    PayType(int value) {
+    AcountType(int value) {
         this.value = value;
     }
 
@@ -23,4 +29,6 @@ public enum PayType {
     public int getValue() {
         return this.value;
     }
+
+
 }

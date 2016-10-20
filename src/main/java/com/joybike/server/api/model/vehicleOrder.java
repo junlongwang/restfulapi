@@ -41,7 +41,7 @@ public class vehicleOrder implements Serializable {
     private Long payId;
 
     /** 
-     * 状态
+     * 状态1:新建，2:骑行结束，15：支付完成
      *  @Author lisy
     **/
     private Integer status;

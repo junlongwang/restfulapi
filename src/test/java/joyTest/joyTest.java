@@ -46,7 +46,7 @@ public class joyTest {
     @Test
     public void getUserInfoTest(){
 
-        userInfo u = userInfoService.getUserInfo("13721766224");
+        userInfo u = userInfoService.getUserInfoByMobile("13721766224");
         System.out.println(u.getRealName() + "，的信息");
 
     }

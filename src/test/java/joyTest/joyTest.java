@@ -4,6 +4,7 @@ import com.joybike.server.api.Enum.DepositStatus;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.userInfo;
+import com.joybike.server.api.service.BankAcountService;
 import com.joybike.server.api.service.BankDepositOrderService;
 import com.joybike.server.api.service.UserInfoService;
 
@@ -31,6 +32,10 @@ public class joyTest {
 
     @Autowired
     BankDepositOrderService depositOrderService;
+
+    @Autowired
+    BankAcountService bankAcountService;
+
 
     @Test
     public void joy() {
@@ -65,5 +70,11 @@ public class joyTest {
         order.setPayAt(UnixTimeUtils.now());
         depositOrderService.depositRecharge(order);
 
+    }
+
+    @Test
+    public void bankAcountServiceTest(){
+       double amount = bankAcountService.getUserAcountMoneyByuserId(2);
+        System.out.println(amount + ":余额");
     }
 }

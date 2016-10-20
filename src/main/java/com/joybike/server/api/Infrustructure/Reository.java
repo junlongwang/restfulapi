@@ -1,7 +1,6 @@
 package com.joybike.server.api.Infrustructure;
 
 
-import com.joybike.server.api.model.userInfo;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -64,7 +63,13 @@ public class Reository<T> extends AbstractRepository<T> {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return (T) jdbcTemplate.queryForObject(sql, ps, new BeanPropertyRowMapper(entityClass));
+        //queryForObject 如果为空就会发生异常
+        try {
+            return (T) jdbcTemplate.queryForObject(sql, ps, new BeanPropertyRowMapper(entityClass));
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 
@@ -72,7 +77,12 @@ public class Reository<T> extends AbstractRepository<T> {
     public T findById(T model) {
         String sql = "SELECT * FROM " + entityClass.getSimpleName() + " WHERE id=:id";
         SqlParameterSource ps = new BeanPropertySqlParameterSource(model);
-        return (T) jdbcTemplate.queryForObject(sql, ps, new BeanPropertyRowMapper(entityClass));
+        try {
+            return (T) jdbcTemplate.queryForObject(sql, ps, new BeanPropertyRowMapper(entityClass));
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
     @Override
@@ -85,7 +95,7 @@ public class Reository<T> extends AbstractRepository<T> {
     }
 
     @Override
-    public List<T> query(String sql, Object[] object ) {
+    public List<T> query(String sql, Object[] object) {
 //        Object stu=jdbcTemplate.queryForObject(sql, object, new BeanPropertyRowMapper(entityClass.getName().getClass()));
         return jdbcTemplate.getJdbcOperations().query(sql, object, new BeanPropertyRowMapper(entityClass.getName().getClass()));
 
@@ -104,7 +114,12 @@ public class Reository<T> extends AbstractRepository<T> {
 
     @Override
     public int getCount(String sql, Map map) {
-        return jdbcTemplate.queryForObject(sql, map, Integer.class);
+        try {
+            return jdbcTemplate.queryForObject(sql, map, Integer.class);
+        } catch (Exception e) {
+            return 0;
+        }
+
     }
 
 
@@ -123,7 +138,12 @@ public class Reository<T> extends AbstractRepository<T> {
             }
         }
 
-        return jdbcTemplate.queryForObject(sql.toString(), new HashMap<String, Object>(), Integer.class);
+        try {
+            return jdbcTemplate.queryForObject(sql.toString(), new HashMap<String, Object>(), Integer.class);
+        } catch (Exception e) {
+            return 0;
+        }
+
     }
 
 }

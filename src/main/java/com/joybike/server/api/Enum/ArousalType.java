@@ -1,21 +1,24 @@
 package com.joybike.server.api.Enum;
 
 /**
- * Created by 58 on 2016/10/16.
+ * Created by lishaoyong on 16/10/19.
  */
-public enum PayType {
+public enum ArousalType {
+
     /**
-     * 微信
+     * 电话或短信
      */
-    weixin(0),
+    remind(0),
+
     /**
-     * 支付宝
+     * 震动
      */
-    Alipay(1);
+    shock(1)
+    ;
 
     private int value;
 
-    PayType(int value) {
+    ArousalType(int value) {
         this.value = value;
     }
 

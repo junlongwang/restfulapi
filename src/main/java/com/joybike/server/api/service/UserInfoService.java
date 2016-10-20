@@ -11,8 +11,16 @@ public interface UserInfoService {
 
     /**
      * 修改用户信息
+     *
      * @param user
      * @return
      */
     int updateUserInfo(userInfo user);
+
+    /**
+     * 判断用户是否存在,如果存在,获取用户信息直接返回，未存在则创建用户信息
+     *
+     * @return
+     */
+    userInfo getUserInfo(String phone);
 }

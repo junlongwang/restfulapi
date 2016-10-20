@@ -94,11 +94,19 @@ public class bankDepositOrder implements Serializable {
     **/
     private Integer createAt;
 
+    /**
+     * 充值类型 0余额 1押金
+     */
+    private Integer rechargeType;
+
+
+
     public bankDepositOrder(){
 
     }
 
-    public bankDepositOrder(Long userId, BigDecimal cash, BigDecimal award, Integer discountAt, BigDecimal residualCash, BigDecimal residualAward, Integer status, Integer payType, String payAcount, String payDocumentid, String merchantId, String remark, Integer payAt, Integer createAt) {
+    public bankDepositOrder(Long id, Long userId, BigDecimal cash, BigDecimal award, Integer discountAt, BigDecimal residualCash, BigDecimal residualAward, Integer status, Integer payType, String payAcount, String payDocumentid, String merchantId, String remark, Integer payAt, Integer createAt, Integer rechargeType) {
+        this.id = id;
         this.userId = userId;
         this.cash = cash;
         this.award = award;
@@ -113,6 +121,7 @@ public class bankDepositOrder implements Serializable {
         this.remark = remark;
         this.payAt = payAt;
         this.createAt = createAt;
+        this.rechargeType = rechargeType;
     }
 
     @Override
@@ -133,7 +142,16 @@ public class bankDepositOrder implements Serializable {
                 ", remark='" + remark + '\'' +
                 ", payAt=" + payAt +
                 ", createAt=" + createAt +
+                ", rechargeType=" + rechargeType +
                 '}';
+    }
+
+    public void setRechargeType(Integer rechargeType) {
+        this.rechargeType = rechargeType;
+    }
+
+    public Integer getRechargeType() {
+        return rechargeType;
     }
 
     public Long getId() {

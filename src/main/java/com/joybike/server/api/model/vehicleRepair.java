@@ -40,7 +40,7 @@ public class vehicleRepair implements Serializable {
     private Integer createAt;
 
     /** 
-     * 处理状态
+     * 处理状态0：未处理，1：已处理
      *  @Author lisy
     **/
     private Integer disposeStatus;

@@ -1,21 +1,31 @@
 package com.joybike.server.api.Enum;
 
 /**
- * Created by 58 on 2016/10/16.
+ * Created by lishaoyong on 16/10/19.
  */
-public enum PayType {
+public enum VehicleEnableType {
+
     /**
-     * 微信
+     * 启用
      */
-    weixin(0),
+    enable(0),
+
     /**
-     * 支付宝
+     * 禁止
      */
-    Alipay(1);
+    prohibit(1),
+
+
+    /**
+     * 故障
+     */
+    fault(2)
+    ;
+
 
     private int value;
 
-    PayType(int value) {
+    VehicleEnableType(int value) {
         this.value = value;
     }
 

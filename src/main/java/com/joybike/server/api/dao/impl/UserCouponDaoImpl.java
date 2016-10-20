@@ -63,11 +63,11 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
      */
     final String validCountSql = "select count(*) from userCoupon where userId = :userId and expireAt >= :expireAt and status = 0";
 
-    public int getValidCount(long userId ,int expireAt) {
+    public int getValidCount(long userId, int expireAt) {
         Map map = new HashMap();
-        map.put("userId",userId);
-        map.put("expireAt",expireAt);
-        return getCount(validCountSql,map);
+        map.put("userId", userId);
+        map.put("expireAt", expireAt);
+        return getCount(validCountSql, map);
     }
 
 

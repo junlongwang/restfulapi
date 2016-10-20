@@ -1,21 +1,24 @@
 package com.joybike.server.api.Enum;
 
 /**
- * Created by 58 on 2016/10/16.
+ * Created by lishaoyong on 16/10/20.
  */
-public enum PayType {
+public enum RechargeType {
+
     /**
-     * 微信
+     *余额
      */
-    weixin(0),
+    balance(0),
+
     /**
-     * 支付宝
+     * 押金
      */
-    Alipay(1);
+    deposit(1)
+    ;
 
     private int value;
 
-    PayType(int value) {
+    RechargeType(int value) {
         this.value = value;
     }
 
@@ -23,4 +26,5 @@ public enum PayType {
     public int getValue() {
         return this.value;
     }
+
 }

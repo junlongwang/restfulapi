@@ -18,12 +18,6 @@ public interface UserInfoDao extends IRepository<userInfo> {
      */
     userInfo getUserInfo(long userId);
 
-    /**
-     * 根据用户电话号码获取用户信息
-     * @param mobile
-     * @return
-     */
-    userInfo getUserInfoByMobile(String mobile);
 
     /**
      * 根据用户号码获取用户信息

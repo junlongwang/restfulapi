@@ -74,7 +74,7 @@ public class joyTest {
 
     @Test
     public void bankAcountServiceTest(){
-       double amount = bankAcountService.getUserAcountMoneyByuserId(1);
+       double amount = bankAcountService.getUserAcountMoneyByuserId(2);
         System.out.println(amount + ":余额");
     }
 }

@@ -1,28 +1,34 @@
 package com.joybike.server.api.Enum;
 
 /**
- * Created by lishaoyong on 16/10/19.
+ * Created by lishaoyong on 16/10/20.
  */
-public enum UseStatus {
+public enum SubscribeStatus {
 
     /**
-     * 空闲
+     * 预约中
      */
-    free(0),
+    subscribe(0),
 
     /**
-     * 预约
+     * 过期
      */
-    subscribe(1),
+    expire(1),
 
     /**
      * 使用中
      */
-    use(2);
+    use(2),
+
+    /**
+     * 订单未完成支付
+     */
+    nComplete(3)
+    ;
 
     private int value;
 
-    UseStatus(int value) {
+    SubscribeStatus(int value) {
         this.value = value;
     }
 

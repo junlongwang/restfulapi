@@ -23,13 +23,13 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
      * @param userId
      * @return
      */
-    final String getUserInfoSql = "select * from userInfo where id = :userId";
+    final String userInfoSql = "select * from userInfo where id = :userId";
 
     @Override
     public userInfo getUserInfo(long userId) {
         Map map = new HashMap();
         map.put("userId", userId);
-        return (userInfo) this.jdbcTemplate.queryForObject(getUserInfoSql, map, new BeanPropertyRowMapper(userInfo.class));
+        return (userInfo) this.jdbcTemplate.queryForObject(userInfoSql, map, new BeanPropertyRowMapper(userInfo.class));
     }
 
 
@@ -39,13 +39,13 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
      * @param phone
      * @return
      */
-    final String getPhoneSql = "select * from userInfo where iphone = ?";
+    final String phoneSql = "select * from userInfo where iphone = ?";
 
     @Override
     public userInfo getInfoByPhone(String phone) {
         Map map = new HashMap();
         map.put("mobile", phone);
-        return (userInfo) this.jdbcTemplate.queryForObject(getPhoneSql, map, new BeanPropertyRowMapper(userInfo.class));
+        return (userInfo) this.jdbcTemplate.queryForObject(phoneSql, map, new BeanPropertyRowMapper(userInfo.class));
     }
 
 }

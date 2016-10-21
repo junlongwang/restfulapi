@@ -4,77 +4,89 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class vehicleOrder implements Serializable {
-    /** 
-     * 
-     *  @Author lisy
-    **/
+    /**
+     * @Author lisy
+     **/
     private Long id;
 
-    /** 
+    /**
      * 订单code
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private String orderCode;
 
-    /** 
+    /**
      * 用户ID
-     *  @Author lisy
-    **/
-    private String userId;
+     *
+     * @Author lisy
+     **/
+    private Long userId;
 
-    /** 
+    /**
      * 折前金额
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private BigDecimal beforePrice;
 
-    /** 
+    /**
      * 折扣金额
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private BigDecimal afterPrice;
 
-    /** 
+    /**
      * 支付ID
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private Long payId;
 
-    /** 
+    /**
      * 状态1:新建，2:骑行结束，15：支付完成
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private Integer status;
 
-    /** 
+    /**
      * 备注
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private String remark;
 
-    /** 
+    /**
      * 扩展信息
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private String extension;
 
-    /** 
+    /**
      * 创建时间
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private Integer createAt;
 
-    /** 
+    /**
      * 执行时间
-     *  @Author lisy
-    **/
+     *
+     * @Author lisy
+     **/
     private Integer exucuteAt;
 
-    public vehicleOrder(){
+    private String vehicleId;
+
+    public vehicleOrder() {
 
     }
 
-    public vehicleOrder(String orderCode, String userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String remark, String extension, Integer createAt, Integer exucuteAt) {
+    public vehicleOrder(Long id, String orderCode, Long userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String remark, String extension, Integer createAt, Integer exucuteAt, String vehicleId) {
+        this.id = id;
         this.orderCode = orderCode;
         this.userId = userId;
         this.beforePrice = beforePrice;
@@ -85,6 +97,7 @@ public class vehicleOrder implements Serializable {
         this.extension = extension;
         this.createAt = createAt;
         this.exucuteAt = exucuteAt;
+        this.vehicleId = vehicleId;
     }
 
     @Override
@@ -92,7 +105,7 @@ public class vehicleOrder implements Serializable {
         return "vehicleOrder{" +
                 "id=" + id +
                 ", orderCode='" + orderCode + '\'' +
-                ", userId='" + userId + '\'' +
+                ", userId=" + userId +
                 ", beforePrice=" + beforePrice +
                 ", afterPrice=" + afterPrice +
                 ", payId=" + payId +
@@ -101,7 +114,16 @@ public class vehicleOrder implements Serializable {
                 ", extension='" + extension + '\'' +
                 ", createAt=" + createAt +
                 ", exucuteAt=" + exucuteAt +
+                ", vehicleId='" + vehicleId + '\'' +
                 '}';
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
+    }
+
+    public String getVehicleId() {
+        return vehicleId;
     }
 
     public Long getId() {
@@ -120,12 +142,12 @@ public class vehicleOrder implements Serializable {
         this.orderCode = orderCode == null ? null : orderCode.trim();
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId == null ? null : userId.trim();
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public BigDecimal getBeforePrice() {
@@ -191,4 +213,6 @@ public class vehicleOrder implements Serializable {
     public void setExucuteAt(Integer exucuteAt) {
         this.exucuteAt = exucuteAt;
     }
+
+
 }

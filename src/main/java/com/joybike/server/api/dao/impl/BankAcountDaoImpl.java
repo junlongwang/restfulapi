@@ -48,11 +48,11 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
      * @param acountType
      * @return
      */
-    final String getAcountSql = "select * from bankAcount where userId = ? and acountType = ?";
+    final String acountSql = "select * from bankAcount where userId = ? and acountType = ?";
     @Override
     public bankAcount getAcount(long userId, AcountType acountType) {
         Object[] object = new Object[]{userId, acountType.getValue()};
-        List<bankAcount> list = this.jdbcTemplate.getJdbcOperations().query(getAcountSql, object, new BeanPropertyRowMapper(bankAcount.class));
+        List<bankAcount> list = this.jdbcTemplate.getJdbcOperations().query(acountSql, object, new BeanPropertyRowMapper(bankAcount.class));
         if (list.size() > 0) return list.get(0);
         else return null;
     }

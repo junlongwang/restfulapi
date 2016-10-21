@@ -1,7 +1,6 @@
 package com.joybike.server.api.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * Created by lishaoyong on 16/10/20.
@@ -21,7 +20,7 @@ public class subscribeInfo implements Serializable {
     /**
      * 车辆印刷的id
      */
-    private Long vehicleId;
+    private String vehicleId;
 
     /**
      * 预约开始时间
@@ -38,17 +37,25 @@ public class subscribeInfo implements Serializable {
      */
     private Integer createAt;
 
-    public subscribeInfo(Long id, Long userId, Long vehicleId, Integer startAt, Integer endAt, Integer createAt) {
+    /**
+     * 预约状态
+     */
+    private Integer status;
+
+    /**
+     * 修改时间
+     */
+    private Integer updateAt;
+
+    public subscribeInfo(Long id, Long userId, String vehicleId, Integer startAt, Integer endAt, Integer createAt, Integer status, Integer updateAt) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
         this.startAt = startAt;
         this.endAt = endAt;
         this.createAt = createAt;
-    }
-
-    public subscribeInfo(){
-
+        this.status = status;
+        this.updateAt = updateAt;
     }
 
     @Override
@@ -56,11 +63,33 @@ public class subscribeInfo implements Serializable {
         return "subscribeInfo{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", vehicleId=" + vehicleId +
+                ", vehicleId='" + vehicleId + '\'' +
                 ", startAt=" + startAt +
                 ", endAt=" + endAt +
                 ", createAt=" + createAt +
+                ", status=" + status +
+                ", updateAt=" + updateAt +
                 '}';
+    }
+
+    public subscribeInfo(){
+
+    }
+
+    public void setUpdateAt(Integer updateAt) {
+        this.updateAt = updateAt;
+    }
+
+    public Integer getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public Integer getStatus() {
+        return status;
     }
 
     public Long getId() {
@@ -79,11 +108,11 @@ public class subscribeInfo implements Serializable {
         this.userId = userId;
     }
 
-    public Long getVehicleId() {
+    public String getVehicleId() {
         return vehicleId;
     }
 
-    public void setVehicleId(Long vehicleId) {
+    public void setVehicleId(String vehicleId) {
         this.vehicleId = vehicleId;
     }
 

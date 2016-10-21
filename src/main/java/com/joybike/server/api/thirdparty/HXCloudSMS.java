@@ -1,9 +1,7 @@
 package com.joybike.server.api.thirdparty;
 
+import com.joybike.server.api.thirdparty.huaxinSdk.*;
 import com.alibaba.fastjson.JSON;
-import com.huaxincloud.utils.HuaXinUtils;
-import com.huaxincloud.utils.RequestParametersHolder;
-import com.huaxincloud.utils.map.HuaXinMap;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;

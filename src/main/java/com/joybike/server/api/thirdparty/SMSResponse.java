@@ -12,6 +12,8 @@ public class SMSResponse {
     private  String errorCode;
     private  String msg;
 
+    public SMSResponse(){}
+
     public SMSResponse(String transactId, String errorCode, String msg) {
         this.transactId = transactId;
         this.errorCode = errorCode;
@@ -40,5 +42,14 @@ public class SMSResponse {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    @Override
+    public String toString() {
+        return "SMSResponse{" +
+                "transactId='" + transactId + '\'' +
+                ", errorCode='" + errorCode + '\'' +
+                ", msg='" + msg + '\'' +
+                '}';
     }
 }

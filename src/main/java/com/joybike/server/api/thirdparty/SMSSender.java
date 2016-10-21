@@ -1,9 +1,7 @@
 package com.joybike.server.api.thirdparty;
 
+import com.joybike.server.api.thirdparty.huaxinSdk.*;
 import com.alibaba.fastjson.JSON;
-import com.huaxincloud.utils.HuaXinUtils;
-import com.huaxincloud.utils.RequestParametersHolder;
-import com.huaxincloud.utils.map.HuaXinMap;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -21,6 +19,7 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * 短信发送功能类
@@ -47,7 +46,8 @@ public class SMSSender {
         }
         hxmap.put("dynadatas",str);
         hxmap.put("productId", "B2016000493");
-        hxmap.put("templateId", "SMS20160923729");//
+        //hxmap.put("templateId", "SMS20160923729");
+        hxmap.put("templateId", "SMS20161021927");
         hxmap.put("signingId", "1474596563933063");
         //hxmap.put("callbackUrl", "http://YOURWebSite.com:8080/callback_url");
         //需要回调，就加上你的回调地址,不需要就不要加
@@ -114,7 +114,11 @@ public class SMSSender {
     public static void main(String [] args) {
 
         try {
-            sendMessage("15110184829","123");
+            //15110184829 18701134871
+            int randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
+            System.out.println(randNo);
+            SMSResponse response=sendMessage("15110184829", String.valueOf(randNo));
+            System.out.println(response);
         }catch (Exception e){
             e.printStackTrace();
         }

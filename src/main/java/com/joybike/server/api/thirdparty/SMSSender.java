@@ -46,6 +46,30 @@ public class SMSSender {
         }
         hxmap.put("dynadatas",str);
         hxmap.put("productId", "B2016000493");
+        hxmap.put("templateId", "SMS20160923729");
+        //hxmap.put("templateId", "SMS20161021927");
+        hxmap.put("signingId", "1474596563933063");
+        //hxmap.put("callbackUrl", "http://YOURWebSite.com:8080/callback_url");
+        //需要回调，就加上你的回调地址,不需要就不要加
+        return process((Map<String, String>) hxmap, appSecret);
+    }
+
+    /**
+     * 给手机发送验证码
+     * @param mobile
+     * @param content
+     */
+    static SMSResponse sendValidateCode(String mobile,String content) {
+        HuaXinMap hxmap = new HuaXinMap();
+        String str=null;
+        try {
+            str= "[{\"data\":\""+content+"\",\"destination\":\""+mobile+"\"}]";
+            str= URLEncoder.encode(str, "utf-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        hxmap.put("dynadatas",str);
+        hxmap.put("productId", "B2016000493");
         //hxmap.put("templateId", "SMS20160923729");
         hxmap.put("templateId", "SMS20161021927");
         hxmap.put("signingId", "1474596563933063");
@@ -53,6 +77,7 @@ public class SMSSender {
         //需要回调，就加上你的回调地址,不需要就不要加
         return process((Map<String, String>) hxmap, appSecret);
     }
+
     static SMSResponse process(Map<String,String> mapParams,String secret)
     {
 

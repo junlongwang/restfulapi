@@ -4,6 +4,7 @@ import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BankAcountService;
 import com.joybike.server.api.service.UserInfoService;
+import com.joybike.server.api.thirdparty.SMSHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +59,9 @@ public class UserRestfulApi {
     public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile) {
         try {
             int randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
-            //此处调用金峰的发送短信接口
+            //发送短信接口
+            SMSHelper.sendValidateCode(mobile,String.valueOf(randNo));
+            //根据用户号码，进行查询，存在返回信息；不存在创建
             userInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
             LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
             return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));

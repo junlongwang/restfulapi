@@ -22,9 +22,8 @@ public class ThirdPayServiceImpl implements IThirdPayService {
             map.put("out_trade_no", payOrder.getId().toString());
             map.put("total_fee", payOrder.getOrderMoney().toString());
             map.put("notify_url", payOrder.getNotifyUrl());
+            map.put("spbill_create_ip",payOrder.getOperIP());
             String appid ="longziyuan";
-            map.put("appid",appid);
-            map.put("channel_id",String.valueOf(payOrder.getChannelId()));
             RedirectParam redirectPara= new WxAppConstructUrlImpl().getUrl(map);
             if( redirectPara != null )
                 return redirectPara.getPara();

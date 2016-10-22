@@ -4,6 +4,7 @@ import com.joybike.server.api.ThirdPayService.IThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BankDepositOrderService;
+import com.joybike.server.api.service.impl.BankDepositOrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +22,9 @@ import java.util.List;
 public class PayRestfulApi {
 
     @Autowired
-    private BankDepositOrderService bankDepositOrderService;
+    private BankDepositOrderService bankDepositOrderService = new BankDepositOrderServiceImpl();
     @Autowired
-    private IThirdPayService iThirdPayService;
+    private IThirdPayService iThirdPayService = new ThirdPayServiceImpl();
 
     /**
      * 充值：可充值押金、预存现金

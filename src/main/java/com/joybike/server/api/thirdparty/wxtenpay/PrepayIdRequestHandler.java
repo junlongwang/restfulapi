@@ -108,4 +108,16 @@ public class PrepayIdRequestHandler extends RequestHandler {
 		}
 		return accesstoken;
 	}
+
+	public String sendPrepayNew(String requestContent) {
+		TenpayHttpClient httpClient = new TenpayHttpClient();
+		httpClient.setCharset("UTF-8");
+		httpClient.setReqContent(requestContent);
+		String resContent = "";
+		if (httpClient.callHttpPost(super.getGateUrl(),requestContent)) {
+			resContent = httpClient.getResContent();
+			//	System.out.println("sendPrepayNew.resContent>>>"+resContent);
+		}
+		return resContent;
+	}
 }

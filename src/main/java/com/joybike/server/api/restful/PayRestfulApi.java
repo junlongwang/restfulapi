@@ -1,6 +1,8 @@
 package com.joybike.server.api.restful;
 
 import com.joybike.server.api.model.*;
+import com.joybike.server.api.service.BankDepositOrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,10 @@ import java.util.List;
 @RequestMapping("/pay")
 @RestController()
 public class PayRestfulApi {
+
+    @Autowired
+    BankDepositOrderService bankDepositOrderService;
+
 
     /**
      * 充值：可充值押金、预存现金
@@ -42,7 +48,13 @@ public class PayRestfulApi {
      */
     @RequestMapping(value = "getDepositLogs",method = RequestMethod.GET)
     public ResponseEntity<Message<List<bankDepositOrder>>> getDepositLogs(@RequestParam("userId") long userId) {
-        return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, new ArrayList<bankDepositOrder>()));
+        try {
+            List<bankDepositOrder> list = bankDepositOrderService.getBankDepositOrderList(userId);
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, new ArrayList<bankDepositOrder>()));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(false, "1001：" + "获取充值记录失败", null));
+        }
+
     }
 
     @RequestMapping(value = "refund",method = RequestMethod.POST)

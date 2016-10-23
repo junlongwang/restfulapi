@@ -17,7 +17,7 @@ public class BankAcountServiceImpl implements BankAcountService {
 
 
     @Override
-    public double getUserAcountMoneyByuserId(long userId) {
+    public double getUserAcountMoneyByuserId(long userId) throws Exception{
 
         return acountDao.getUserAmount(userId);
     }

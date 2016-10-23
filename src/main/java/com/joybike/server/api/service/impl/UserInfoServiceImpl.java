@@ -27,7 +27,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param user
      * @return
      */
-    public int updateUserInfo(userInfo user) {
+    public int updateUserInfo(userInfo user) throws Exception {
 
         long userId = user.getId();
 

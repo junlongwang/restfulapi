@@ -15,6 +15,8 @@ import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by lishaoyong on 16/10/19.
  */
@@ -94,7 +96,11 @@ public class BankDepositOrderServiceImpl implements BankDepositOrderService {
         userInfo userInfo = new userInfo();
         userInfo.setId(depositOrder.getUserId());
         userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
-        userInfoService.updateUserInfo(userInfo);
+        try {
+            userInfoService.updateUserInfo(userInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -134,5 +140,11 @@ public class BankDepositOrderServiceImpl implements BankDepositOrderService {
         moneyFlow.setDepositId(depositId);
         moneyFlow.setCreateAt(UnixTimeUtils.now());
         return moneyFlow;
+    }
+
+
+    @Override
+    public List<bankDepositOrder> getBankDepositOrderList(long userId) throws Exception{
+        return depositOrderDao.getBankDepositOrderList(userId);
     }
 }

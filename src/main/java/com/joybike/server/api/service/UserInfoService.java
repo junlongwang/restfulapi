@@ -15,7 +15,7 @@ public interface UserInfoService {
      * @param user
      * @return
      */
-    int updateUserInfo(userInfo user);
+    int updateUserInfo(userInfo user) throws Exception;
 
 
     /**

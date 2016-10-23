@@ -48,6 +48,8 @@ public class joyTest {
     @Autowired
     VehicleRepairService  vehicleRepairService;
 
+    @Autowired
+    BankDepositOrderService bankDepositOrderService;
 
 
 
@@ -58,7 +60,12 @@ public class joyTest {
         userInfo.setRealName("龙子渊");
         userInfo.setIdNumber("1234567890");
         userInfo.setNationality("中国");
-        int u = userInfoService.updateUserInfo(userInfo);
+        int u = 0;
+        try {
+            u = userInfoService.updateUserInfo(userInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(u + ":");
     }
 
@@ -88,7 +95,12 @@ public class joyTest {
 
     @Test
     public void bankAcountServiceTest() {
-        double amount = bankAcountService.getUserAcountMoneyByuserId(2);
+        double amount = 0;
+        try {
+            amount = bankAcountService.getUserAcountMoneyByuserId(2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(amount + ":余额");
     }
 
@@ -170,6 +182,24 @@ public class joyTest {
         try {
            long id = vehicleRepairService.addVehicleRepair(repair);
             System.out.println(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getBankDepositOrderListTest(){
+
+        try {
+           List<bankDepositOrder> list = bankDepositOrderService.getBankDepositOrderList(1);
+            if (list.size() > 0){
+                list.forEach(new Consumer<bankDepositOrder>() {
+                    @Override
+                    public void accept(bankDepositOrder depositOrder) {
+                        System.out.println(depositOrder);
+                    }
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

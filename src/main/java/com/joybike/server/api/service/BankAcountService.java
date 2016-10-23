@@ -12,5 +12,5 @@ public interface BankAcountService {
      * @param userId
      * @return
      */
-    double getUserAcountMoneyByuserId(long userId);
+    double getUserAcountMoneyByuserId(long userId) throws Exception;
 }

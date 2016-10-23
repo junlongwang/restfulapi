@@ -1,5 +1,6 @@
 package com.joybike.server.api.dao.impl;
 
+import com.joybike.server.api.Enum.DepositStatus;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankDepositOrderDao;
 import com.joybike.server.api.model.bankDepositOrder;
@@ -22,11 +23,11 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      * @param userId
      * @return
      */
-    final String getBankDepositOrderListSql = "select * from bankDepositOrder where status = 2 and userId = ?";
+    final String getBankDepositOrderListSql = "select * from bankDepositOrder where userId = ? and status = ? ";
 
     @Override
-    public List<bankDepositOrder> getBankDepositOrderList(long userId) {
-        Object[] object = new Object[]{userId};
+    public List<bankDepositOrder> getBankDepositOrderList(long userId,DepositStatus depositStatus) {
+        Object[] object = new Object[]{userId,depositStatus.getValue()};
         List<bankDepositOrder> list = this.jdbcTemplate.getJdbcOperations().query(getBankDepositOrderListSql, object, new BeanPropertyRowMapper(bankDepositOrder.class));
         return list;
     }

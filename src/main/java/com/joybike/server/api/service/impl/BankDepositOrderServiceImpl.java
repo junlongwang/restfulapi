@@ -145,6 +145,6 @@ public class BankDepositOrderServiceImpl implements BankDepositOrderService {
 
     @Override
     public List<bankDepositOrder> getBankDepositOrderList(long userId) throws Exception{
-        return depositOrderDao.getBankDepositOrderList(userId);
+        return depositOrderDao.getBankDepositOrderList(userId,DepositStatus.susuccess);
     }
 }

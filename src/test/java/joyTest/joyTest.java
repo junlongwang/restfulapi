@@ -51,6 +51,9 @@ public class joyTest {
     @Autowired
     BankDepositOrderService bankDepositOrderService;
 
+    @Autowired
+    BankConsumedOrderService bankConsumedOrderService;
+
 
 
     @Test
@@ -197,6 +200,22 @@ public class joyTest {
                     @Override
                     public void accept(bankDepositOrder depositOrder) {
                         System.out.println(depositOrder);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
+    public void bankConsumedOrderServiceTest(){
+        try {
+            List<bankConsumedOrder> list = bankConsumedOrderService.getBankConsumedOrderList(1);
+            if (list.size() >0){
+                list.forEach(new Consumer<bankConsumedOrder>() {
+                    @Override
+                    public void accept(bankConsumedOrder bankConsumedOrder) {
+                        System.out.println(bankConsumedOrder);
                     }
                 });
             }

@@ -11,11 +11,6 @@ public enum SubscribeStatus {
     subscribe(0),
 
     /**
-     * 过期
-     */
-    expire(1),
-
-    /**
      * 使用中
      */
     use(2),

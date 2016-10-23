@@ -91,9 +91,14 @@ public class joyTest {
     @Test
     public void addSubcribTest() {
 
-        long id = subscribeInfoService.addSubscribeInfo(1, "jy02", 1476983501);
-        if (id == 0) System.out.println("该车辆不可预约");
-        if (id > 0) System.out.println("预约成功");
+        long id = 0;
+        try {
+            id = subscribeInfoService.VehicleSubscribe(1, "jy04", 1476983501);
+        } catch (Exception e) {
+            System.out.println(e.toString() + "信息");
+        }
+//        if (id == 0) System.out.println("该车辆不可预约");
+//        if (id > 0) System.out.println("预约成功");
     }
 
     /**

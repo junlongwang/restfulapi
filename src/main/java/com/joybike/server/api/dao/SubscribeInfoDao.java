@@ -11,13 +11,12 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
 
 
     /**
-     * 根据用户,车辆ID获取预约信息
+     * 根据车辆ID获取预约信息
      *
-     * @param userId
      * @param vehicleId
      * @return
      */
-    subscribeInfo getSubscribeInfo(long userId, String vehicleId);
+    subscribeInfo getSubscribeInfo(String vehicleId);
 
     /**
      * 删除车辆预约信息,两种情况，1:取消预约，2:到达15分钟预约时间
@@ -52,9 +51,19 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * 根据用户ID查找
      *
      * @param userId
-     * @param subscribeStatus
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId, SubscribeStatus subscribeStatus);
+    subscribeInfo getSubscribeInfoByUserId(long userId);
+
+
+    /**
+     * 根据用户ID查找
+     *
+     * @param userId
+     * @param vehicleId
+     * @return
+     */
+//    subscribeInfo getSubscribeInfoByCode(long userId, String vehicleId);
+
 
 }

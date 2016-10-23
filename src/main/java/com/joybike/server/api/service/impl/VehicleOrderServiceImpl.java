@@ -33,7 +33,7 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
 
 
     /**
-     * 创建订单，扫码后的操作
+     * 扫码
      *
      * @param userId         用户ID
      * @param vehicleId      车身印刷ID
@@ -64,7 +64,11 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
 
             if (userId == subscribeinfoUser.getUserId() && !vehicleId.equals(subscribeinfoUser.getVehicleId())) {
                 subscribeInfoService.deleteSubscribeInfo(userId, subscribeinfoUser.getVehicleId());
-                subscribeInfoService.addSubscribeInfo(userId, vehicleId, UnixTimeUtils.now());
+                try {
+                    subscribeInfoService.VehicleSubscribe(userId, vehicleId, UnixTimeUtils.now());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
             }
         }

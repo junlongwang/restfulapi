@@ -18,18 +18,16 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
 
 
     /**
-     * 根据用户,车辆ID获取预约信息
+     * 根据车辆ID获取预约信息
      *
-     * @param userId
      * @param vehicleId
      * @return
      */
-    final String subscribeInfoSql = "select * from subscribeInfo where userId = :userId and vehicleId = :vehicleId";
+    final String subscribeInfoSql = "select * from subscribeInfo where vehicleId = :vehicleId";
 
     @Override
-    public subscribeInfo getSubscribeInfo(long userId, String vehicleId) {
+    public subscribeInfo getSubscribeInfo( String vehicleId) {
         Map map = new HashMap();
-        map.put("userId", userId);
         map.put("vehicleId", vehicleId);
         try {
             return (subscribeInfo) this.jdbcTemplate.queryForObject(subscribeInfoSql, map, new BeanPropertyRowMapper(subscribeInfo.class));
@@ -100,23 +98,43 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
 
 
     /**
-     * 根据车辆ID获取当前使用信息
+     * 根据用户信息查找预约信息
      *
      * @param userId
      * @param vehicleId
      * @return
      */
-    final String getSubscribeInfoByUserId = "select * from subscribeInfo where userId = :userId and status = :status";
+    final String getSubscribeInfoByUserId = "select * from subscribeInfo where userId = :userId";
 
     @Override
-    public subscribeInfo getSubscribeInfoByUserId(long userId, SubscribeStatus subscribeStatus) {
+    public subscribeInfo getSubscribeInfoByUserId(long userId) {
         Map map = new HashMap();
         map.put("userId", userId);
-        map.put("status", subscribeStatus.getValue());
         try {
             return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByUserId, map, new BeanPropertyRowMapper(subscribeInfo.class));
         } catch (Exception e) {
             return null;
         }
     }
+
+//    /**
+//     * 根据预约code获取预约订单
+//     *
+//     * @param userId
+//     * @param vehicleId
+//     * @return
+//     */
+//    final String getSubscribeInfoByCode = "select * from subscribeInfo where subscribeCode = :subscribeCode";
+//
+//    @Override
+//    public subscribeInfo getSubscribeInfoByCode(long userId, String vehicleId) {
+//        String subscribeCode = String.valueOf(userId) + String.valueOf(vehicleId);
+//        Map map = new HashMap();
+//        map.put("subscribeCode", subscribeCode);
+//        try {
+//            return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByCode, map, new BeanPropertyRowMapper(subscribeInfo.class));
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
 }

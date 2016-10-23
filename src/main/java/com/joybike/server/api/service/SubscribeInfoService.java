@@ -10,13 +10,13 @@ public interface SubscribeInfoService {
 
 
     /**
-     * 添加预约信息
+     * 预约车辆
      *
      * @param userId
      * @param vehicleId
      * @return
      */
-    long addSubscribeInfo(long userId, String vehicleId, int startAt);
+    long VehicleSubscribe(long userId, String vehicleId, int startAt) throws Exception;
 
     /**
      * 删除车辆预约信息,两种情况，1:取消预约，2:到达15分钟预约时间
@@ -61,4 +61,5 @@ public interface SubscribeInfoService {
      * @return
      */
     subscribeInfo getSubscribeInfoByUserId(long userId, SubscribeStatus subscribeStatus);
+
 }

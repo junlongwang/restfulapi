@@ -16,7 +16,7 @@ import java.util.Random;
 /**
  * Created by 58 on 2016/10/16.
  */
-//"/api/user"
+@RequestMapping("/user")
 @RestController()
 public class UserRestfulApi {
 
@@ -57,16 +57,18 @@ public class UserRestfulApi {
      */
     @RequestMapping(value = "getValidateCode", method = RequestMethod.GET)
     public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile) {
+        int randNo = 0;
         try {
-            int randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
-            //发送短信接口
-            SMSHelper.sendValidateCode(mobile,String.valueOf(randNo));
+            randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
             //根据用户号码，进行查询，存在返回信息；不存在创建
             userInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
             LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
             return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<LoginData>(false, "1001：" + e.getMessage(), null));
+        } finally {
+            //发送短信接口
+            SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
         }
     }
 

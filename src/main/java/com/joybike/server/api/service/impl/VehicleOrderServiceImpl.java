@@ -3,12 +3,14 @@ package com.joybike.server.api.service.impl;
 import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.dao.OrderItemDao;
+import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
 import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.vehicleOrder;
 import com.joybike.server.api.service.SubscribeInfoService;
 import com.joybike.server.api.service.VehicleOrderService;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,34 +45,20 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
      * @return
      */
     @Override
-    public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) {
+    public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) throws Exception {
 
-        //修改预约信息,修改预约状态时判断是不是预约的这辆车,如果是,修改状态，如果不是重新插入一条信息
+        subscribeInfo vinfo = subscribeInfoService.getSubscribeInfoByBicycleCode(vehicleId);
+        subscribeInfo uInfo = subscribeInfoService.getSubscribeInfoByUserId(userId);
 
-        //根据车辆查找
-        subscribeInfo subscribeinfoVehicle = subscribeInfoService.getSubscribeInfoByVehicleId(vehicleId, SubscribeStatus.subscribe);
-
-        if (subscribeinfoVehicle != null) {
-
-            if (userId == subscribeinfoVehicle.getUserId() && vehicleId.equals(subscribeinfoVehicle.getVehicleId())) {
-                subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
-            }
+        if (vinfo != null && uInfo != null) {
+            subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
         }
 
-        //根据人查找
-        subscribeInfo subscribeinfoUser = subscribeInfoService.getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
-
-        if (subscribeinfoUser != null) {
-
-            if (userId == subscribeinfoUser.getUserId() && !vehicleId.equals(subscribeinfoUser.getVehicleId())) {
-                subscribeInfoService.deleteSubscribeInfo(userId, subscribeinfoUser.getVehicleId());
-                try {
-                    subscribeInfoService.VehicleSubscribe(userId, vehicleId, UnixTimeUtils.now());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
-            }
+        if (uInfo != null && vinfo == null) {
+            subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
+            subscribeInfoService.deleteSubscribeInfo(userId, uInfo.getVehicleId());
+            subscribeInfoService.vehicleSubscribe(userId, vehicleId, beginAt);
+            subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
         }
 
 
@@ -104,12 +92,19 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
     }
 
     /**
+     * 根据用户ID获取用户未支付订单
+     *
      * @param userId
      * @return
      */
     @Override
-    public vehicleOrder getOrderInfoByUserId(long userId) {
-        return vehicleOrderDao.getOrderByUserId(userId);
+    public vehicleOrder getNoPayByUserId(long userId) throws Exception {
+        try {
+            return vehicleOrderDao.getNoPayByUserId(userId);
+        } catch (Exception e) {
+            throw new RestfulException("1001:" + "预约失败");
+        }
+
     }
 
     /**
@@ -119,20 +114,22 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
      * @return
      */
     @Override
-    public vehicleOrder getOrderByVehicleId(String vehicleId) {
-        subscribeInfo subscribeInfo = subscribeInfoService.getSubscribeInfoByVehicleId(vehicleId, SubscribeStatus.use);
-        vehicleOrder vehicleOrder = vehicleOrderDao.getOrderByVehicleId(vehicleId);
-
-        if (vehicleOrder != null && subscribeInfo != null) {
-            //判断未完成的订单与预约中执行的订单是不是同一个,双向保证
-            if (subscribeInfo.getUserId().equals(vehicleOrder.getUserId())) {
-                return vehicleOrder;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-
+    public vehicleOrder getOrderByVehicleId(String vehicleId) throws Exception {
+//        subscribeInfo subscribeInfo = subscribeInfoService.getSubscribeInfoByVehicleId(vehicleId, SubscribeStatus.use);
+//        vehicleOrder vehicleOrder = vehicleOrderDao.getOrderByVehicleId(vehicleId);
+//
+//        if (vehicleOrder != null && subscribeInfo != null) {
+//            //判断未完成的订单与预约中执行的订单是不是同一个,双向保证
+//            if (subscribeInfo.getUserId().equals(vehicleOrder.getUserId())) {
+//                return vehicleOrder;
+//            } else {
+//                return null;
+//            }
+//        } else {
+//            return null;
+//        }
+//
+//    }
+        return null;
     }
 }

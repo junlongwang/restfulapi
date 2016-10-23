@@ -28,5 +28,5 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
     /**
      * 根据用户ID获取未完成订单
      */
-    vehicleOrder getOrderByUserId(long userId);
+    vehicleOrder getNoPayByUserId(long userId);
 }

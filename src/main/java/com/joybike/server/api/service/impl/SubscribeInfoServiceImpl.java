@@ -8,6 +8,7 @@ import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.Message;
 import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.service.SubscribeInfoService;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,82 +30,94 @@ public class SubscribeInfoServiceImpl implements SubscribeInfoService {
      * 添加预约信息,如果返回的id>0则为该用户的预约ID
      *
      * @param userId
-     * @param vehicleId
+     * @param bicycleCode
      * @return
      */
     @Override
-    public long VehicleSubscribe(long userId, String vehicleId, int startAt) throws Exception {
+    public subscribeInfo vehicleSubscribe(long userId, String bicycleCode, int startAt) throws Exception {
 
-        /**
-         * 预约的逻辑调整为，
-         * 1：如果该车有预约,且过期时间为未过期,则返回不可预约
-         * 2：如果该车有预约,但过期时间已到并且不为待支付状态，则删除原预约信息
-         * 3: 如果该车没有预约信息,则添加预约信息
-         */
-        String subcribeCode = String.valueOf(userId) + String.valueOf(vehicleId);
-        subscribeInfo vInfo = subscribeInfoDao.getSubscribeInfo(vehicleId);
+        subscribeInfo bscribeInfo = new subscribeInfo();
+        String subcribeCode = String.valueOf(userId) + String.valueOf(bicycleCode);
         subscribeInfo uInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
-
+        subscribeInfo vInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode);
 
         if (vInfo != null && uInfo != null) {
-            if (vInfo.getStatus() == SubscribeStatus.nComplete.getValue()) {
-                return 0;
-
-            }else if (vInfo.getStatus() == SubscribeStatus.subscribe.getValue()){
+            if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                 //删除原订单
                 subscribeInfoDao.delete(uInfo.getId());
-                //预约信息插入
-                subscribeInfo info = new subscribeInfo();
-                info.setUserId(userId);
-                info.setVehicleId(vehicleId);
-                info.setStartAt(startAt);
-                info.setEndAt(startAt + 900);
-                info.setCreateAt(UnixTimeUtils.now());
-                info.setStatus(SubscribeStatus.subscribe.getValue());
-                info.setUpdateAt(0);
-                info.setSubscribeCode(subcribeCode);
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
+                //返回预约信息
+                bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
+
                 //修改车辆使用状态
-                vehicleDao.updateVehicleStatus(vehicleId, UseStatus.subscribe);
-                return subscribeId;
+                vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
 
-
+            } else {
+                throw new RestfulException("1001:" + "不可重复预约");
+//                bscribeInfo = vInfo;
             }
-        } else if (vInfo != null) {
-            return 0;
-        } else if (uInfo != null) {
-            //删除原订单
-            subscribeInfoDao.delete(uInfo.getId());
-            //预约信息插入
-            subscribeInfo info = new subscribeInfo();
-            info.setUserId(userId);
-            info.setVehicleId(vehicleId);
-            info.setStartAt(startAt);
-            info.setEndAt(startAt + 900);
-            info.setCreateAt(UnixTimeUtils.now());
-            info.setStatus(SubscribeStatus.subscribe.getValue());
-            info.setUpdateAt(0);
-            info.setSubscribeCode(subcribeCode);
-            long subscribeId = subscribeInfoDao.save(info);
-            //修改车辆使用状态
-            vehicleDao.updateVehicleStatus(vehicleId, UseStatus.subscribe);
-            return subscribeId;
-        } else {
-            //预约信息插入
-            subscribeInfo info = new subscribeInfo();
-            info.setUserId(userId);
-            info.setVehicleId(vehicleId);
-            info.setStartAt(startAt);
-            info.setEndAt(startAt + 900);
-            info.setCreateAt(UnixTimeUtils.now());
-            info.setStatus(SubscribeStatus.subscribe.getValue());
-            info.setUpdateAt(0);
-            info.setSubscribeCode(subcribeCode);
-            long subscribeId = subscribeInfoDao.save(info);
-            //修改车辆使用状态
-            vehicleDao.updateVehicleStatus(vehicleId, UseStatus.subscribe);
-            return subscribeId;
         }
+
+        if (uInfo != null && vInfo == null) {
+            if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                //删除原订单
+                subscribeInfoDao.delete(uInfo.getId());
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                //保存预约信息
+                long subscribeId = subscribeInfoDao.save(info);
+                //返回预约信息
+                bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
+
+                //修改车辆使用状态
+                vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
+            } else {
+//                bscribeInfo = uInfo;
+                throw new RestfulException("1001:" + "不可重复预约");
+            }
+        }
+
+        if (vInfo != null && uInfo == null) {
+            if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                //保存预约信息
+                long subscribeId = subscribeInfoDao.save(info);
+                //返回预约信息
+                bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
+
+                //修改车辆使用状态
+                vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
+            } else {
+                throw new RestfulException("1001:" + "该车已被预约");
+            }
+        }
+
+        if (vInfo == null && uInfo == null) {
+            subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+            //保存预约信息
+            long subscribeId = subscribeInfoDao.save(info);
+            //返回预约信息
+            bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
+
+            //修改车辆使用状态
+            vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
+        }
+        return bscribeInfo;
+    }
+
+    //保存预约信息
+    public static subscribeInfo insertSubscribeInfo(long userId, String bicycleCode, int startAt, SubscribeStatus subscribeStatus, String subcribeCode) {
+        subscribeInfo info = new subscribeInfo();
+        info.setUserId(userId);
+        info.setVehicleId(bicycleCode);
+        info.setStartAt(startAt);
+        info.setEndAt(startAt + 900);
+        info.setCreateAt(UnixTimeUtils.now());
+        info.setStatus(subscribeStatus.getValue());
+        info.setUpdateAt(0);
+        info.setSubscribeCode(subcribeCode);
+        return info;
     }
 
     /**
@@ -132,39 +145,36 @@ public class SubscribeInfoServiceImpl implements SubscribeInfoService {
     }
 
     /**
-     * 根据车辆code获取当前使用车的用户ID
+     * 根据ID获取预约信息
      *
-     * @param vehicleId
+     * @param id
      * @return
      */
     @Override
-    public subscribeInfo getSubscribeInfoByVehicleId(String vehicleId, SubscribeStatus subscribeStatus) {
-        return subscribeInfoDao.getSubscribeInfoByVehicleId(vehicleId, subscribeStatus);
+    public subscribeInfo getSubscribeInfoById(long id) {
+        return subscribeInfoDao.getSubscribeInfoById(id);
     }
 
     /**
-     * 根据用户与车辆信息获取预约信息
+     * 根据用户获取预约信息
      *
      * @param userId
-     * @param vehicleId
      * @return
      */
     @Override
-    public subscribeInfo getSubscribeInfo(long userId, String vehicleId) {
-        return subscribeInfoDao.getSubscribeInfo(vehicleId);
-    }
-
-    /**
-     * 根据用户ID查找
-     *
-     * @param userId
-     * @param subscribeStatus
-     * @return
-     */
-    @Override
-    public subscribeInfo getSubscribeInfoByUserId(long userId, SubscribeStatus subscribeStatus) {
+    public subscribeInfo getSubscribeInfoByUserId(long userId) {
         return subscribeInfoDao.getSubscribeInfoByUserId(userId);
     }
 
+    /**
+     * 根据车辆ID获取预约信息
+     *
+     * @param vehicleId
+     * @return
+     */
+    @Override
+    public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) {
+        return subscribeInfoDao.getSubscribeInfoByBicycleCode(vehicleId);
+    }
 
 }

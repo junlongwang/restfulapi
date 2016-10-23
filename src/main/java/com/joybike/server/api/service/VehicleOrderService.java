@@ -20,7 +20,7 @@ public interface VehicleOrderService {
      * @param beginLongitude 骑行开始的维度
      * @return
      */
-    void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude);
+    void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) throws Exception;
 
 
     /**
@@ -29,7 +29,7 @@ public interface VehicleOrderService {
      * @param userId
      * @return
      */
-    vehicleOrder getOrderInfoByUserId(long userId);
+    vehicleOrder getNoPayByUserId(long userId) throws Exception;
 
     /**
      * 根据车辆ID获取用户未完成订单
@@ -37,7 +37,7 @@ public interface VehicleOrderService {
      * @param vehicleId
      * @return
      */
-    vehicleOrder getOrderByVehicleId(String vehicleId);
+    vehicleOrder getOrderByVehicleId(String vehicleId) throws Exception;
 
 
 }

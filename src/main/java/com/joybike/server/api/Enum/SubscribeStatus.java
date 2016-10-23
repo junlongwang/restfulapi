@@ -14,11 +14,6 @@ public enum SubscribeStatus {
      * 使用中
      */
     use(2),
-
-    /**
-     * 订单未完成支付
-     */
-    nComplete(3)
     ;
 
     private int value;

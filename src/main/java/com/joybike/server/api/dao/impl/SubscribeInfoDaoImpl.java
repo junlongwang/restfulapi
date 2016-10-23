@@ -23,14 +23,14 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
      * @param vehicleId
      * @return
      */
-    final String subscribeInfoSql = "select * from subscribeInfo where vehicleId = :vehicleId";
+    final String getSubscribeInfoByBicycleCode = "select * from subscribeInfo where vehicleId = :vehicleId";
 
     @Override
-    public subscribeInfo getSubscribeInfo( String vehicleId) {
+    public subscribeInfo getSubscribeInfoByBicycleCode( String vehicleId) {
         Map map = new HashMap();
         map.put("vehicleId", vehicleId);
         try {
-            return (subscribeInfo) this.jdbcTemplate.queryForObject(subscribeInfoSql, map, new BeanPropertyRowMapper(subscribeInfo.class));
+            return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByBicycleCode, map, new BeanPropertyRowMapper(subscribeInfo.class));
         } catch (Exception e) {
             return null;
         }
@@ -82,15 +82,14 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
      * @param vehicleId
      * @return
      */
-    final String getSubscribeInfoByVehicleId = "select * from subscribeInfo where vehicleId = :vehicleId and status = :status";
+    final String getSubscribeInfoByIdSql = "select * from subscribeInfo where id = :id";
 
     @Override
-    public subscribeInfo getSubscribeInfoByVehicleId(String vehicleId, SubscribeStatus subscribeStatus) {
+    public subscribeInfo getSubscribeInfoById(long id) {
         Map map = new HashMap();
-        map.put("vehicleId", vehicleId);
-        map.put("status", subscribeStatus.getValue());
+        map.put("id", id);
         try {
-            return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByVehicleId, map, new BeanPropertyRowMapper(subscribeInfo.class));
+            return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByIdSql, map, new BeanPropertyRowMapper(subscribeInfo.class));
         } catch (Exception e) {
             return null;
         }

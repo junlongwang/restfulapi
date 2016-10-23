@@ -10,7 +10,7 @@ public class VehicleComHelper {
      * 车辆开锁
      * @param mobile
      */
-    public SMSResponse openLock(String mobile)
+    public static SMSResponse openLock(String mobile)
     {
         return SMSSender.sendMessage(mobile,"00");
     }
@@ -19,7 +19,7 @@ public class VehicleComHelper {
      * 寻车辆
      * @param mobile
      */
-    public SMSResponse find(String mobile)
+    public static SMSResponse find(String mobile)
     {
         return SMSSender.sendMessage(mobile,"01");
     }
@@ -28,7 +28,7 @@ public class VehicleComHelper {
      * 唤醒车辆
      * @param mobile
      */
-    public SMSResponse wakeup(String mobile)
+    public static SMSResponse wakeup(String mobile)
     {
         return SMSSender.sendMessage(mobile,"02");
     }

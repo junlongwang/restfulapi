@@ -2,6 +2,7 @@ package daoUnitTest;
 
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.User;
+import com.joybike.server.api.model.userInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,24 @@ public class UserInfoDaoUnitTest {
 //
 //        List<User> users= userInfoDao.getList("select * from user", new HashMap<String,Object>());
 //        System.out.println(users);
+
+
+        userInfo userInfo = null;// userInfoDao.getInfoByPhone("15110184829");
+        System.out.println("+++++++++++++++++++++++++");
+        System.out.println(userInfo);
+
+
+        userInfo= userInfoDao.getUserInfo(1L);
+
+        userInfo = userInfoDao.getInfoByPhone("13910991532");
+
+        userInfo.setIphone("15110184829");
+        userInfo.setRealName("GJF");
+
+        userInfoDao.save(userInfo);
+
+        System.out.println(userInfo);
+
 
 
     }

@@ -48,10 +48,9 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
         map.put("status", OrderStatus.newly.getValue());
         try {
             return (vehicleOrder) this.jdbcTemplate.queryForObject(getOrderByVehicleIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
-
     }
 
     /**
@@ -60,14 +59,18 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param vehicleId
      * @return
      */
-    final String getOrderByUserIdSql = "select * from vehicleOrder where userId = : userId and status = : status";
+    final String getNoPayByUserIdSql = "select * from vehicleOrder where userId = : userId and status = : status";
 
     @Override
-    public vehicleOrder getOrderByUserId(long userId) {
+    public vehicleOrder getNoPayByUserId(long userId) {
         Map map = new HashMap();
         map.put("userId", userId);
-        map.put("status", OrderStatus.newly.getValue());
-        return (vehicleOrder) this.jdbcTemplate.queryForObject(getOrderByUserIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
+        map.put("status", OrderStatus.complete.getValue());
+        try {
+            return (vehicleOrder) this.jdbcTemplate.queryForObject(getNoPayByUserIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

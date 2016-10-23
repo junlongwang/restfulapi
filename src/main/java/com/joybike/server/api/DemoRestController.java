@@ -34,7 +34,7 @@ public class DemoRestController {
         return message;
     }
 
-    @RequestMapping(value = "user/add",method = RequestMethod.POST)
+    @RequestMapping(value = "user/addUser",method = RequestMethod.POST)
     public Message addUser(@RequestBody User user) {
 
         Message message = new Message();

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by 58 on 2016/10/16.
  */
-//"/api/pay"
+@RequestMapping("/pay")
 @RestController()
 public class PayRestfulApi {
 

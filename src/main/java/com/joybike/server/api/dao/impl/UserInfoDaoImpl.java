@@ -2,6 +2,7 @@ package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserInfoDao;
+import com.joybike.server.api.model.userCoupon;
 import com.joybike.server.api.model.userInfo;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
@@ -29,7 +30,11 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     public userInfo getUserInfo(long userId) {
         Map map = new HashMap();
         map.put("userId", userId);
-        return (userInfo) this.jdbcTemplate.queryForObject(userInfoSql, map, new BeanPropertyRowMapper(userInfo.class));
+        try {
+            return (userInfo) this.jdbcTemplate.queryForObject(userInfoSql, map, new BeanPropertyRowMapper(userInfo.class));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 
@@ -45,7 +50,12 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     public userInfo getInfoByPhone(String phone) {
         Map map = new HashMap();
         map.put("mobile", phone);
-        return (userInfo) this.jdbcTemplate.queryForObject(phoneSql, map, new BeanPropertyRowMapper(userInfo.class));
+        try {
+            return (userInfo) this.jdbcTemplate.queryForObject(phoneSql, map, new BeanPropertyRowMapper(userInfo.class));
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
 }

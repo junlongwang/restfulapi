@@ -9,15 +9,6 @@ import com.joybike.server.api.model.subscribeInfo;
  */
 public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
 
-
-    /**
-     * 根据车辆ID获取预约信息
-     *
-     * @param vehicleId
-     * @return
-     */
-    subscribeInfo getSubscribeInfo(String vehicleId);
-
     /**
      * 删除车辆预约信息,两种情况，1:取消预约，2:到达15分钟预约时间
      *
@@ -39,13 +30,12 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
     int updateSubscribeInfo(long userId, String vehicleId, SubscribeStatus subscribeStatus);
 
     /**
-     * 根据车辆code获取该车使用用户
+     * 根据预约表ID获取预约信息
      *
-     * @param vehicleId
-     * @param subscribeStatus
+     * @param id
      * @return
      */
-    subscribeInfo getSubscribeInfoByVehicleId(String vehicleId, SubscribeStatus subscribeStatus);
+    subscribeInfo getSubscribeInfoById(long id);
 
     /**
      * 根据用户ID查找
@@ -57,13 +47,12 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
 
 
     /**
-     * 根据用户ID查找
+     * 根据车辆ID获取预约信息
      *
-     * @param userId
      * @param vehicleId
      * @return
      */
-//    subscribeInfo getSubscribeInfoByCode(long userId, String vehicleId);
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId);
 
 
 }

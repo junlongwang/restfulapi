@@ -12,11 +12,11 @@ public interface SubscribeInfoService {
     /**
      * 预约车辆
      *
-     * @param userId
-     * @param vehicleId
+     * @param userId 用户ID
+     * @param bicycleCode 车辆code
      * @return
      */
-    long VehicleSubscribe(long userId, String vehicleId, int startAt) throws Exception;
+    subscribeInfo vehicleSubscribe(long userId, String bicycleCode, int startAt) throws Exception;
 
     /**
      * 删除车辆预约信息,两种情况，1:取消预约，2:到达15分钟预约时间
@@ -36,30 +36,30 @@ public interface SubscribeInfoService {
      */
     int updateSubscribeInfo(long userId, String vehicleId);
 
-    /**
-     * 根据车辆code 获取当前那个用户在使用该车
-     *
-     * @param vehicleId
-     * @return
-     */
-    subscribeInfo getSubscribeInfoByVehicleId(String vehicleId, SubscribeStatus subscribeStatus);
 
     /**
-     * 根据用户与车辆ID获取预约信息
+     * 根据预约表ID获取预约信息
      *
-     * @param userId
-     * @param vehicleId
+     * @param id
      * @return
      */
-    subscribeInfo getSubscribeInfo(long userId, String vehicleId);
+    subscribeInfo getSubscribeInfoById(long id);
 
     /**
      * 根据用户ID查找
      *
      * @param userId
-     * @param subscribeStatus
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId, SubscribeStatus subscribeStatus);
+    subscribeInfo getSubscribeInfoByUserId(long userId);
+
+    /**
+     * 根据车辆ID获取预约信息
+     *
+     * @param vehicleId
+     * @return
+     */
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId);
+
 
 }

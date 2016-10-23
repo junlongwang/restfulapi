@@ -38,7 +38,7 @@ public class subscribeInfo implements Serializable {
     private Integer createAt;
 
     /**
-     * 预约状态 1：预约中 ，2使用中 ，3：待支付
+     * 预约状态 1：预约中 ，2使用中
      */
     private Integer status;
 

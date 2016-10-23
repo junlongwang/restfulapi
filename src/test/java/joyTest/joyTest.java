@@ -3,9 +3,7 @@ package joyTest;
 import com.joybike.server.api.Enum.DepositStatus;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.dao.SubscribeInfoDao;
-import com.joybike.server.api.model.bankDepositOrder;
-import com.joybike.server.api.model.userInfo;
-import com.joybike.server.api.model.vehicleOrder;
+import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.*;
 
 import com.joybike.server.api.util.UnixTimeUtils;
@@ -17,6 +15,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.swing.plaf.PanelUI;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.function.Consumer;
 
 
 /**
@@ -41,6 +41,10 @@ public class joyTest {
 
     @Autowired
     VehicleOrderService vehicleOrderService;
+
+    @Autowired
+    VehicleService vehicleService;
+
 
 
 
@@ -91,9 +95,14 @@ public class joyTest {
     @Test
     public void addSubcribTest() {
 
-        long id = 0;
+//        subscribeInfo info = new subscribeInfo();
         try {
-            id = subscribeInfoService.VehicleSubscribe(1, "jy04", 1476983501);
+            subscribeInfo info = subscribeInfoService.vehicleSubscribe(2, "jy6", 1477205674);
+            if (info!= null){
+                System.out.println(info);
+            }else{
+                System.out.println("失败");
+            }
         } catch (Exception e) {
             System.out.println(e.toString() + "信息");
         }
@@ -107,17 +116,42 @@ public class joyTest {
     @Test
     public void ordertest(){
 
-        vehicleOrderService.addOrder(1,"jy03",1476983501,BigDecimal.valueOf(123.4),BigDecimal.valueOf(123.89));
+        try {
+            vehicleOrderService.addOrder(1,"jy03",1476983501,BigDecimal.valueOf(123.4),BigDecimal.valueOf(123.89));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
+//
+//    /**
+//     * 根据锁车动作来判断这辆车是谁骑行的
+//     */
+//    @Test
+//    public void payVelicle(){
+//
+//        vehicleOrder order = vehicleOrderService.getOrderByVehicleId("jy04");
+//        System.out.println(order);
+//    }
 
-    /**
-     * 根据锁车动作来判断这辆车是谁骑行的
-     */
     @Test
-    public void payVelicle(){
+    public void getVehicleListTest(){
 
-        vehicleOrder order = vehicleOrderService.getOrderByVehicleId("jy04");
-        System.out.println(order);
+        try {
+           List<vehicle> list = vehicleService.getVehicleList(40.0276996416, 116.3552618704);
+            if (list.size() >0 ){
+                list.forEach(new Consumer<vehicle>() {
+                    @Override
+                    public void accept(vehicle vehicle) {
+                        System.out.println(vehicle);
+                    }
+                });
+            }else{
+                System.out.println("meiyou");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

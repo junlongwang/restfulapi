@@ -6,8 +6,17 @@ package com.joybike.server.api.model;
  */
 public class Message<T> {
 
+    /**
+     * 请求是否成功
+     */
     private boolean isSucess;
+    /**
+     * 错误码
+     */
     private String errorCode;
+    /**
+     * 返回数据
+     */
     private T data;
 
     public Message(boolean isSucess, String errorCode, T data) {

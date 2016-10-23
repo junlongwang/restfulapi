@@ -39,6 +39,10 @@ public class SMSSender {
         HuaXinMap hxmap = new HuaXinMap();
         String str=null;
         try {
+            Date date = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("YY-MM-dd HH:mm:ss");
+            content=content+" "+sdf.format(date);
+
             str= "[{\"data\":\""+content+"\",\"destination\":\""+mobile+"\"}]";
             str= URLEncoder.encode(str, "utf-8");
         } catch (Exception e) {
@@ -139,11 +143,16 @@ public class SMSSender {
     public static void main(String [] args) {
 
         try {
-            //15110184829 18701134871
-            int randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
-            System.out.println(randNo);
-            SMSResponse response=sendMessage("15110184829", String.valueOf(randNo));
+//            //15110184829 18701134871
+//            int randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
+//            System.out.println(randNo);
+//            SMSResponse response=sendMessage("15110184829", String.valueOf(randNo));
+//            System.out.println(response);
+            SMSResponse response=sendMessage("18492066739", "02");
             System.out.println(response);
+
+
+
         }catch (Exception e){
             e.printStackTrace();
         }

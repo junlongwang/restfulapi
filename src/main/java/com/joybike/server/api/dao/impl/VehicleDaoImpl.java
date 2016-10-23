@@ -87,14 +87,16 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
 
     @Override
     public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) {
-        Double maxLat = beginDimension + UnixGps.doLatDegress(beginDimension);
-        Double minLat = beginDimension - UnixGps.doLatDegress(beginDimension);
-        Double maxLng = beginLongitude + UnixGps.doLngDegress(beginLongitude);
-        Double minLng = beginLongitude + UnixGps.doLngDegress(beginLongitude);
+        //最大小维度
+        Double maxLat = beginDimension + UnixGps.doDimension(beginDimension);
+        Double minLat = beginDimension - UnixGps.doDimension(beginDimension);
+        //最大小经度,经度是负数,+是小，-是大
+        Double maxLng = beginLongitude - UnixGps.doLongitude(beginLongitude);
+        Double minLng  = beginLongitude + UnixGps.doLongitude(beginLongitude);
 
-        System.out.println(UnixGps.doLatDegress(beginDimension) + "：1");
-        System.out.println(UnixGps.doLngDegress(beginLongitude) +  "：2");
-        Object[] object = new Object[]{maxLat, minLat, maxLng, minLng};
+        System.out.println(UnixGps.doDimension(beginDimension) + "：1");
+        System.out.println(UnixGps.doLongitude(beginLongitude) +  "：2");
+        Object[] object = new Object[]{minLat, maxLat, minLng, maxLng};
         List<vehicle> list = this.jdbcTemplate.getJdbcOperations().query(getVehicleListSql, object, new BeanPropertyRowMapper(vehicle.class));
         return list;
     }

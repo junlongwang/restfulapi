@@ -138,7 +138,7 @@ public class joyTest {
     public void getVehicleListTest(){
 
         try {
-           List<vehicle> list = vehicleService.getVehicleList(40.0276996416, 116.3552618704);
+           List<vehicle> list = vehicleService.getVehicleList(40.0276731,116.355149);
             if (list.size() >0 ){
                 list.forEach(new Consumer<vehicle>() {
                     @Override

@@ -13,7 +13,7 @@ public class vehicleRepair implements Serializable {
      * 车辆ID
      *  @Author lisy
     **/
-    private Long vehicleId;
+    private String vehicleId;
 
     /** 
      * 保修原因
@@ -67,7 +67,7 @@ public class vehicleRepair implements Serializable {
 
     }
 
-    public vehicleRepair(Long vehicleId, String cause, String faultImg, Long createId, Integer createAt, Integer disposeStatus, String disposeDepict, Long operateId, Integer operateAt) {
+    public vehicleRepair(String vehicleId, String cause, String faultImg, Long createId, Integer createAt, Integer disposeStatus, String disposeDepict, Long operateId, Integer operateAt) {
         this.vehicleId = vehicleId;
         this.cause = cause;
         this.faultImg = faultImg;
@@ -83,7 +83,7 @@ public class vehicleRepair implements Serializable {
     public String toString() {
         return "vehicleRepair{" +
                 "id=" + id +
-                ", vehicleId=" + vehicleId +
+                ", vehicleId=" + vehicleId + '\'' +
                 ", cause='" + cause + '\'' +
                 ", faultImg='" + faultImg + '\'' +
                 ", createId=" + createId +
@@ -103,12 +103,12 @@ public class vehicleRepair implements Serializable {
         this.id = id;
     }
 
-    public Long getVehicleId() {
+    public String getVehicleId() {
         return vehicleId;
     }
 
-    public void setVehicleId(Long vehicleId) {
-        this.vehicleId = vehicleId;
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId == null ? null : vehicleId.trim();
     }
 
     public String getCause() {

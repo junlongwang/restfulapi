@@ -5,6 +5,7 @@ import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.SubscribeInfoService;
 import com.joybike.server.api.service.VehicleOrderService;
+import com.joybike.server.api.service.VehicleRepairService;
 import com.joybike.server.api.service.VehicleService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.util.RestfulException;
@@ -44,6 +45,9 @@ public class BicycleRestfulApi {
 
     @Autowired
     private VehicleService vehicleService;
+
+    @Autowired
+    private VehicleRepairService vehicleRepairService;
 
 
     /**
@@ -86,7 +90,7 @@ public class BicycleRestfulApi {
     @RequestMapping(value = "cancle", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> cancle(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
         try {
-            subscribeInfoService.deleteSubscribeInfo(userId,bicycleCode);
+            subscribeInfoService.deleteSubscribeInfo(userId, bicycleCode);
             return ResponseEntity.ok(new Message<String>(true, null, "取消预约成功！"));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<String>(false, "取消预约失败", null));
@@ -244,6 +248,14 @@ public class BicycleRestfulApi {
      */
     @RequestMapping(value = "submit", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> submit(@RequestBody vehicleRepair form) {
-        return ResponseEntity.ok(new Message<String>(true, null, "提交成功！"));
+
+        try {
+            vehicleRepairService.addVehicleRepair(form);
+            return ResponseEntity.ok(new Message<String>(true, null, "提交成功！"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<String>(false, "1001：" + "故障申报失败", null));
+        }
+
+
     }
 }

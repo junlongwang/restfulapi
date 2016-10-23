@@ -85,7 +85,7 @@ public class UserRestfulApi {
             double acountMoney = bankAcountService.getUserAcountMoneyByuserId(user_id);
             return ResponseEntity.ok(new Message<Double>(true, null, acountMoney));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<Double>(false, "1001：" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<Double>(false, "1001：" + "获取余额信息失败", null));
         }
     }
 

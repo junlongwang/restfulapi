@@ -45,6 +45,9 @@ public class joyTest {
     @Autowired
     VehicleService vehicleService;
 
+    @Autowired
+    VehicleRepairService  vehicleRepairService;
+
 
 
 
@@ -150,6 +153,23 @@ public class joyTest {
                 System.out.println("meiyou");
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void addvehicleRepairTest(){
+        vehicleRepair repair = new vehicleRepair();
+        repair.setVehicleId("yj04");
+        repair.setCause("不能骑了");
+        repair.setCreateId(Long.valueOf(12));
+        repair.setCreateAt(12345789);
+        repair.setDisposeDepict("");
+        repair.setDisposeStatus(0);
+        try {
+           long id = vehicleRepairService.addVehicleRepair(repair);
+            System.out.println(id);
         } catch (Exception e) {
             e.printStackTrace();
         }

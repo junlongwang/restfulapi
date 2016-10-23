@@ -1,28 +1,24 @@
 package com.joybike.server.api.service.impl;
 
 import com.joybike.server.api.Enum.OrderStatus;
-import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.dao.OrderItemDao;
-import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
 import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.vehicleOrder;
-import com.joybike.server.api.service.SubscribeInfoService;
-import com.joybike.server.api.service.VehicleOrderService;
+import com.joybike.server.api.service.BicycleRestfulService;
+import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
 /**
- * Created by lishaoyong on 16/10/20.
+ * Created by lishaoyong on 16/10/23.
  */
-@Service
-public class VehicleOrderServiceImpl implements VehicleOrderService {
+public class OrderRestfulServiceImpl implements OrderRestfulService {
 
     @Autowired
     VehicleOrderDao vehicleOrderDao;
@@ -31,7 +27,7 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
     OrderItemDao orderItemDao;
 
     @Autowired
-    SubscribeInfoService subscribeInfoService;
+    BicycleRestfulService bicycleRestfulService;
 
 
     /**
@@ -47,18 +43,18 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
     @Override
     public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) throws Exception {
 
-        subscribeInfo vinfo = subscribeInfoService.getSubscribeInfoByBicycleCode(vehicleId);
-        subscribeInfo uInfo = subscribeInfoService.getSubscribeInfoByUserId(userId);
+        subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
+        subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
 
         if (vinfo != null && uInfo != null) {
-            subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
+            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
         }
 
         if (uInfo != null && vinfo == null) {
-            subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
-            subscribeInfoService.deleteSubscribeInfo(userId, uInfo.getVehicleId());
-            subscribeInfoService.vehicleSubscribe(userId, vehicleId, beginAt);
-            subscribeInfoService.updateSubscribeInfo(userId, vehicleId);
+            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+            bicycleRestfulService.deleteSubscribeInfo(userId, uInfo.getVehicleId());
+            bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
+            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
         }
 
 
@@ -98,7 +94,7 @@ public class VehicleOrderServiceImpl implements VehicleOrderService {
      * @return
      */
     @Override
-    public vehicleOrder getNoPayByUserId(long userId) throws Exception {
+    public vehicleOrder getNoPayOrderByUserId(long userId) throws Exception {
         try {
             return vehicleOrderDao.getNoPayByUserId(userId);
         } catch (Exception e) {

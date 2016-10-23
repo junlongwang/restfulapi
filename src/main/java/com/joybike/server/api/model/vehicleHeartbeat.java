@@ -130,17 +130,7 @@ public class vehicleHeartbeat implements Serializable {
     **/
     private Integer createAt;
 
-    /**
-     * 车身印刷的ID
-     */
-    private String vehicleId;
-
-
-    public vehicleHeartbeat(){
-
-    }
-
-    public vehicleHeartbeat(Long id, Long lockId, String firmwareVersion, String allocation, String baseStationType, Integer gpsTime, BigDecimal dimension, BigDecimal longitude, Integer lockTime, String cellId, String stationId, String speed, String direction, Integer arousalType, String custom, Integer lockStatus, Integer batteryStatus, String batteryPercent, Integer unlockNumber, String orderCode, Integer createAt, String vehicleId) {
+    public vehicleHeartbeat(Long id, Long lockId, String firmwareVersion, String allocation, String baseStationType, Integer gpsTime, BigDecimal dimension, BigDecimal longitude, Integer lockTime, String cellId, String stationId, String speed, String direction, Integer arousalType, String custom, Integer lockStatus, Integer batteryStatus, String batteryPercent, Integer unlockNumber, String orderCode, Integer createAt) {
         this.id = id;
         this.lockId = lockId;
         this.firmwareVersion = firmwareVersion;
@@ -162,7 +152,10 @@ public class vehicleHeartbeat implements Serializable {
         this.unlockNumber = unlockNumber;
         this.orderCode = orderCode;
         this.createAt = createAt;
-        this.vehicleId = vehicleId;
+    }
+
+    public vehicleHeartbeat(){
+
     }
 
     @Override
@@ -189,16 +182,7 @@ public class vehicleHeartbeat implements Serializable {
                 ", unlockNumber=" + unlockNumber +
                 ", orderCode='" + orderCode + '\'' +
                 ", createAt=" + createAt +
-                ", vehicleId='" + vehicleId + '\'' +
                 '}';
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
-    }
-
-    public String getVehicleId() {
-        return vehicleId;
     }
 
     public Long getId() {

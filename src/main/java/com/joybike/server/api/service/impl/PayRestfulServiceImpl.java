@@ -1,39 +1,52 @@
 package com.joybike.server.api.service.impl;
 
 import com.joybike.server.api.Enum.*;
-import com.joybike.server.api.dao.BankAcountDao;
-import com.joybike.server.api.dao.BankDepositOrderDao;
-import com.joybike.server.api.dao.BankMoneyFlowDao;
-import com.joybike.server.api.dao.UserInfoDao;
-import com.joybike.server.api.model.bankAcount;
-import com.joybike.server.api.model.bankDepositOrder;
-import com.joybike.server.api.model.bankMoneyFlow;
-import com.joybike.server.api.model.userInfo;
-import com.joybike.server.api.service.BankDepositOrderService;
-import com.joybike.server.api.service.UserInfoService;
+import com.joybike.server.api.dao.*;
+import com.joybike.server.api.model.*;
+import com.joybike.server.api.service.PayRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * Created by lishaoyong on 16/10/19.
+ * Created by lishaoyong on 16/10/23.
  */
 @Service
-public class BankDepositOrderServiceImpl implements BankDepositOrderService {
+public class PayRestfulServiceImpl implements PayRestfulService {
+
 
     @Autowired
-    BankDepositOrderDao depositOrderDao;
+    private BankConsumedOrderDao bankConsumedOrderDao;
+    @Autowired
+    private BankDepositOrderDao depositOrderDao;
 
     @Autowired
-    BankAcountDao acountDao;
+    private BankAcountDao acountDao;
 
     @Autowired
-    BankMoneyFlowDao moneyFlowDao;
+    private BankMoneyFlowDao moneyFlowDao;
 
     @Autowired
-    UserInfoService userInfoService;
+    private UserRestfulService userInfoService;
+
+    @Autowired
+    private UserCouponDao userCouponDao;
+
+
+    /**
+     * 获取用户消费明细
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<bankConsumedOrder> getBankConsumedOrderList(long userId) throws Exception {
+        return bankConsumedOrderDao.getBankConsumedOrderList(userId, ConsumedStatus.susuccess);
+    }
 
     /**
      * 余额充值
@@ -106,6 +119,61 @@ public class BankDepositOrderServiceImpl implements BankDepositOrderService {
     }
 
     /**
+     * 获取用户充值明细
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public List<bankDepositOrder> getBankDepositOrderList(long userId) throws Exception {
+        return depositOrderDao.getBankDepositOrderList(userId, DepositStatus.susuccess);
+    }
+
+    /**
+     * 用户优惠券发放
+     *
+     * @param userCoupon
+     * @return
+     */
+    public long addUserCoupon(userCoupon userCoupon) {
+        return userCouponDao.save(userCoupon);
+    }
+
+    /**
+     * 删除用户的优惠券
+     *
+     * @param map
+     * @return
+     */
+    public long deleteUserCoupon(Map map) {
+        return userCouponDao.deleteUserCoupon(map);
+    }
+
+    /**
+     * 修改用户优惠券信息
+     *
+     * @param map
+     * @return
+     */
+    public long updateCoupon(Map map) {
+        return userCouponDao.updateCoupon(map);
+    }
+
+    /**
+     * 获取用户当前可使用的优惠券
+     *
+     * @param userId
+     * @param useAt
+     * @return
+     */
+    public List<userCoupon> getValidCouponList(long userId, int useAt) {
+        return userCouponDao.getValidList(userId, useAt);
+    }
+
+    /*==================================================*/
+
+    /**
      * 充值不同账户的金额
      *
      * @param order
@@ -141,10 +209,6 @@ public class BankDepositOrderServiceImpl implements BankDepositOrderService {
         moneyFlow.setCreateAt(UnixTimeUtils.now());
         return moneyFlow;
     }
+    /*==================================================*/
 
-
-    @Override
-    public List<bankDepositOrder> getBankDepositOrderList(long userId) throws Exception{
-        return depositOrderDao.getBankDepositOrderList(userId,DepositStatus.susuccess);
-    }
 }

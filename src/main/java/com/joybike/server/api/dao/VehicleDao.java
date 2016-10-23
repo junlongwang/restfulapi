@@ -49,4 +49,12 @@ public interface VehicleDao extends IRepository<vehicle> {
      */
     List<vehicle> getVehicleList(double beginDimension, double beginLongitude);
 
+
+    /**
+     * 根据BicycleCode获取车锁
+     * @param bicycleCode
+     * @return
+     */
+    long getLockByBicycleCode(String bicycleCode);
+
 }

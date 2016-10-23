@@ -28,32 +28,13 @@ public class joyTest {
 
 
     @Autowired
-    UserInfoService userInfoService;
-
+    PayRestfulService payRestfulService;
     @Autowired
-    BankDepositOrderService depositOrderService;
-
+    UserRestfulService userRestfulService;
     @Autowired
-    BankAcountService bankAcountService;
-
+    OrderRestfulService orderRestfulService;
     @Autowired
-    SubscribeInfoService subscribeInfoService;
-
-    @Autowired
-    VehicleOrderService vehicleOrderService;
-
-    @Autowired
-    VehicleService vehicleService;
-
-    @Autowired
-    VehicleRepairService  vehicleRepairService;
-
-    @Autowired
-    BankDepositOrderService bankDepositOrderService;
-
-    @Autowired
-    BankConsumedOrderService bankConsumedOrderService;
-
+    BicycleRestfulService bicycleRestfulService;
 
 
     @Test
@@ -65,7 +46,7 @@ public class joyTest {
         userInfo.setNationality("中国");
         int u = 0;
         try {
-            u = userInfoService.updateUserInfo(userInfo);
+            u = userRestfulService.updateUserInfo(userInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -75,7 +56,7 @@ public class joyTest {
     @Test
     public void getUserInfoTest() {
 
-        userInfo u = userInfoService.getUserInfoByMobile("13721766224");
+        userInfo u = userRestfulService.getUserInfoByMobile("13721766224");
         System.out.println(u.getRealName() + "，的信息");
 
     }
@@ -92,19 +73,8 @@ public class joyTest {
         order.setPayDocumentid("lishaoyong");
         order.setMerchantId("lishaoyong");
         order.setPayAt(UnixTimeUtils.now());
-        depositOrderService.depositRecharge(order);
+        payRestfulService.depositRecharge(order);
 
-    }
-
-    @Test
-    public void bankAcountServiceTest() {
-        double amount = 0;
-        try {
-            amount = bankAcountService.getUserAcountMoneyByuserId(2);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(amount + ":余额");
     }
 
     /**
@@ -115,10 +85,10 @@ public class joyTest {
 
 //        subscribeInfo info = new subscribeInfo();
         try {
-            subscribeInfo info = subscribeInfoService.vehicleSubscribe(2, "jy6", 1477205674);
-            if (info!= null){
+            subscribeInfo info = bicycleRestfulService.vehicleSubscribe(2, "jy6", 1477205674);
+            if (info != null) {
                 System.out.println(info);
-            }else{
+            } else {
                 System.out.println("失败");
             }
         } catch (Exception e) {
@@ -132,10 +102,10 @@ public class joyTest {
      * 扫码解锁
      */
     @Test
-    public void ordertest(){
+    public void ordertest() {
 
         try {
-            vehicleOrderService.addOrder(1,"jy03",1476983501,BigDecimal.valueOf(123.4),BigDecimal.valueOf(123.89));
+            orderRestfulService.addOrder(1, "jy03", 1476983501, BigDecimal.valueOf(123.4), BigDecimal.valueOf(123.89));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -153,18 +123,18 @@ public class joyTest {
 //    }
 
     @Test
-    public void getVehicleListTest(){
+    public void getVehicleListTest() {
 
         try {
-           List<vehicle> list = vehicleService.getVehicleList(40.0276731,116.355149);
-            if (list.size() >0 ){
+            List<vehicle> list = bicycleRestfulService.getVehicleList(40.0276731, 116.355149);
+            if (list.size() > 0) {
                 list.forEach(new Consumer<vehicle>() {
                     @Override
                     public void accept(vehicle vehicle) {
                         System.out.println(vehicle);
                     }
                 });
-            }else{
+            } else {
                 System.out.println("meiyou");
             }
 
@@ -174,7 +144,7 @@ public class joyTest {
     }
 
     @Test
-    public void addvehicleRepairTest(){
+    public void addvehicleRepairTest() {
         vehicleRepair repair = new vehicleRepair();
         repair.setVehicleId("yj04");
         repair.setCause("不能骑了");
@@ -183,7 +153,7 @@ public class joyTest {
         repair.setDisposeDepict("");
         repair.setDisposeStatus(0);
         try {
-           long id = vehicleRepairService.addVehicleRepair(repair);
+            long id = bicycleRestfulService.addVehicleRepair(repair);
             System.out.println(id);
         } catch (Exception e) {
             e.printStackTrace();
@@ -191,11 +161,11 @@ public class joyTest {
     }
 
     @Test
-    public void getBankDepositOrderListTest(){
+    public void getBankDepositOrderListTest() {
 
         try {
-           List<bankDepositOrder> list = bankDepositOrderService.getBankDepositOrderList(1);
-            if (list.size() > 0){
+            List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(1);
+            if (list.size() > 0) {
                 list.forEach(new Consumer<bankDepositOrder>() {
                     @Override
                     public void accept(bankDepositOrder depositOrder) {
@@ -207,11 +177,12 @@ public class joyTest {
             e.printStackTrace();
         }
     }
+
     @Test
-    public void bankConsumedOrderServiceTest(){
+    public void bankConsumedOrderServiceTest() {
         try {
-            List<bankConsumedOrder> list = bankConsumedOrderService.getBankConsumedOrderList(1);
-            if (list.size() >0){
+            List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(1);
+            if (list.size() > 0) {
                 list.forEach(new Consumer<bankConsumedOrder>() {
                     @Override
                     public void accept(bankConsumedOrder bankConsumedOrder) {
@@ -219,6 +190,16 @@ public class joyTest {
                     }
                 });
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getVehicleHeartbeatListTest() {
+
+        try {
+            bicycleRestfulService.getVehicleHeartbeatList("jy02", 1, 2);
         } catch (Exception e) {
             e.printStackTrace();
         }

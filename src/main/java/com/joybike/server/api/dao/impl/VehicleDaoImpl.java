@@ -98,4 +98,23 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
         List<vehicle> list = this.jdbcTemplate.getJdbcOperations().query(getVehicleListSql, object, new BeanPropertyRowMapper(vehicle.class));
         return list;
     }
+
+    /**
+     * 更具车身编号获取车锁Id
+     *
+     * @param bicycleCode
+     * @return
+     */
+    final String getLockByBicycleCodeSql = "select lockId from vehicle where vehicleId = :vehicleId";
+
+    @Override
+    public long getLockByBicycleCode(String bicycleCode) {
+        Map map = new HashMap();
+        map.put("vehicleId", bicycleCode);
+        try {
+            return (Integer) this.jdbcTemplate.queryForObject(getLockByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 }

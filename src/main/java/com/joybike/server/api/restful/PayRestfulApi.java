@@ -1,13 +1,11 @@
 package com.joybike.server.api.restful;
 
 import com.joybike.server.api.model.*;
-import com.joybike.server.api.service.BankConsumedOrderService;
-import com.joybike.server.api.service.BankDepositOrderService;
+import com.joybike.server.api.service.PayRestfulService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,11 +16,7 @@ import java.util.List;
 public class PayRestfulApi {
 
     @Autowired
-    private BankDepositOrderService bankDepositOrderService;
-
-    @Autowired
-    private BankConsumedOrderService bankConsumedOrderService;
-
+    private PayRestfulService payRestfulService;
 
     /**
      * 充值：可充值押金、预存现金
@@ -44,7 +38,7 @@ public class PayRestfulApi {
     @RequestMapping(value = "getConsumeLogs", method = RequestMethod.GET)
     public ResponseEntity<Message<List<bankConsumedOrder>>> getConsumeLogs(@RequestParam("userId") long userId) {
         try {
-            List<bankConsumedOrder> list = bankConsumedOrderService.getBankConsumedOrderList(userId);
+            List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(userId);
             return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, null, list));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, "1001：" + "获取消费记录失败", null));
@@ -61,7 +55,7 @@ public class PayRestfulApi {
     @RequestMapping(value = "getDepositLogs", method = RequestMethod.GET)
     public ResponseEntity<Message<List<bankDepositOrder>>> getDepositLogs(@RequestParam("userId") long userId) {
         try {
-            List<bankDepositOrder> list = bankDepositOrderService.getBankDepositOrderList(userId);
+            List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(userId);
             return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, list));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<List<bankDepositOrder>>(false, "1001：" + "获取充值记录失败", null));

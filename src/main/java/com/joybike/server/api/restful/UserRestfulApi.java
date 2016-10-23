@@ -1,9 +1,12 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
-import com.joybike.server.api.service.BankAcountService;
-import com.joybike.server.api.service.UserInfoService;
+import com.joybike.server.api.service.BicycleRestfulService;
+import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.service.PayRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.SMSHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,37 +23,10 @@ import java.util.Random;
 @RestController()
 public class UserRestfulApi {
 
-    @Autowired
-    private UserInfoService userInfoService;
 
     @Autowired
-    private BankAcountService bankAcountService;
+    private UserRestfulService userRestfulService;
 
-//    /**
-//     * 注册用户
-//     *
-//     * @param mobile
-//     * @return
-//     */
-//    @RequestMapping(value = "add", method = RequestMethod.POST)
-//    public ResponseEntity<Message<userInfo>>  add(@RequestParam("mobile") String mobile) {
-//        int randNo = 0;
-//        try {
-//            randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
-//            //根据用户号码，进行查询，存在返回信息；不存在创建
-//            userInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
-//            LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
-//
-//            return ResponseEntity.ok(new Message<userInfo>(true, null, null));
-//        } catch (Exception e) {
-//            return ResponseEntity.ok(new Message<userInfo>(false,  "1001：" + "更新用户信息失败", null));
-//        } finally {
-//            //发送短信接口
-//            SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
-//        }
-//
-//
-//    }
 
     /**
      * 更新用户信息
@@ -61,8 +37,8 @@ public class UserRestfulApi {
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public ResponseEntity<Message<userInfo>> update(@RequestBody userInfo user) {
         try {
-            userInfoService.updateUserInfo(user);
-            userInfo userInfo = userInfoService.getUserInfoByMobile(user.getIphone());
+            userRestfulService.updateUserInfo(user);
+            userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
             return ResponseEntity.ok(new Message<userInfo>(true, null, userInfo));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<userInfo>(false, "1001：" + "更新用户信息失败", null));
@@ -82,7 +58,7 @@ public class UserRestfulApi {
         try {
             randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
             //根据用户号码，进行查询，存在返回信息；不存在创建
-            userInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
+            userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);
             LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
             return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
         } catch (Exception e) {
@@ -102,7 +78,7 @@ public class UserRestfulApi {
     @RequestMapping(value = "getAcountMoney", method = RequestMethod.GET)
     public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") long userid) {
         try {
-            double acountMoney = bankAcountService.getUserAcountMoneyByuserId(userid);
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userid);
             return ResponseEntity.ok(new Message<Double>(true, null, acountMoney));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<Double>(false, "1001：" + "获取余额信息失败", null));

@@ -4,27 +4,39 @@ import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Enum.UseStatus;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleDao;
-import com.joybike.server.api.dto.LoginData;
-import com.joybike.server.api.model.Message;
+import com.joybike.server.api.dao.VehicleHeartbeatDao;
+import com.joybike.server.api.dao.VehicleRepairDao;
 import com.joybike.server.api.model.subscribeInfo;
-import com.joybike.server.api.service.SubscribeInfoService;
+import com.joybike.server.api.model.vehicle;
+import com.joybike.server.api.model.vehicleHeartbeat;
+import com.joybike.server.api.model.vehicleRepair;
+import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
- * Created by lishaoyong on 16/10/20.
+ * Created by lishaoyong on 16/10/23.
  */
 @Service
-public class SubscribeInfoServiceImpl implements SubscribeInfoService {
-
+public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
     @Autowired
     SubscribeInfoDao subscribeInfoDao;
 
     @Autowired
     VehicleDao vehicleDao;
+
+    @Autowired
+    private VehicleHeartbeatDao vehicleHeartbeatDao;
+
+
+    @Autowired
+    private VehicleRepairDao vehicleRepairDao;
+
 
     /**
      * 添加预约信息,如果返回的id>0则为该用户的预约ID
@@ -128,7 +140,7 @@ public class SubscribeInfoServiceImpl implements SubscribeInfoService {
      * @return
      */
     @Override
-    public int deleteSubscribeInfo(long userId, String vehicleId) throws Exception{
+    public int deleteSubscribeInfo(long userId, String vehicleId) throws Exception {
         return subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
     }
 
@@ -142,17 +154,6 @@ public class SubscribeInfoServiceImpl implements SubscribeInfoService {
     @Override
     public int updateSubscribeInfo(long userId, String vehicleId) {
         return subscribeInfoDao.updateSubscribeInfo(userId, vehicleId, SubscribeStatus.use);
-    }
-
-    /**
-     * 根据ID获取预约信息
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    public subscribeInfo getSubscribeInfoById(long id) {
-        return subscribeInfoDao.getSubscribeInfoById(id);
     }
 
     /**
@@ -175,6 +176,71 @@ public class SubscribeInfoServiceImpl implements SubscribeInfoService {
     @Override
     public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) {
         return subscribeInfoDao.getSubscribeInfoByBicycleCode(vehicleId);
+    }
+
+    /**
+     * 获取车骑行记录
+     *
+     * @param bicycleCode
+     * @param beginAt
+     * @param endAt
+     * @return
+     */
+    @Override
+    public List<vehicleHeartbeat> getVehicleHeartbeatList(String bicycleCode, int beginAt, int endAt) throws Exception {
+
+        long lockId = vehicleDao.getLockByBicycleCode(bicycleCode);
+        return vehicleHeartbeatDao.getVehicleHeartbeatList(lockId, beginAt, endAt);
+
+    }
+
+    /**
+     * 故障上报
+     *
+     * @param vehicleRepair
+     * @return
+     */
+    @Override
+    public long addVehicleRepair(vehicleRepair vehicleRepair) throws Exception {
+        vehicleRepair.setCreateAt(UnixTimeUtils.now());
+        vehicleRepair.setDisposeStatus(0);
+        return vehicleRepairDao.save(vehicleRepair);
+    }
+
+
+    /**
+     * 获取车辆使用状态
+     *
+     * @param bicycleCode
+     * @return
+     */
+    @Override
+    public int getVehicleUseStatusByBicycleCode(String bicycleCode) throws Exception {
+        return vehicleDao.getVehicleUseStatusByBicycleCode(bicycleCode);
+    }
+
+    /**
+     * 获取车辆本身的状态
+     *
+     * @param bicycleCode
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int getVehicleStatusByBicycleCode(String bicycleCode) throws Exception {
+        return vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
+    }
+
+    /**
+     * 获取当前位置一公里内的车辆
+     *
+     * @param beginDimension
+     * @param beginLongitude
+     * @return
+     */
+    @Override
+    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) {
+        return vehicleDao.getVehicleList(beginDimension, beginLongitude);
     }
 
 }

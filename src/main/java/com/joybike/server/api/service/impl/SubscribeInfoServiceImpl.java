@@ -128,7 +128,7 @@ public class SubscribeInfoServiceImpl implements SubscribeInfoService {
      * @return
      */
     @Override
-    public int deleteSubscribeInfo(long userId, String vehicleId) {
+    public int deleteSubscribeInfo(long userId, String vehicleId) throws Exception{
         return subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
     }
 

@@ -53,7 +53,7 @@ public class BicycleRestfulApi {
      * @param bicycleCode
      * @return
      */
-    @RequestMapping(value = "subscribe", method = RequestMethod.POST)
+    @RequestMapping(value = "subscribe", method = RequestMethod.GET)
     public ResponseEntity<Message<String>> subscribe(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode, @RequestParam("beginAt") int beginAt) {
         logger.info(userId + ":" + bicycleCode);
 
@@ -85,7 +85,12 @@ public class BicycleRestfulApi {
      */
     @RequestMapping(value = "cancle", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> cancle(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
-        return ResponseEntity.ok(new Message<String>(true, null, "取消预约成功！"));
+        try {
+            subscribeInfoService.deleteSubscribeInfo(userId,bicycleCode);
+            return ResponseEntity.ok(new Message<String>(true, null, "取消预约成功！"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<String>(false, "取消预约失败", null));
+        }
     }
 
     /**
@@ -116,9 +121,6 @@ public class BicycleRestfulApi {
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<List<vehicle>>(false, "1001：" + "GPS信号丢失", null));
         }
-
-
-//        return ResponseEntity.ok(new Message<List<vehicle>>(true, null, new ArrayList<vehicle>()));
     }
 
 

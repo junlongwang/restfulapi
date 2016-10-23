@@ -1,6 +1,5 @@
 package com.joybike.server.api.service;
 
-import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.model.subscribeInfo;
 
 /**
@@ -25,7 +24,7 @@ public interface SubscribeInfoService {
      * @param vehicleId
      * @return
      */
-    int deleteSubscribeInfo(long userId, String vehicleId);
+    int deleteSubscribeInfo(long userId, String vehicleId) throws Exception;
 
     /**
      * 修改预约状态

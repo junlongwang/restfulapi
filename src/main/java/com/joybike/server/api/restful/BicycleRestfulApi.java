@@ -18,7 +18,7 @@ import java.util.*;
 /**
  * Created by 58 on 2016/10/16.
  */
-//@RequestMapping("/api/bicycle")
+@RequestMapping("/bicycle")
 @RestController()
 public class BicycleRestfulApi {
 
@@ -162,26 +162,5 @@ public class BicycleRestfulApi {
     public ResponseEntity<Message<String>> submit(@RequestBody vehicleRepair form)
     {
         return ResponseEntity.ok(new Message<String>(true,null,"提交成功！"));
-    }
-
-
-    public static void main(String[] args) {
-        //DOMConfigurator.configure("E:\\开源项目\\restfulapi\\src\\main\\resources\\log4j.xml");
-//        System.out.println("hello");
-//
-//        Logger logger =Logger.getLogger(BicycleRestfulApi.class);
-//        logger.info("gengjinfeng");
-
-        //method 2
-        String msg="";
-        Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("YY-MM-dd HH:mm:ss");
-        msg+=sdf.format(date);
-        System.out.println(msg);
-
-        //LoginData loginData = new
-
-        //Message<LoginData> message=new Message<LoginData>(true, null, loginData);
-
     }
 }

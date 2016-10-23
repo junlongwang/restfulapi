@@ -1,10 +1,12 @@
 package com.joybike.server.api.model;
 
+import java.io.Serializable;
+
 /**
  * 统一返回结果
  * Created by 58 on 2016/10/16.
  */
-public class Message<T> {
+public class Message<T> implements Serializable {
 
     /**
      * 请求是否成功
@@ -18,6 +20,9 @@ public class Message<T> {
      * 返回数据
      */
     private T data;
+
+    public Message()
+    {}
 
     public Message(boolean isSucess, String errorCode, T data) {
         this.isSucess = isSucess;

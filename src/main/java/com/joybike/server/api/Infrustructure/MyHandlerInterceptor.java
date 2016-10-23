@@ -44,7 +44,7 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
         System.out.println(map);
         System.out.println("++++++++++++++++++++++++++++++++");
         System.out.println(request.getRequestURI());
-        return false;
+        return true;
     }
 
 }

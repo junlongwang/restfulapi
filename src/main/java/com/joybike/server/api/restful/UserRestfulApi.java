@@ -16,7 +16,7 @@ import java.util.Random;
 /**
  * Created by 58 on 2016/10/16.
  */
-//"/api/user"
+@RequestMapping("/user")
 @RestController()
 public class UserRestfulApi {
 

@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 /**
  * Created by lishaoyong on 16/10/23.
  */
-@Service
 public interface OrderRestfulService {
 
     /**

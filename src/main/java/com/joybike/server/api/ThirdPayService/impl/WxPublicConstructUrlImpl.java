@@ -25,7 +25,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             return null;
         RedirectParam  redirectParam = new RedirectParam();
         try {
-            Map<String,String> map = new HashMap<>();
+            Map<String,String> map = new HashMap();
             map.put("appid",appid);//公众账号ID
             map.put("mch_id",mch_id);//商户号
             map.put("nonce_str", WXUtil.getNonceStr());//随机字符串

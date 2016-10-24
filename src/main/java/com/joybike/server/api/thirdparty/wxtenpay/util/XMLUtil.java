@@ -14,14 +14,14 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 /**
- * xml工具�?
+ * xml工具lei
  * @author miklchen
  *
  */
 public class XMLUtil {
 
 	/**
-	 * 解析xml,返回第一级元素键值对。如果第�?级元素有子节点，则此节点的�?�是子节点的xml数据�?
+	 * 解析xml,返回第一级元素键值对。
 	 * @param strxml
 	 * @return
 	 * @throws JDOMException
@@ -56,7 +56,7 @@ public class XMLUtil {
 			m.put(k, v);
 		}
 		
-		//关闭�?
+		//关闭�?
 		in.close();
 		
 		return m;
@@ -89,7 +89,7 @@ public class XMLUtil {
 	}
 	
 	/**
-	 * 获取xml编码字符�?
+	 * 获取xml编码字符
 	 * @param strxml
 	 * @return
 	 * @throws IOException 

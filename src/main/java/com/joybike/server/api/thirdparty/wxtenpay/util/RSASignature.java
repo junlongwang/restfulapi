@@ -16,7 +16,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher; 
 /**
- * RSA签名验签�?
+ * RSA签名验签
  * @author 3y
  *@version $Id: RSASignature.java, v 0.1 2011-8-21 上午10:47:41 3y Exp $
  */

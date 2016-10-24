@@ -59,6 +59,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
+    @Override
     public void recharge(bankDepositOrder depositOrder) throws Exception {
 
         try {
@@ -106,6 +107,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
+    @Override
     public void depositRecharge(bankDepositOrder depositOrder) throws Exception {
 
         try {
@@ -151,6 +153,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userCoupon
      * @return
      */
+    @Override
     public long addUserCoupon(userCoupon userCoupon) throws Exception {
 
         try {
@@ -167,6 +170,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
+    @Override
     public long deleteUserCoupon(Map map) throws Exception {
 
         try {
@@ -183,6 +187,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
+    @Override
     public long updateCoupon(Map map) throws Exception {
         try {
             return userCouponDao.updateCoupon(map);
@@ -199,6 +204,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param useAt
      * @return
      */
+    @Override
     public List<userCoupon> getValidCouponList(long userId, int useAt) throws Exception {
         try {
             return userCouponDao.getValidList(userId, useAt);

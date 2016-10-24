@@ -181,7 +181,7 @@ public class WxAppConstructUrlImpl implements appConstructUrlInter {
     }
 
     public static void main(String []str){
-        HashMap<String, String> paraMap = new HashMap<>();
+        HashMap<String, String> paraMap = new HashMap();
         WxAppConstructUrlImpl wxAppConstructUrl = new WxAppConstructUrlImpl();
         wxAppConstructUrl.getUrl(paraMap);
     }

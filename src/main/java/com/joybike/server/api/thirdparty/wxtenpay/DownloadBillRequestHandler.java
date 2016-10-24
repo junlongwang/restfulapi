@@ -12,7 +12,7 @@ public class DownloadBillRequestHandler extends RequestHandler {
 	}
 	
 	/**
-	 * 创建md5摘要,规则�?:按参数固定顺序组�?,遇到空�?�的参数不参加签名�??
+	 * 创建md5摘要
 	 */
 	protected void createSign() {
 		StringBuffer sb = new StringBuffer();

@@ -48,6 +48,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param user
      * @return
      */
+    @Override
     public int updateUserInfo(userInfo user) throws Exception {
 
         try {
@@ -67,6 +68,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param phone
      * @return
      */
+    @Override
     public userInfo getUserInfoByMobile(String phone) throws Exception {
 
         try {

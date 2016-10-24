@@ -82,9 +82,17 @@ public class UserInfoDaoUnitTest {
         System.out.println(userInfo);
 
 
-        userInfo= userInfoDao.getUserInfo(1L);
+        try {
+            userInfo= userInfoDao.getUserInfo(1L);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        userInfo = userInfoDao.getInfoByPhone("13910991532");
+        try {
+            userInfo = userInfoDao.getInfoByPhone("13910991532");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         userInfo.setIphone("15110184829");
         userInfo.setRealName("GJF");

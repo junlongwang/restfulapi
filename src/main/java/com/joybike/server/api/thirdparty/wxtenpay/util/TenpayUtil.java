@@ -11,9 +11,9 @@ public class TenpayUtil {
 	private final static String characterencode="UTF-8";
 	
 	/**
-	 * 把对象转换成字符�?
+	 * 把对象转换成字符�?
 	 * @param obj
-	 * @return String 转换成字符串,若对象为null,则返回空字符�?.
+	 * @return String 转换成字符串,若对象为null,则返回空字符�?.
 	 */
 	public static String toString(Object obj) {
 		if(obj == null)
@@ -23,11 +23,11 @@ public class TenpayUtil {
 	}
 	
 	/**
-	 * 把对象转换为int数�??.
+	 * 把对象转换为int
 	 * 
 	 * @param obj
-	 *            包含数字的对�?.
-	 * @return int 转换后的数�??,对不能转换的对象返回0�?
+	 *            包含数字的对�?.
+	 * @return int 转换后的数�??,对不能转换的对象返回0�?
 	 */
 	public static int toInt(Object obj) {
 		int a = 0;
@@ -63,11 +63,11 @@ public class TenpayUtil {
 	}
 	
 	/**
-	 * 取出�?个指定长度大小的随机正整�?.
+	 * 取出�?个指定长度大小的随机正整�?.
 	 * 
 	 * @param length
-	 *            int 设定�?取出随机数的长度。length小于11
-	 * @return int 返回生成的随机数�?
+	 *            int 设定�?取出随机数的长度。length小于11
+	 * @return int 返回生成的随机数�?
 	 */
 	public static int buildRandom(int length) {
 		int num = 1;
@@ -82,7 +82,7 @@ public class TenpayUtil {
 	}
 	
 	/**
-	 * 获取编码字符�?
+	 * 获取编码字符�?
 	 * @param request
 	 * @param response
 	 * @return String
@@ -107,7 +107,7 @@ public class TenpayUtil {
 	}
 	
 	/**
-	 * 获取unix时间，从1970-01-01 00:00:00�?始的秒数
+	 * 获取unix时间，从1970-01-01 00:00:00�?始的秒数
 	 * @param date
 	 * @return long
 	 */
@@ -122,7 +122,7 @@ public class TenpayUtil {
 	/**
 	 * 时间转换成字符串
 	 * @param date 时间
-	 * @param formatType 格式化类�?
+	 * @param formatType 格式化类�?
 	 * @return String
 	 */
 	public static String date2String(Date date, String formatType) {

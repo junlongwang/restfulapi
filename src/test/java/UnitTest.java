@@ -2,6 +2,7 @@ import com.joybike.server.api.Message;
 import com.joybike.server.api.model.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -10,6 +11,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSON;
+
+import java.util.Properties;
 
 /**
  * Created by 58 on 2016/10/14.
@@ -87,10 +90,16 @@ public class UnitTest {
 
     }
 
+    @Value("#{thirdparty}")
+    private Properties thirdpartyProperty;
+
     @Test
     public void fun()
     {
        // Message message=new Message<String>(true,null,"预约成功！");
         //System.out.println(JSON.toJSONString(message));
+
+        String value=thirdpartyProperty.getProperty("key1");
+        System.out.println(value);
     }
 }

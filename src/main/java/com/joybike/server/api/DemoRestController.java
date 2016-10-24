@@ -3,7 +3,10 @@ package com.joybike.server.api;
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Properties;
 
 /**
  * 测试DEMO
@@ -11,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 public class DemoRestController {
+
+    @Value("#{thirdparty}")
+    private Properties thirdpartyProperty;
 
     @Autowired
     private UserInfoDao userInfoDao;
@@ -41,5 +47,10 @@ public class DemoRestController {
         message.setName(user.getName());
         message.setText("hello," + user.toString());
         return message;
+    }
+
+    public static void main(String[] args) {
+
+
     }
 }

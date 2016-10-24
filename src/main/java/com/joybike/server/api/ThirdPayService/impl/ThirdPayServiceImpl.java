@@ -81,6 +81,9 @@ public class ThirdPayServiceImpl implements IThirdPayService {
         if (channleId.equals("117")){
             return new WxappConstructUrlImpl().callBack(request);
         }
+        if (channleId.equals("118")){
+            return new WxPublicConstructUrlImpl().callBack(request);
+        }
         return null;
     }
 }

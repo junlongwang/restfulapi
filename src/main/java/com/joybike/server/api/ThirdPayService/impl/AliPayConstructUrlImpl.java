@@ -1,16 +1,20 @@
 package com.joybike.server.api.ThirdPayService.impl;
 
+import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import com.joybike.server.api.thirdparty.wxtenpay.util.RSASignature;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by LongZiyuan on 2016/10/24.
  */
-public class AliPayConstructUrlImpl {
+public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
 
     private String partner = "";
     private String key = "";
@@ -85,5 +89,19 @@ public class AliPayConstructUrlImpl {
             return null;
         }
         return para;
+    }
+
+    @Override
+    public String callBack(HttpServletRequest request){
+        boolean result = getPayfinishHandler(request);
+        return null;
+    }
+
+    private boolean getPayfinishHandler(HttpServletRequest request){
+        boolean flag = false;
+        String merId = "";
+        Map params = new HashMap();
+        String sign=request.getParameter("sign");
+        return flag;
     }
 }

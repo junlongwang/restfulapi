@@ -85,7 +85,28 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
 
     @Override
     public String callBack(HttpServletRequest request) {
-        return null;
+        Map paraMap = ReadRequestUtil.getRequestMap(request);
+        if (paraMap == null || paraMap.size() == 0) {
+            return "";
+        }
+        String reqSign = String.valueOf(paraMap.get("sign"));
+        String sign = SignUtil.sign(paraMap,key).toUpperCase();
+        if (!sign.equals(reqSign)) {
+            return "";
+        }
+        String result = String.valueOf(paraMap.get("result_code"));
+        if ("SUCCESS".equals(result)) {// 如果支付成功返回支付系统唯一订单号及支付金额
+            String noOrder = String.valueOf(paraMap.get("out_trade_no"));
+            String totalFee = String.valueOf(paraMap.get("total_fee"));
+            Double realTotalFee = (Double) (Double.parseDouble(totalFee) / 100);
+            String appId=String.valueOf(paraMap.get("appid"));
+            String openId=String.valueOf(paraMap.get("openid"));
+            String bank_type=String.valueOf(paraMap.get("bank_type"));
+            String resultMsg=noOrder + "," + realTotalFee;
+            if( !StringUtil.isNullOrEmpty(openId) ) resultMsg=resultMsg+","+openId+ ";" +appId+ ";" +bank_type;
+            return resultMsg;
+        }
+        return "";
     }
 }
 

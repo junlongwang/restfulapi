@@ -91,7 +91,6 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
         try {
             Map map = new HashMap();
             map.put("userId", userId);
-
             return getCount(userAmountSql, map);
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);

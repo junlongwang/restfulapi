@@ -14,5 +14,5 @@ public interface appConstructUrlInter {
      * @param paraMap
      * @return
      */
-    public RedirectParam getUrl(HashMap<String,String> paraMap); ;
+    public RedirectParam getUrl(HashMap<String, String> paraMap);
 }

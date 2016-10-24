@@ -18,7 +18,7 @@ import java.util.SortedMap;
 public class WxAppConstructUrlImpl implements appConstructUrlInter {
 
     private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-    private static String mch_id = "商户号";
+    private static String mch_id = "1401808502";
     private static String appid = "longziyuan";
 
     @Override
@@ -77,7 +77,7 @@ public class WxAppConstructUrlImpl implements appConstructUrlInter {
             spbill_create_ip="127.0.0.1";
         }
         packageReqHandler.setParameter("spbill_create_ip", spbill_create_ip);
-        packageReqHandler.setParameter("attach","微信充值");
+        packageReqHandler.setParameter("attach",paraMap.get("attach"));
 
         //获取签名信息
         String sign =getMd5Sign(packageReqHandler);
@@ -148,8 +148,6 @@ public class WxAppConstructUrlImpl implements appConstructUrlInter {
 
     private String getWxAppJsonStr(String prepayId,HashMap<String, String> paraMap) {
         String appid = paraMap.get("appid");
-        //2015-08-24 支持安居客或者别的走老接口的app
-        //根据appid获取partnerid
         String partnerId = mch_id;
         paraMap.put("prepayId", prepayId);
         paraMap.put("partnerid", partnerId);
@@ -180,5 +178,11 @@ public class WxAppConstructUrlImpl implements appConstructUrlInter {
         SortedMap map = paySignReqHandler.getAllParameters();
         map.remove("appkey");// 去掉key值
         return JsonUtil.mapToJson(map);
+    }
+
+    public static void main(String []str){
+        HashMap<String, String> paraMap = new HashMap<>();
+        WxAppConstructUrlImpl wxAppConstructUrl = new WxAppConstructUrlImpl();
+        wxAppConstructUrl.getUrl(paraMap);
     }
 }

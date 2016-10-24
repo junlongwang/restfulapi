@@ -57,14 +57,14 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
 
     @Override
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) {
-        Map map = new HashMap();
-        map.put("id", id);
-        map.put("payType", payType.getValue());
-        map.put("payDocumentId", payDocumentId);
-        map.put("merchantId", merchantId);
-        map.put("payAt", payAt);
 
         try {
+            Map map = new HashMap();
+            map.put("id", id);
+            map.put("payType", payType.getValue());
+            map.put("payDocumentId", payDocumentId);
+            map.put("merchantId", merchantId);
+            map.put("payAt", payAt);
             return execSQL(updateDepositOrderByIdSql, map);
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);

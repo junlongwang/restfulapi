@@ -1,6 +1,7 @@
 package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.model.userInfo;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixGps;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -57,7 +58,11 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
         try {
             Map map = new HashMap();
             map.put("vehicleId", bicycleCode);
-            return (Integer) this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            try {
+                return (Integer) this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            } catch (Exception e) {
+                return -1;
+            }
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
@@ -76,7 +81,11 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
         try {
             Map map = new HashMap();
             map.put("vehicleId", bicycleCode);
-            return (Integer) this.jdbcTemplate.queryForObject(getVehicleStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            try {
+                return (Integer) this.jdbcTemplate.queryForObject(getVehicleStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            } catch (Exception e) {
+                return -1;
+            }
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
@@ -103,7 +112,11 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
             Double minLng = beginLongitude + UnixGps.doLongitude(beginLongitude);
 
             Object[] object = new Object[]{minLat, maxLat, minLng, maxLng};
-            return this.jdbcTemplate.getJdbcOperations().query(getVehicleListSql, object, new BeanPropertyRowMapper(vehicle.class));
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getVehicleListSql, object, new BeanPropertyRowMapper(vehicle.class));
+            } catch (Exception e) {
+                return null;
+            }
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
@@ -123,8 +136,11 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
             Map map = new HashMap();
             map.put("vehicleId", bicycleCode);
 
-            return (Integer) this.jdbcTemplate.queryForObject(getLockByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
-
+            try {
+                return (Integer) this.jdbcTemplate.queryForObject(getLockByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            } catch (Exception e) {
+                return -1;
+            }
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }

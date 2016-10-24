@@ -1,5 +1,6 @@
 package com.joybike.server.api.service;
 
+import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.model.bankConsumedOrder;
 import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.userCoupon;
@@ -81,4 +82,16 @@ public interface PayRestfulService {
      */
     List<userCoupon> getValidCouponList(long userId, int useAt) throws Exception;
 
+
+    /**
+     * 充值成功回调
+     *
+     * @param id
+     * @param payType
+     * @param payDocumentId
+     * @param merchantId
+     * @param payAt
+     * @return
+     */
+    int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception;
 }

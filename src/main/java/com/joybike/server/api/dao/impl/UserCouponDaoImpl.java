@@ -3,6 +3,7 @@ package com.joybike.server.api.dao.impl;
 import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserCouponDao;
+import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.userCoupon;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -65,7 +66,11 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
     public List<userCoupon> getValidList(long userId, int useAt)  throws Exception{
         try {
             Object[] object = new Object[]{userId, useAt};
-            return this.jdbcTemplate.getJdbcOperations().query(validCouponSql, object, new BeanPropertyRowMapper(userCoupon.class));
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(validCouponSql, object, new BeanPropertyRowMapper(userCoupon.class));
+            } catch (Exception e) {
+                return null;
+            }
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }

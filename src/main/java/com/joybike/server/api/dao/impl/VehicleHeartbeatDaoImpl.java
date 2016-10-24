@@ -32,7 +32,11 @@ public class VehicleHeartbeatDaoImpl extends Reository<vehicleHeartbeat> impleme
     public List<vehicleHeartbeat> getVehicleHeartbeatList(long lockId, int beginAt, int endAt)  throws Exception{
         try {
             Object[] objects = new Object[]{lockId , beginAt ,endAt};
-            return this.jdbcTemplate.getJdbcOperations().query(getVehicleHeartbeatListSql, objects, new BeanPropertyRowMapper(vehicleHeartbeat.class));
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getVehicleHeartbeatListSql, objects, new BeanPropertyRowMapper(vehicleHeartbeat.class));
+            } catch (Exception e) {
+                return null;
+            }
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }

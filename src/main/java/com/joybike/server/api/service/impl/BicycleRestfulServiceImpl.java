@@ -49,57 +49,48 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public subscribeInfo vehicleSubscribe(long userId, String bicycleCode, int startAt) throws Exception {
 
-        try {
-            subscribeInfo bscribeInfo = new subscribeInfo();
-            String subcribeCode = String.valueOf(userId) + String.valueOf(bicycleCode);
-            subscribeInfo uInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
-            subscribeInfo vInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode);
+        subscribeInfo bscribeInfo = new subscribeInfo();
+        String subcribeCode = String.valueOf(userId) + String.valueOf(bicycleCode);
+        subscribeInfo uInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
+        subscribeInfo vInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode);
 
-            if (vInfo != null && uInfo != null) {
-                if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                    //删除原订单
-                    subscribeInfoDao.delete(uInfo.getId());
-                    subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
-                    //保存预约信息
-                    long subscribeId = subscribeInfoDao.save(info);
-                    //返回预约信息
-                    bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
+        if (vInfo != null && uInfo != null) {
+            if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                //删除原订单
+                subscribeInfoDao.delete(uInfo.getId());
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                //保存预约信息
+                long subscribeId = subscribeInfoDao.save(info);
+                //返回预约信息
+                bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
 
-                    //修改车辆使用状态
-                    vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
+                //修改车辆使用状态
+                vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
 
-                }
+            } else {
+                throw new RestfulException(ErrorEnum.Repeat_Error);
             }
+        }
 
-            if (uInfo != null && vInfo == null) {
-                if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                    //删除原订单
-                    subscribeInfoDao.delete(uInfo.getId());
-                    subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
-                    //保存预约信息
-                    long subscribeId = subscribeInfoDao.save(info);
-                    //返回预约信息
-                    bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
+        if (uInfo != null && vInfo == null) {
+            if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                //删除原订单
+                subscribeInfoDao.delete(uInfo.getId());
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                //保存预约信息
+                long subscribeId = subscribeInfoDao.save(info);
+                //返回预约信息
+                bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
 
-                    //修改车辆使用状态
-                    vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
-                }
+                //修改车辆使用状态
+                vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
+            } else {
+                throw new RestfulException(ErrorEnum.BicycleUse_Error);
             }
+        }
 
-            if (vInfo != null && uInfo == null) {
-                if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                    subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
-                    //保存预约信息
-                    long subscribeId = subscribeInfoDao.save(info);
-                    //返回预约信息
-                    bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
-
-                    //修改车辆使用状态
-                    vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
-                }
-            }
-
-            if (vInfo == null && uInfo == null) {
+        if (vInfo != null && uInfo == null) {
+            if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                 subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
                 //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
@@ -109,12 +100,19 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //修改车辆使用状态
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
             }
-            return bscribeInfo;
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
         }
 
+        if (vInfo == null && uInfo == null) {
+            subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+            //保存预约信息
+            long subscribeId = subscribeInfoDao.save(info);
+            //返回预约信息
+            bscribeInfo = subscribeInfoDao.getSubscribeInfoById(subscribeId);
 
+            //修改车辆使用状态
+            vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
+        }
+        return bscribeInfo;
     }
 
     //保存预约信息
@@ -140,12 +138,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public int deleteSubscribeInfo(long userId, String vehicleId) throws Exception {
-        try {
-            return subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
     }
 
     /**
@@ -157,12 +150,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public int updateSubscribeInfo(long userId, String vehicleId) throws Exception {
-        try {
-            return subscribeInfoDao.updateSubscribeInfo(userId, vehicleId, SubscribeStatus.use);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return subscribeInfoDao.updateSubscribeInfo(userId, vehicleId, SubscribeStatus.use);
     }
 
     /**
@@ -173,11 +161,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception {
-        try {
-            return subscribeInfoDao.getSubscribeInfoByUserId(userId);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
+        return subscribeInfoDao.getSubscribeInfoByUserId(userId);
     }
 
     /**
@@ -188,12 +172,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception {
-        try {
-            return subscribeInfoDao.getSubscribeInfoByBicycleCode(vehicleId);
-
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
+        return subscribeInfoDao.getSubscribeInfoByBicycleCode(vehicleId);
     }
 
     /**
@@ -206,15 +185,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public List<vehicleHeartbeat> getVehicleHeartbeatList(String bicycleCode, int beginAt, int endAt) throws Exception {
-
-        try {
-            long lockId = vehicleDao.getLockByBicycleCode(bicycleCode);
-            return vehicleHeartbeatDao.getVehicleHeartbeatList(lockId, beginAt, endAt);
-
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        long lockId = vehicleDao.getLockByBicycleCode(bicycleCode);
+        return vehicleHeartbeatDao.getVehicleHeartbeatList(lockId, beginAt, endAt);
     }
 
     /**
@@ -225,15 +197,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public long addVehicleRepair(vehicleRepair vehicleRepair) throws Exception {
-        try {
-            vehicleRepair.setCreateAt(UnixTimeUtils.now());
-            vehicleRepair.setDisposeStatus(0);
-            return vehicleRepairDao.save(vehicleRepair);
-
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        vehicleRepair.setCreateAt(UnixTimeUtils.now());
+        vehicleRepair.setDisposeStatus(0);
+        return vehicleRepairDao.save(vehicleRepair);
     }
 
 
@@ -245,14 +211,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public int getVehicleUseStatusByBicycleCode(String bicycleCode) throws Exception {
-
-        try {
-            return vehicleDao.getVehicleUseStatusByBicycleCode(bicycleCode);
-
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return vehicleDao.getVehicleUseStatusByBicycleCode(bicycleCode);
     }
 
     /**
@@ -264,14 +223,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public int getVehicleStatusByBicycleCode(String bicycleCode) throws Exception {
-
-        try {
-            return vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
-
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
     }
 
     /**
@@ -282,14 +234,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     @Override
-    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) {
-        try {
-            return vehicleDao.getVehicleList(beginDimension, beginLongitude);
-
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) throws Exception{
+        return vehicleDao.getVehicleList(beginDimension, beginLongitude);
     }
 
 }

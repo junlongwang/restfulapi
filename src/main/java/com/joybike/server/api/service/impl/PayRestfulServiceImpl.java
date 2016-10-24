@@ -61,45 +61,38 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Override
     public void recharge(bankDepositOrder depositOrder) throws Exception {
+        //先记录充值记录
+        depositOrder.setCreateAt(UnixTimeUtils.now());
+        depositOrder.setRechargeType(RechargeType.balance.getValue());
+        long depositId = depositOrderDao.save(depositOrder);
 
-        try {
-            //先记录充值记录
-            depositOrder.setCreateAt(UnixTimeUtils.now());
-            depositOrder.setRechargeType(RechargeType.balance.getValue());
-            long depositId = depositOrderDao.save(depositOrder);
+        //记录现金流水
+        moneyFlowDao.save(flowInfo(depositOrder, depositId));
 
-            //记录现金流水
-            moneyFlowDao.save(flowInfo(depositOrder, depositId));
+        if (depositId > 0) {
 
-            if (depositId > 0) {
+            bankAcount bankAcountCash = acountDao.getAcount(depositOrder.getUserId(), AcountType.cash);
 
-                bankAcount bankAcountCash = acountDao.getAcount(depositOrder.getUserId(), AcountType.cash);
+            //充值现金
+            if (bankAcountCash != null) {
+                acountDao.updateAcount(depositOrder.getUserId(), AcountType.cash, bankAcountCash.getPrice().add(depositOrder.getCash()));
 
-                //充值现金
-                if (bankAcountCash != null) {
-                    acountDao.updateAcount(depositOrder.getUserId(), AcountType.cash, bankAcountCash.getPrice().add(depositOrder.getCash()));
+            } else {
+                acountDao.save(depositToAcount(depositOrder, AcountType.cash));
 
-                } else {
-                    acountDao.save(depositToAcount(depositOrder, AcountType.cash));
-
-                }
-
-                //充值优惠
-                bankAcount bankAcountbalance = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
-                if (bankAcountbalance != null) {
-                    acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAcountCash.getPrice().add(depositOrder.getAward()));
-
-                } else {
-
-                    acountDao.save(depositToAcount(depositOrder, AcountType.balance));
-
-                }
             }
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
+
+            //充值优惠
+            bankAcount bankAcountbalance = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
+            if (bankAcountbalance != null) {
+                acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAcountCash.getPrice().add(depositOrder.getAward()));
+
+            } else {
+
+                acountDao.save(depositToAcount(depositOrder, AcountType.balance));
+
+            }
         }
-
-
     }
 
     /**
@@ -109,25 +102,19 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Override
     public void depositRecharge(bankDepositOrder depositOrder) throws Exception {
+        //先记录充值记录
+        depositOrder.setCreateAt(UnixTimeUtils.now());
+        depositOrder.setRechargeType(RechargeType.deposit.getValue());
+        long depositId = depositOrderDao.save(depositOrder);
 
-        try {
-            //先记录充值记录
-            depositOrder.setCreateAt(UnixTimeUtils.now());
-            depositOrder.setRechargeType(RechargeType.deposit.getValue());
-            long depositId = depositOrderDao.save(depositOrder);
+        //记录现金流水
+        moneyFlowDao.save(flowInfo(depositOrder, depositId));
 
-            //记录现金流水
-            moneyFlowDao.save(flowInfo(depositOrder, depositId));
-
-            //修改用户押金状态
-            userInfo userInfo = new userInfo();
-            userInfo.setId(depositOrder.getUserId());
-            userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
-            userInfoService.updateUserInfo(userInfo);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
-        }
-
+        //修改用户押金状态
+        userInfo userInfo = new userInfo();
+        userInfo.setId(depositOrder.getUserId());
+        userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
+        userInfoService.updateUserInfo(userInfo);
     }
 
     /**
@@ -139,12 +126,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Override
     public List<bankDepositOrder> getBankDepositOrderList(long userId) throws Exception {
-        try {
-            return depositOrderDao.getBankDepositOrderList(userId, DepositStatus.susuccess);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return depositOrderDao.getBankDepositOrderList(userId, DepositStatus.susuccess);
     }
 
     /**
@@ -155,13 +137,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Override
     public long addUserCoupon(userCoupon userCoupon) throws Exception {
-
-        try {
-            return userCouponDao.save(userCoupon);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return userCouponDao.save(userCoupon);
     }
 
     /**
@@ -173,12 +149,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Override
     public long deleteUserCoupon(Map map) throws Exception {
 
-        try {
-            return userCouponDao.deleteUserCoupon(map);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return userCouponDao.deleteUserCoupon(map);
     }
 
     /**
@@ -189,12 +160,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Override
     public long updateCoupon(Map map) throws Exception {
-        try {
-            return userCouponDao.updateCoupon(map);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
+        return userCouponDao.updateCoupon(map);
     }
 
     /**
@@ -206,14 +172,26 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Override
     public List<userCoupon> getValidCouponList(long userId, int useAt) throws Exception {
-        try {
-            return userCouponDao.getValidList(userId, useAt);
-        } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
-        }
-
-
+        return userCouponDao.getValidList(userId, useAt);
     }
+
+    /**
+     * 充值成功回调
+     *
+     * @param id
+     * @param payType
+     * @param payDocumentId
+     * @param merchantId
+     * @param payAt
+     * @return
+     */
+
+    @Override
+    public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception{
+        return depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
+    }
+
+
 
     /*==================================================*/
 

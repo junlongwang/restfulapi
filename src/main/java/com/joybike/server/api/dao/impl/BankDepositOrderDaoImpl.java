@@ -2,6 +2,7 @@ package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.DepositStatus;
 import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankDepositOrderDao;
 import com.joybike.server.api.model.bankConsumedOrder;
@@ -29,10 +30,42 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
     final String getBankDepositOrderListSql = "select * from bankDepositOrder where userId = ? and status = ? ";
 
     @Override
-    public List<bankDepositOrder> getBankDepositOrderList(long userId,DepositStatus depositStatus)  throws Exception{
-        Object[] object = new Object[]{userId,depositStatus.getValue()};
+    public List<bankDepositOrder> getBankDepositOrderList(long userId, DepositStatus depositStatus) throws Exception {
+        Object[] object = new Object[]{userId, depositStatus.getValue()};
         try {
-            return this.jdbcTemplate.getJdbcOperations().query(getBankDepositOrderListSql, object, new BeanPropertyRowMapper(bankDepositOrder.class));
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getBankDepositOrderListSql, object, new BeanPropertyRowMapper(bankDepositOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 充值成功回调
+     *
+     * @param id
+     * @param payType
+     * @param payDocumentId
+     * @param merchantId
+     * @param payAt
+     * @return
+     */
+    final String updateDepositOrderByIdSql = "update bankDepositOrder set status = 2 ,payType = :payType , payDocumentId = :payDocumentId ,merchantId = :merchantId, payAt = :payAt where id = :id";
+
+    @Override
+    public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) {
+        Map map = new HashMap();
+        map.put("id", id);
+        map.put("payType", payType.getValue());
+        map.put("payDocumentId", payDocumentId);
+        map.put("merchantId", merchantId);
+        map.put("payAt", payAt);
+
+        try {
+            return execSQL(updateDepositOrderByIdSql, map);
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }

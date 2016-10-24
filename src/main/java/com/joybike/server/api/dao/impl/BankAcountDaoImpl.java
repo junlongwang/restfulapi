@@ -42,7 +42,6 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
             map.put("acountType", acountType.getValue());
             map.put("price", price);
             map.put("updateAt", UnixTimeUtils.now());
-
             return execSQL(updateAcountSql, map);
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
@@ -66,8 +65,12 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
             Map map = new HashMap();
             map.put("userId", userId);
             map.put("acountType", acountType.getValue());
+            try {
+                return (bankAcount) this.jdbcTemplate.queryForObject(acountSql, map, new BeanPropertyRowMapper(bankAcount.class));
+            }catch (Exception e){
+                return null;
+            }
 
-            return (bankAcount) this.jdbcTemplate.queryForObject(acountSql, map, new BeanPropertyRowMapper(bankAcount.class));
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }

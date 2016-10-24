@@ -4,6 +4,7 @@ import com.joybike.server.api.Enum.ConsumedStatus;
 import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankConsumedOrderDao;
+import com.joybike.server.api.model.bankAcount;
 import com.joybike.server.api.model.bankConsumedOrder;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -31,8 +32,11 @@ public class BankConsumedOrderDaoImpl extends Reository<bankConsumedOrder> imple
 
         try {
             Object[] object = new Object[]{userId, consumedStatus.getValue()};
-            return this.jdbcTemplate.getJdbcOperations().query(getBankConsumedOrderListSql, object, new BeanPropertyRowMapper(bankConsumedOrder.class));
-
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getBankConsumedOrderListSql, object, new BeanPropertyRowMapper(bankConsumedOrder.class));
+            }catch (Exception e){
+                return null;
+            }
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }

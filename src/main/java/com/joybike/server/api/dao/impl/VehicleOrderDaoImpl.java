@@ -55,7 +55,12 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
             Map map = new HashMap();
             map.put("userId", userId);
             map.put("status", OrderStatus.complete.getValue());
-            return (vehicleOrder) this.jdbcTemplate.queryForObject(getNoPayByUserIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
+
+            try {
+                return (vehicleOrder) this.jdbcTemplate.queryForObject(getNoPayByUserIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
 
         } catch (Exception e) {
             throw new RestfulException(ErrorEnum.DATABASE_ERROR);

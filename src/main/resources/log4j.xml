@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration PUBLIC "-//log4j/log4j Configuration//EN" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <appender name="consoleLog" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+    </appender>
+    <appender name="requestLog" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/opt/soft/logs/server.log"/>
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="INFO"/>
+        <param name="DatePattern" value="'_'yyyyMMddHH'.log'"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%p] %d{yy-MM-dd HH:mm:ss} %m%n"/>
+        </layout>
+    </appender>
+    <appender name="errorLog" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
+        <param name="File" value="/opt/soft/logs/error.log"/>
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="ERROR"/>
+        <param name="DatePattern" value="'_'yyyy-MM-dd'.log'"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%c-%l] %m%n"/>
+        </layout>
+    </appender>
+    <appender name="infoLog" class="org.apache.log4j.DailyRollingFileAppender">
+        <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
+        <param name="File" value="/opt/soft/logs/info.log"/>
+        <param name="Append" value="true"/>
+        <param name="Threshold" value="INFO"/>
+        <param name="DatePattern" value="'_'yyyy-MM-dd'.log'"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%c-%l] %m%n"/>
+        </layout>
+    </appender>
+    <logger name="requestLogger" additivity="false">
+        <appender-ref ref="requestLog"/>
+    </logger>
+    <root>
+        <priority value="DEBUG" />
+        <appender-ref ref="consoleLog" />
+        <appender-ref ref="infoLog"/>
+        <appender-ref ref="errorLog"/>
+        <appender-ref ref="asyncMail"/>
+    </root>
+</log4j:configuration>

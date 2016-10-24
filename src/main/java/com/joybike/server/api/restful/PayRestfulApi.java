@@ -3,8 +3,7 @@ package com.joybike.server.api.restful;
 import com.joybike.server.api.ThirdPayService.IThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.model.*;
-import com.joybike.server.api.service.BankDepositOrderService;
-import com.joybike.server.api.service.impl.BankDepositOrderServiceImpl;
+import com.joybike.server.api.service.PayRestfulService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +21,9 @@ import java.util.List;
 public class PayRestfulApi {
 
     @Autowired
-    private BankDepositOrderService bankDepositOrderService = new BankDepositOrderServiceImpl();
+    private PayRestfulService payRestfulService;
     @Autowired
-    private IThirdPayService iThirdPayService = new ThirdPayServiceImpl();
+    private IThirdPayService iThirdPayService;
 
     /**
      * 充值：可充值押金、预存现金
@@ -83,7 +82,7 @@ public class PayRestfulApi {
         order.setCreateAt(creatTime);
         order.setRechargeType(payBean.getRechargeType());
         try {
-            bankDepositOrderService.depositRecharge(order);
+            payRestfulService.depositRecharge(order);
             return order;
         }catch (Exception e){
             return null;

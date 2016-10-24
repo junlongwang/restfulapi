@@ -1,18 +1,12 @@
 package com.joybike.server.api.thirdparty.wxtenpay.util;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.joybike.server.api.thirdparty.huaxinSdk.StringUtils;
-import javax.swing.text.Document;
-import javax.xml.bind.Element;
+import org.apache.commons.lang.StringUtils;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 /**
  * Created by LongZiyuan on 2016/10/21.
@@ -22,7 +16,7 @@ public class ParseXml {
     public static HashMap<String,String>  parseXml(String documentStr){
 //		 log.info("需要解析的xml:"+documentStr);
         HashMap<String,String> resultMap = new HashMap<String,String>();
-        if( !StringUtils.isNotBlank(documentStr) || "null".equals(documentStr) ) return resultMap;
+        if( documentStr == "" || "null".equals(documentStr) ) return resultMap;
         try {
             Document document = DocumentHelper.parseText(documentStr.toString());
             Element root =document.getRootElement();
@@ -47,6 +41,60 @@ public class ParseXml {
             }
         }catch (Exception e) {
             return null;
+        }
+        return resultMap;
+    }
+
+    public static String parseXML(Map paraMap) {
+        Document document = DocumentHelper.createDocument();
+        Element rootElement = document.addElement("xml");
+        if (paraMap != null && paraMap.size() > 0) {
+            for (Object entry : paraMap.keySet()) {
+                rootElement.addElement(entry.toString()).addCDATA(paraMap.get(entry).toString());
+            }
+        }
+        return document.asXML();
+    }
+
+    /**
+     * @time:2014-07-18
+     * @description:处理字符串
+     * @param textValue
+     * @return
+     */
+    private static String doStr(String textValue) {
+        if (textValue.indexOf("<![CDATA[") > -1 && textValue.indexOf("]]>") > -1) {
+            textValue = textValue.replaceAll("<![CDATA[", "").replaceAll("]]>", "");
+        }
+        return textValue;
+    }
+
+    /**
+     * @time:2014-07-14
+     * @description:解析子节点
+     * @param node
+     * @param pareName
+     * @param resultMap
+     * @return
+     */
+    private static HashMap<String, String> parseNode(Element node, String pareName, HashMap<String, String> resultMap) {
+        if (node == null)
+            return resultMap;
+        for (Iterator j = node.elementIterator(); j.hasNext();) {
+            Element e2 = (Element) j.next();
+            String key = e2.attributeValue("name");
+            if (!StringUtils.isNotBlank(key) || "null".equals(key))
+                key = e2.getName();
+            String textValue = e2.getText();
+            if (e2.elements() != null && e2.elements().size() > 0) {
+                for (int i = 0; i < e2.elements().size(); i++) {
+                    parseNode(e2, key, resultMap);
+                }
+            } else {
+                if (!StringUtils.isNotBlank(textValue))
+                    continue;
+                resultMap.put(key, textValue);
+            }
         }
         return resultMap;
     }

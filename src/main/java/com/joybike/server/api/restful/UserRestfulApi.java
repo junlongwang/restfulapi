@@ -1,9 +1,12 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
-import com.joybike.server.api.service.BankAcountService;
-import com.joybike.server.api.service.UserInfoService;
+import com.joybike.server.api.service.BicycleRestfulService;
+import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.service.PayRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.SMSHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,27 +19,14 @@ import java.util.Random;
 /**
  * Created by 58 on 2016/10/16.
  */
-//"/api/user"
+@RequestMapping("/user")
 @RestController()
 public class UserRestfulApi {
 
-    @Autowired
-    private UserInfoService userInfoService;
 
     @Autowired
-    private BankAcountService bankAcountService;
+    private UserRestfulService userRestfulService;
 
-    /**
-     * 注册用户
-     *
-     * @param user
-     * @return
-     */
-    @RequestMapping(value = "add", method = RequestMethod.POST)
-    public ResponseEntity<userInfo> add(@RequestBody userInfo user) {
-
-        return ResponseEntity.ok(new userInfo());
-    }
 
     /**
      * 更新用户信息
@@ -45,8 +35,15 @@ public class UserRestfulApi {
      * @return
      */
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public ResponseEntity<userInfo> update(@RequestBody userInfo user) {
-        return ResponseEntity.ok(new userInfo());
+    public ResponseEntity<Message<userInfo>> update(@RequestBody userInfo user) {
+        try {
+            userRestfulService.updateUserInfo(user);
+            userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
+            return ResponseEntity.ok(new Message<userInfo>(true, null, userInfo));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<userInfo>(false, "1001：" + "更新用户信息失败", null));
+        }
+
     }
 
     /**
@@ -57,16 +54,18 @@ public class UserRestfulApi {
      */
     @RequestMapping(value = "getValidateCode", method = RequestMethod.GET)
     public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile) {
+        int randNo = 0;
         try {
-            int randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
-            //发送短信接口
-            SMSHelper.sendValidateCode(mobile,String.valueOf(randNo));
+            randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
             //根据用户号码，进行查询，存在返回信息；不存在创建
-            userInfo userInfo = userInfoService.getUserInfoByMobile(mobile);
+            userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);
             LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
             return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<LoginData>(false, "1001：" + e.getMessage(), null));
+        } finally {
+            //发送短信接口
+            SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
         }
     }
 
@@ -77,13 +76,12 @@ public class UserRestfulApi {
      * @return
      */
     @RequestMapping(value = "getAcountMoney", method = RequestMethod.GET)
-    public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") String userid) {
+    public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") long userid) {
         try {
-            long user_id = Long.valueOf(userid);
-            double acountMoney = bankAcountService.getUserAcountMoneyByuserId(user_id);
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userid);
             return ResponseEntity.ok(new Message<Double>(true, null, acountMoney));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<Double>(false, "1001：" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<Double>(false, "1001：" + "获取余额信息失败", null));
         }
     }
 

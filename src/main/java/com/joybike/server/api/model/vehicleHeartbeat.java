@@ -130,10 +130,6 @@ public class vehicleHeartbeat implements Serializable {
     **/
     private Integer createAt;
 
-    public vehicleHeartbeat(){
-
-    }
-
     public vehicleHeartbeat(Long id, Long lockId, String firmwareVersion, String allocation, String baseStationType, Integer gpsTime, BigDecimal dimension, BigDecimal longitude, Integer lockTime, String cellId, String stationId, String speed, String direction, Integer arousalType, String custom, Integer lockStatus, Integer batteryStatus, String batteryPercent, Integer unlockNumber, String orderCode, Integer createAt) {
         this.id = id;
         this.lockId = lockId;
@@ -156,6 +152,10 @@ public class vehicleHeartbeat implements Serializable {
         this.unlockNumber = unlockNumber;
         this.orderCode = orderCode;
         this.createAt = createAt;
+    }
+
+    public vehicleHeartbeat(){
+
     }
 
     @Override

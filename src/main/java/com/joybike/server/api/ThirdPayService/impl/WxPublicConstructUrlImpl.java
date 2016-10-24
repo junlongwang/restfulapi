@@ -1,4 +1,5 @@
 package com.joybike.server.api.ThirdPayService.impl;
+import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
 import com.joybike.server.api.ThirdPayService.appConstructUrlInter;
 import com.joybike.server.api.model.ThirdPayBean;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.*;
 /**
  * Created by LongZiyuan on 2016/10/23.
  */
-public class WxPublicConstructUrlImpl {
+public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     private static String mch_id = "1401808502";
     private static String appid = "longziyuan";
@@ -31,7 +32,7 @@ public class WxPublicConstructUrlImpl {
             map.put("body", payOrder.getPruductDesc());//商品描述
             map.put("attach","附加数据原样返回");//附加数据
             map.put("out_trade_no", payOrder.getId().toString());//商户订单号
-            Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100;
+            Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
             BigDecimal total_fee = new BigDecimal(fMoney);
             map.put("total_fee",String.valueOf(total_fee));//总金额
             String spbillCreateIp = payOrder.getOperIP();
@@ -45,12 +46,12 @@ public class WxPublicConstructUrlImpl {
             String xml=ParseXml.parseXML(map);//转化为xml格式
             String httpType = "SSL";
             String timeOut = "60000";
-            String res = HttpRequestSimple.sendHttpMsg(WxPublicPropertiesConfigEnum.WXPUBLIC_PAYURL.getEnumValues(), xml, httpType, timeOut);
+            String res = HttpRequestSimple.sendHttpMsg("www.weixinpay.com", xml, httpType, timeOut);
             HashMap resMap=ParseXml.parseXml(res);
             if(resMap.get("return_code").equals("SUCCESS")){
                 String reqSign=String.valueOf(resMap.get("sign"));
                 String resSign=SignUtil.sign(resMap, key).toUpperCase();
-                if(reqSign.equals(resSign){
+                if(reqSign.equals(resSign)){
                     String   prepayId=String.valueOf(resMap.get("prepay_id"));
 
                     //生成paySign參數值

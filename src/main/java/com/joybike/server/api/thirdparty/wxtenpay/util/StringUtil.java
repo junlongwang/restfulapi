@@ -37,6 +37,22 @@ public class StringUtil {
         }
     }
 
+    public static boolean isBlank(String str) {
+        int length;
+
+        if ((str == null) || ((length = str.length()) == 0)) {
+            return true;
+        }
+
+        for (int i = 0; i < length; i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 
     public static String encode(String source, String from, String to) {
         byte[] bts;

@@ -54,7 +54,6 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
     public List<userCoupon> getValidList(long userId, int useAt) {
         Object[] object = new Object[]{userId, useAt};
         List<userCoupon> list = this.jdbcTemplate.getJdbcOperations().query(validCouponSql, object, new BeanPropertyRowMapper(userCoupon.class));
-
         return list;
     }
 

@@ -3,7 +3,7 @@ package com.joybike.server.api.Enum;
 /**
  * Created by lishaoyong on 16/10/19.
  */
-public enum useStatus {
+public enum UseStatus {
 
     /**
      * 空闲
@@ -18,12 +18,11 @@ public enum useStatus {
     /**
      * 使用中
      */
-    use(2)
-    ;
+    use(2);
 
     private int value;
 
-    useStatus(int value) {
+    UseStatus(int value) {
         this.value = value;
     }
 

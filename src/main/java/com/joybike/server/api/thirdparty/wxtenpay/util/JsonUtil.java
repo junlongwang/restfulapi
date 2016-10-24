@@ -21,6 +21,32 @@ public class JsonUtil {
 		return v;
 	}
 
+
+	/**
+	 * 将map的键值对转化成json串,value值不自动添加双引号（暂时用于支付宝app支付）
+	 *
+	 * @param paraMap
+	 * @return
+	 */
+	public static String mapToJsonNoSinganaure(Map paraMap) {
+		String jsonString = "{";
+		if (paraMap != null && paraMap.size() > 0) {
+			Set sets = paraMap.keySet();
+			Iterator its = sets.iterator();
+			while (its.hasNext()) {
+				String key = its.next().toString();
+				Object value = paraMap.get(key);
+				if (value instanceof Map) {
+					value = mapToJson((Map) value);
+				}
+				jsonString += "\"" + key + "\":" + value + ",";
+			}
+			jsonString = jsonString.substring(0, jsonString.length() - 1);
+		}
+		jsonString += "}";
+		return jsonString;
+	}
+
 	public static String mapToJson(Map paraMap) {
 		String jsonString = "{";
 		if (paraMap != null && paraMap.size() > 0) {

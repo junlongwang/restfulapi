@@ -1,9 +1,9 @@
 package com.joybike.server.api.service.impl;
 
-
+import com.joybike.server.api.dao.BankAcountDao;
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.userInfo;
-import com.joybike.server.api.service.UserInfoService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.MergeUtil;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
@@ -11,15 +11,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 用户体系服务
- * Created by 58 on 2016/10/18.
+ * Created by lishaoyong on 16/10/23.
  */
 @Service
-public class UserInfoServiceImpl implements UserInfoService {
+public class UserRestfulServiceImpl implements UserRestfulService {
+
+    @Autowired
+    private BankAcountDao acountDao;
+
 
     @Autowired
     private UserInfoDao userInfoDao;
 
+
+    /**
+     * 根据userId获取用户余额
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public double getUserAcountMoneyByuserId(long userId) throws Exception {
+        return acountDao.getUserAmount(userId);
+    }
 
     /**
      * 修改用户基本信息，先获取用户所有的信息
@@ -27,7 +41,7 @@ public class UserInfoServiceImpl implements UserInfoService {
      * @param user
      * @return
      */
-    public int updateUserInfo(userInfo user) {
+    public int updateUserInfo(userInfo user) throws Exception {
 
         long userId = user.getId();
 
@@ -65,6 +79,4 @@ public class UserInfoServiceImpl implements UserInfoService {
             return userInfoDao.getUserInfo(userId);
         }
     }
-
-
 }

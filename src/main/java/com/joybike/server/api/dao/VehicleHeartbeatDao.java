@@ -18,5 +18,5 @@ public interface VehicleHeartbeatDao extends IRepository<vehicleHeartbeat> {
      * @param endAt
      * @return
      */
-    List<vehicleHeartbeat> getVehicleHeartbeatList(long lockId, int beginAt, int endAt);
+    List<vehicleHeartbeat> getVehicleHeartbeatList(long lockId, int beginAt, int endAt) throws Exception;
 }

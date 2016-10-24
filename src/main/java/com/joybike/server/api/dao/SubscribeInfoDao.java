@@ -16,7 +16,7 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * @param vehicleId
      * @return
      */
-    int deleteSubscribeInfo(long userId, String vehicleId);
+    int deleteSubscribeInfo(long userId, String vehicleId) throws Exception;
 
 
     /**
@@ -27,7 +27,7 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * @param subscribeStatus
      * @return
      */
-    int updateSubscribeInfo(long userId, String vehicleId, SubscribeStatus subscribeStatus);
+    int updateSubscribeInfo(long userId, String vehicleId, SubscribeStatus subscribeStatus) throws Exception;
 
     /**
      * 根据预约表ID获取预约信息
@@ -35,7 +35,7 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * @param id
      * @return
      */
-    subscribeInfo getSubscribeInfoById(long id);
+    subscribeInfo getSubscribeInfoById(long id) throws Exception;
 
     /**
      * 根据用户ID查找
@@ -43,7 +43,7 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * @param userId
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId);
+    subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception;
 
 
     /**
@@ -52,7 +52,7 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * @param vehicleId
      * @return
      */
-    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId);
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception;
 
 
 }

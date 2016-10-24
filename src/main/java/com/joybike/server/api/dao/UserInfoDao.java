@@ -16,7 +16,7 @@ public interface UserInfoDao extends IRepository<userInfo> {
      * @param userId
      * @return
      */
-    userInfo getUserInfo(long userId);
+    userInfo getUserInfo(long userId) throws Exception;
 
 
     /**
@@ -24,7 +24,7 @@ public interface UserInfoDao extends IRepository<userInfo> {
      * @param phone
      * @return
      */
-    userInfo getInfoByPhone(String phone);
+    userInfo getInfoByPhone(String phone) throws Exception;
 
 
 }

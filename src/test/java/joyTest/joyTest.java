@@ -56,7 +56,12 @@ public class joyTest {
     @Test
     public void getUserInfoTest() {
 
-        userInfo u = userRestfulService.getUserInfoByMobile("13721766224");
+        userInfo u = null;
+        try {
+            u = userRestfulService.getUserInfoByMobile("13721766224");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(u.getRealName() + "，的信息");
 
     }
@@ -73,7 +78,11 @@ public class joyTest {
         order.setPayDocumentid("lishaoyong");
         order.setMerchantId("lishaoyong");
         order.setPayAt(UnixTimeUtils.now());
-        payRestfulService.depositRecharge(order);
+        try {
+            payRestfulService.depositRecharge(order);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

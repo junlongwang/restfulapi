@@ -1,9 +1,11 @@
 package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.ConsumedStatus;
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankConsumedOrderDao;
 import com.joybike.server.api.model.bankConsumedOrder;
+import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -25,9 +27,14 @@ public class BankConsumedOrderDaoImpl extends Reository<bankConsumedOrder> imple
     final String getBankConsumedOrderListSql = "select * from bankConsumedOrder where userId = ? and status = ?";
 
     @Override
-    public List<bankConsumedOrder> getBankConsumedOrderList(long userId, ConsumedStatus consumedStatus) {
-        Object[] object = new Object[]{userId, consumedStatus.getValue()};
-        List<bankConsumedOrder> list = this.jdbcTemplate.getJdbcOperations().query(getBankConsumedOrderListSql, object, new BeanPropertyRowMapper(bankConsumedOrder.class));
-        return list;
+    public List<bankConsumedOrder> getBankConsumedOrderList(long userId, ConsumedStatus consumedStatus) throws Exception {
+
+        try {
+            Object[] object = new Object[]{userId, consumedStatus.getValue()};
+            return this.jdbcTemplate.getJdbcOperations().query(getBankConsumedOrderListSql, object, new BeanPropertyRowMapper(bankConsumedOrder.class));
+
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 }

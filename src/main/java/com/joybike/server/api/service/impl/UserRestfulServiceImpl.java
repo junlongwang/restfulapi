@@ -1,10 +1,12 @@
 package com.joybike.server.api.service.impl;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.dao.BankAcountDao;
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.userInfo;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.MergeUtil;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,12 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      */
     @Override
     public double getUserAcountMoneyByuserId(long userId) throws Exception {
-        return acountDao.getUserAmount(userId);
+
+        try {
+            return acountDao.getUserAmount(userId);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
+        }
     }
 
     /**
@@ -43,16 +50,14 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      */
     public int updateUserInfo(userInfo user) throws Exception {
 
-        long userId = user.getId();
-
-        userInfo info = userInfoDao.getUserInfo(userId);
-
         try {
+            long userId = user.getId();
+            userInfo info = userInfoDao.getUserInfo(userId);
             MergeUtil.merge(info, user);
+            return userInfoDao.update(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
         }
-        return userInfoDao.update(user);
 
     }
 
@@ -62,21 +67,27 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param phone
      * @return
      */
-    public userInfo getUserInfoByMobile(String phone) {
+    public userInfo getUserInfoByMobile(String phone) throws Exception {
 
-        userInfo userInfo = userInfoDao.getInfoByPhone(phone);
-        if (userInfo != null) {
-            return userInfo;
-        } else {
-            userInfo user = new userInfo();
-            user.setRealName(StringRandom.getStringRandom(8));
-            user.setIphone(phone);
-            user.setSecurityStatus(0);
-            user.setAuthenStatus(0);
-            user.setUpdateAt(0);
-            user.setCreateAt(UnixTimeUtils.now());
-            long userId = userInfoDao.save(user);
-            return userInfoDao.getUserInfo(userId);
+        try {
+            userInfo userInfo = userInfoDao.getInfoByPhone(phone);
+            if (userInfo != null) {
+                return userInfo;
+            } else {
+                userInfo user = new userInfo();
+                user.setRealName(StringRandom.getStringRandom(8));
+                user.setIphone(phone);
+                user.setSecurityStatus(0);
+                user.setAuthenStatus(0);
+                user.setUpdateAt(0);
+                user.setCreateAt(UnixTimeUtils.now());
+                long userId = userInfoDao.save(user);
+                return userInfoDao.getUserInfo(userId);
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
         }
+
+
     }
 }

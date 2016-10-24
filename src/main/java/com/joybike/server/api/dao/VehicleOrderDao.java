@@ -15,11 +15,11 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * @param id
      * @return
      */
-    int updateOrderCode(long id, String orderCode);
+    int updateOrderCode(long id, String orderCode) throws Exception;
 
 
     /**
      * 根据用户ID获取未完成订单
      */
-    vehicleOrder getNoPayByUserId(long userId);
+    vehicleOrder getNoPayByUserId(long userId) throws Exception;
 }

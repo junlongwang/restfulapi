@@ -27,7 +27,7 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     final String userInfoSql = "select * from userInfo where id = :userId";
 
     @Override
-    public userInfo getUserInfo(long userId) {
+    public userInfo getUserInfo(long userId)  throws Exception{
         Map map = new HashMap();
         map.put("userId", userId);
         try {
@@ -47,7 +47,7 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     final String phoneSql = "select * from userInfo where iphone = ?";
 
     @Override
-    public userInfo getInfoByPhone(String phone) {
+    public userInfo getInfoByPhone(String phone)  throws Exception{
         Map map = new HashMap();
         map.put("mobile", phone);
         try {

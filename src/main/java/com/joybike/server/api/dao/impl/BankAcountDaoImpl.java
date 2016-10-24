@@ -1,9 +1,11 @@
 package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.AcountType;
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankAcountDao;
 import com.joybike.server.api.model.bankAcount;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
@@ -32,13 +34,20 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
     final String updateAcountSql = "update bankAcount set price = :price ,updateAt = :updateAt where userId = :userId and acountType = :acountType";
 
     @Override
-    public int updateAcount(long userId, AcountType acountType, BigDecimal price) {
-        Map map = new HashMap();
-        map.put("userId", userId);
-        map.put("acountType", acountType.getValue());
-        map.put("price", price);
-        map.put("updateAt", UnixTimeUtils.now());
-        return execSQL(updateAcountSql, map);
+    public int updateAcount(long userId, AcountType acountType, BigDecimal price) throws Exception {
+
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            map.put("acountType", acountType.getValue());
+            map.put("price", price);
+            map.put("updateAt", UnixTimeUtils.now());
+
+            return execSQL(updateAcountSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
+
     }
 
     /**
@@ -49,25 +58,41 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
      * @return
      */
     final String acountSql = "select * from bankAcount where userId = ? and acountType = ?";
+
     @Override
-    public bankAcount getAcount(long userId, AcountType acountType) {
-        Object[] object = new Object[]{userId, acountType.getValue()};
-        List<bankAcount> list = this.jdbcTemplate.getJdbcOperations().query(acountSql, object, new BeanPropertyRowMapper(bankAcount.class));
-        if (list.size() > 0) return list.get(0);
-        else return null;
+    public bankAcount getAcount(long userId, AcountType acountType) throws Exception {
+
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            map.put("acountType", acountType.getValue());
+
+            return (bankAcount) this.jdbcTemplate.queryForObject(acountSql, map, new BeanPropertyRowMapper(bankAcount.class));
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 
 
     /**
      * 根据用户ID获取用户总余额
+     *
      * @param userId
      * @return
      */
     final String userAmountSql = "select sum(price) price from bankAcount where userId = :userId group by userId";
+
     @Override
-    public double getUserAmount(long userId) {
-        Map map = new HashMap();
-        map.put("userId", userId);
-        return getCount(userAmountSql, map);
+    public double getUserAmount(long userId) throws Exception {
+
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+
+            return getCount(userAmountSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
+
     }
 }

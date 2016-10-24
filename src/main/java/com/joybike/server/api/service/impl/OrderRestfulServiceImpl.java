@@ -1,5 +1,6 @@
 package com.joybike.server.api.service.impl;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.dao.OrderItemDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
@@ -45,47 +46,52 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
     @Override
     public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) throws Exception {
 
-        subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
-        subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
+        try {
+            subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
+            subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
 
-        if (vinfo != null && uInfo != null) {
-            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+            if (vinfo != null && uInfo != null) {
+                bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+            }
+
+            if (uInfo != null && vinfo == null) {
+                bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+                bicycleRestfulService.deleteSubscribeInfo(userId, uInfo.getVehicleId());
+                bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
+                bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+            }
+
+
+            //创建订单
+            vehicleOrder order = new vehicleOrder();
+            order.setOrderCode(StringRandom.getStringRandom(14));
+            order.setUserId(userId);
+            order.setBeforePrice(BigDecimal.valueOf(0));
+            order.setAfterPrice(BigDecimal.valueOf(0));
+            order.setPayId(Long.valueOf(0));
+            order.setStatus(OrderStatus.newly.getValue());
+            order.setVehicleId(vehicleId);
+            order.setCreateAt(UnixTimeUtils.now());
+            order.setExucuteAt(beginAt);
+            long orderId = vehicleOrderDao.save(order);
+            String orderCode = StringRandom.GenerateOrderCode((int) orderId, userId);
+
+            vehicleOrderDao.updateOrderCode(orderId, orderCode);
+
+
+            //创建订单订单资源
+            orderItem item = new orderItem();
+            item.setUserId(userId);
+            item.setOrderCode(orderCode);
+            item.setVehicleCode(vehicleId);
+            item.setBeginAt(beginAt);
+            item.setBeginDimension(beginDimension);
+            item.setBeginLongitude(beginLongitude);
+            orderItemDao.save(item);
+        }catch (Exception e){
+            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
         }
 
-        if (uInfo != null && vinfo == null) {
-            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
-            bicycleRestfulService.deleteSubscribeInfo(userId, uInfo.getVehicleId());
-            bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
-            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
-        }
-
-
-        //创建订单
-        vehicleOrder order = new vehicleOrder();
-        order.setOrderCode(StringRandom.getStringRandom(14));
-        order.setUserId(userId);
-        order.setBeforePrice(BigDecimal.valueOf(0));
-        order.setAfterPrice(BigDecimal.valueOf(0));
-        order.setPayId(Long.valueOf(0));
-        order.setStatus(OrderStatus.newly.getValue());
-        order.setVehicleId(vehicleId);
-        order.setCreateAt(UnixTimeUtils.now());
-        order.setExucuteAt(beginAt);
-        long orderId = vehicleOrderDao.save(order);
-        String orderCode = StringRandom.GenerateOrderCode((int) orderId, userId);
-
-        vehicleOrderDao.updateOrderCode(orderId, orderCode);
-
-
-        //创建订单订单资源
-        orderItem item = new orderItem();
-        item.setUserId(userId);
-        item.setOrderCode(orderCode);
-        item.setVehicleCode(vehicleId);
-        item.setBeginAt(beginAt);
-        item.setBeginDimension(beginDimension);
-        item.setBeginLongitude(beginLongitude);
-        orderItemDao.save(item);
 
     }
 
@@ -100,7 +106,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         try {
             return vehicleOrderDao.getNoPayByUserId(userId);
         } catch (Exception e) {
-            throw new RestfulException("1001:" + "预约失败");
+            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
         }
 
     }

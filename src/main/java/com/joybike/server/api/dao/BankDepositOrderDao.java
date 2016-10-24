@@ -18,5 +18,5 @@ public interface BankDepositOrderDao extends IRepository<bankDepositOrder> {
      * @param depositStatus
      * @return
      */
-    List<bankDepositOrder> getBankDepositOrderList(long userId,DepositStatus depositStatus);
+    List<bankDepositOrder> getBankDepositOrderList(long userId,DepositStatus depositStatus) throws Exception;
 }

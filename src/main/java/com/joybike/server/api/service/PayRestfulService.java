@@ -28,14 +28,14 @@ public interface PayRestfulService {
      *
      * @param depositOrder
      */
-    void recharge(bankDepositOrder depositOrder);
+    void recharge(bankDepositOrder depositOrder) throws Exception;
 
     /**
      * 押金充值
      *
      * @param depositOrder
      */
-    void depositRecharge(bankDepositOrder depositOrder);
+    void depositRecharge(bankDepositOrder depositOrder) throws Exception;
 
 
     /**
@@ -54,7 +54,7 @@ public interface PayRestfulService {
      * @param userCoupon
      * @return
      */
-    long addUserCoupon(userCoupon userCoupon);
+    long addUserCoupon(userCoupon userCoupon) throws Exception;
 
     /**
      * 删除用户的优惠券
@@ -62,7 +62,7 @@ public interface PayRestfulService {
      * @param map
      * @return
      */
-    long deleteUserCoupon(Map map);
+    long deleteUserCoupon(Map map) throws Exception;
 
     /**
      * 修改用户优惠券信息
@@ -70,7 +70,7 @@ public interface PayRestfulService {
      * @param map
      * @return
      */
-    long updateCoupon(Map map);
+    long updateCoupon(Map map) throws Exception;
 
     /**
      * 获取用户当前可使用的优惠券
@@ -79,6 +79,6 @@ public interface PayRestfulService {
      * @param useAt
      * @return
      */
-    List<userCoupon> getValidCouponList(long userId, int useAt);
+    List<userCoupon> getValidCouponList(long userId, int useAt) throws Exception;
 
 }

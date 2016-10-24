@@ -1,9 +1,12 @@
 package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.DepositStatus;
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankDepositOrderDao;
+import com.joybike.server.api.model.bankConsumedOrder;
 import com.joybike.server.api.model.bankDepositOrder;
+import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -26,9 +29,12 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
     final String getBankDepositOrderListSql = "select * from bankDepositOrder where userId = ? and status = ? ";
 
     @Override
-    public List<bankDepositOrder> getBankDepositOrderList(long userId,DepositStatus depositStatus) {
+    public List<bankDepositOrder> getBankDepositOrderList(long userId,DepositStatus depositStatus)  throws Exception{
         Object[] object = new Object[]{userId,depositStatus.getValue()};
-        List<bankDepositOrder> list = this.jdbcTemplate.getJdbcOperations().query(getBankDepositOrderListSql, object, new BeanPropertyRowMapper(bankDepositOrder.class));
-        return list;
+        try {
+            return this.jdbcTemplate.getJdbcOperations().query(getBankDepositOrderListSql, object, new BeanPropertyRowMapper(bankDepositOrder.class));
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 }

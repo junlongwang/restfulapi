@@ -1,13 +1,17 @@
 package com.joybike.server.api.dao.impl;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.SubscribeInfoDao;
+import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.subscribeInfo;
+import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,16 +30,14 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
     final String getSubscribeInfoByBicycleCode = "select * from subscribeInfo where vehicleId = :vehicleId";
 
     @Override
-    public subscribeInfo getSubscribeInfoByBicycleCode( String vehicleId) {
-        Map map = new HashMap();
-        map.put("vehicleId", vehicleId);
+    public subscribeInfo getSubscribeInfoByBicycleCode( String vehicleId)  throws Exception{
         try {
+            Map map = new HashMap();
+            map.put("vehicleId", vehicleId);
             return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByBicycleCode, map, new BeanPropertyRowMapper(subscribeInfo.class));
         } catch (Exception e) {
-            return null;
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
-
-
     }
 
     /**
@@ -48,11 +50,15 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
     final String deleteSubscribeInfoSql = "delete from subscribeInfo where userId = :userId and vehicleId = :vehicleId";
 
     @Override
-    public int deleteSubscribeInfo(long userId, String vehicleId) {
-        Map map = new HashMap();
-        map.put("userId", userId);
-        map.put("vehicleId", vehicleId);
-        return execSQL(deleteSubscribeInfoSql, map);
+    public int deleteSubscribeInfo(long userId, String vehicleId)  throws Exception{
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            map.put("vehicleId", vehicleId);
+            return execSQL(deleteSubscribeInfoSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -66,12 +72,16 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
     final String updateSubscribeInfoSql = "update subscribeInfo set status = :status where userId = :userId and vehicleId = :vehicleId";
 
     @Override
-    public int updateSubscribeInfo(long userId, String vehicleId, SubscribeStatus subscribeStatus) {
-        Map map = new HashMap();
-        map.put("userId", userId);
-        map.put("vehicleId", vehicleId);
-        map.put("status", subscribeStatus.getValue());
-        return execSQL(updateSubscribeInfoSql, map);
+    public int updateSubscribeInfo(long userId, String vehicleId, SubscribeStatus subscribeStatus)  throws Exception{
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            map.put("vehicleId", vehicleId);
+            map.put("status", subscribeStatus.getValue());
+            return execSQL(updateSubscribeInfoSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 
 
@@ -85,13 +95,13 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
     final String getSubscribeInfoByIdSql = "select * from subscribeInfo where id = :id";
 
     @Override
-    public subscribeInfo getSubscribeInfoById(long id) {
-        Map map = new HashMap();
-        map.put("id", id);
+    public subscribeInfo getSubscribeInfoById(long id)  throws Exception{
         try {
+            Map map = new HashMap();
+            map.put("id", id);
             return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByIdSql, map, new BeanPropertyRowMapper(subscribeInfo.class));
         } catch (Exception e) {
-            return null;
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
     }
 
@@ -106,34 +116,14 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
     final String getSubscribeInfoByUserId = "select * from subscribeInfo where userId = :userId";
 
     @Override
-    public subscribeInfo getSubscribeInfoByUserId(long userId) {
-        Map map = new HashMap();
-        map.put("userId", userId);
+    public subscribeInfo getSubscribeInfoByUserId(long userId)  throws Exception{
         try {
+            Map map = new HashMap();
+            map.put("userId", userId);
             return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByUserId, map, new BeanPropertyRowMapper(subscribeInfo.class));
         } catch (Exception e) {
-            return null;
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
     }
 
-//    /**
-//     * 根据预约code获取预约订单
-//     *
-//     * @param userId
-//     * @param vehicleId
-//     * @return
-//     */
-//    final String getSubscribeInfoByCode = "select * from subscribeInfo where subscribeCode = :subscribeCode";
-//
-//    @Override
-//    public subscribeInfo getSubscribeInfoByCode(long userId, String vehicleId) {
-//        String subscribeCode = String.valueOf(userId) + String.valueOf(vehicleId);
-//        Map map = new HashMap();
-//        map.put("subscribeCode", subscribeCode);
-//        try {
-//            return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByCode, map, new BeanPropertyRowMapper(subscribeInfo.class));
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
 }

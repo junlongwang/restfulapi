@@ -1,5 +1,6 @@
 package com.joybike.server.api.service.impl;
 
+
 import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.dao.OrderItemDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
@@ -8,7 +9,6 @@ import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.vehicleOrder;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
-import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,6 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      */
     @Override
     public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) throws Exception {
-
         subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
         subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
 
@@ -97,12 +96,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      */
     @Override
     public vehicleOrder getNoPayOrderByUserId(long userId) throws Exception {
-        try {
-            return vehicleOrderDao.getNoPayByUserId(userId);
-        } catch (Exception e) {
-            throw new RestfulException("1001:" + "预约失败");
-        }
-
+        return vehicleOrderDao.getNoPayByUserId(userId);
     }
 
     /**

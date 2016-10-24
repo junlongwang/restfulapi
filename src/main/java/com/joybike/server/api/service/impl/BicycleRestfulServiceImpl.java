@@ -1,5 +1,6 @@
 package com.joybike.server.api.service.impl;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Enum.UseStatus;
 import com.joybike.server.api.dao.SubscribeInfoDao;
@@ -67,8 +68,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
 
             } else {
-                throw new RestfulException("1001:" + "不可重复预约");
-//                bscribeInfo = vInfo;
+                throw new RestfulException(ErrorEnum.Repeat_Error);
             }
         }
 
@@ -85,8 +85,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //修改车辆使用状态
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
             } else {
-//                bscribeInfo = uInfo;
-                throw new RestfulException("1001:" + "不可重复预约");
+                throw new RestfulException(ErrorEnum.BicycleUse_Error);
             }
         }
 
@@ -100,8 +99,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
                 //修改车辆使用状态
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
-            } else {
-                throw new RestfulException("1001:" + "该车已被预约");
             }
         }
 
@@ -152,7 +149,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     @Override
-    public int updateSubscribeInfo(long userId, String vehicleId) {
+    public int updateSubscribeInfo(long userId, String vehicleId) throws Exception {
         return subscribeInfoDao.updateSubscribeInfo(userId, vehicleId, SubscribeStatus.use);
     }
 
@@ -163,7 +160,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     @Override
-    public subscribeInfo getSubscribeInfoByUserId(long userId) {
+    public subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception {
         return subscribeInfoDao.getSubscribeInfoByUserId(userId);
     }
 
@@ -174,7 +171,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     @Override
-    public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) {
+    public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception {
         return subscribeInfoDao.getSubscribeInfoByBicycleCode(vehicleId);
     }
 
@@ -188,10 +185,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Override
     public List<vehicleHeartbeat> getVehicleHeartbeatList(String bicycleCode, int beginAt, int endAt) throws Exception {
-
         long lockId = vehicleDao.getLockByBicycleCode(bicycleCode);
         return vehicleHeartbeatDao.getVehicleHeartbeatList(lockId, beginAt, endAt);
-
     }
 
     /**
@@ -239,7 +234,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     @Override
-    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) {
+    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) throws Exception{
         return vehicleDao.getVehicleList(beginDimension, beginLongitude);
     }
 

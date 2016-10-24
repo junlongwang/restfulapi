@@ -40,13 +40,23 @@ public class userCouponTest {
         map.put("status",1);
         map.put("userId",1);
         map.put("couponId", 1);
-        long i = userCouponDao.updateCoupon(map);
+        long i = 0;
+        try {
+            i = userCouponDao.updateCoupon(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(i + ":");
     }
 
     @Test
     public void getTest(){
-        List<userCoupon> list = userCouponDao.getValidList(1,0);
+        List<userCoupon> list = null;
+        try {
+            list = userCouponDao.getValidList(1,0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
         System.out.println(list.size());
@@ -55,7 +65,12 @@ public class userCouponTest {
 
     @Test
     public void getCountTest(){
-        int vaCount = userCouponDao.getValidCount(1,0);
+        int vaCount = 0;
+        try {
+            vaCount = userCouponDao.getValidCount(1,0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(vaCount + "个");
     }
 }

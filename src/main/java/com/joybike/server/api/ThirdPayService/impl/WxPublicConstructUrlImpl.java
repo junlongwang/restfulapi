@@ -4,6 +4,7 @@ import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -22,7 +23,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             return null;
         RedirectParam  redirectParam = new RedirectParam();
         try {
-            Map<String,String> map = new HashMap<>();
+            Map<String,String> map = new HashMap();
             map.put("appid",appid);//公众账号ID
             map.put("mch_id",mch_id);//商户号
             map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
@@ -80,6 +81,11 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             return null;
         }
         return redirectParam;
+    }
+
+    @Override
+    public String callBack(HttpServletRequest request) {
+        return null;
     }
 }
 

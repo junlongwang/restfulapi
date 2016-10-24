@@ -1,6 +1,7 @@
 package com.joybike.server.api.dao;
 
 import com.joybike.server.api.Enum.DepositStatus;
+import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.Infrustructure.IRepository;
 import com.joybike.server.api.model.bankDepositOrder;
 
@@ -18,5 +19,17 @@ public interface BankDepositOrderDao extends IRepository<bankDepositOrder> {
      * @param depositStatus
      * @return
      */
-    List<bankDepositOrder> getBankDepositOrderList(long userId,DepositStatus depositStatus);
+    List<bankDepositOrder> getBankDepositOrderList(long userId, DepositStatus depositStatus) throws Exception;
+
+    /**
+     * 充值成功回调
+     *
+     * @param id
+     * @param payType
+     * @param payDocumentId
+     * @param merchantId
+     * @param payAt
+     * @return
+     */
+    int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt);
 }

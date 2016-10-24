@@ -30,7 +30,7 @@ public interface UserRestfulService {
      * @param mobile
      * @return
      */
-    userInfo getUserInfoByMobile(String mobile);
+    userInfo getUserInfoByMobile(String mobile) throws Exception;
 
 
 }

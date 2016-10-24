@@ -1,5 +1,6 @@
 package com.joybike.server.api.service.impl;
 
+
 import com.joybike.server.api.dao.BankAcountDao;
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.userInfo;
@@ -32,6 +33,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      */
     @Override
     public double getUserAcountMoneyByuserId(long userId) throws Exception {
+
         return acountDao.getUserAmount(userId);
     }
 
@@ -41,19 +43,12 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param user
      * @return
      */
+    @Override
     public int updateUserInfo(userInfo user) throws Exception {
-
         long userId = user.getId();
-
         userInfo info = userInfoDao.getUserInfo(userId);
-
-        try {
-            MergeUtil.merge(info, user);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MergeUtil.merge(info, user);
         return userInfoDao.update(user);
-
     }
 
     /**
@@ -62,7 +57,8 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param phone
      * @return
      */
-    public userInfo getUserInfoByMobile(String phone) {
+    @Override
+    public userInfo getUserInfoByMobile(String phone) throws Exception {
 
         userInfo userInfo = userInfoDao.getInfoByPhone(phone);
         if (userInfo != null) {

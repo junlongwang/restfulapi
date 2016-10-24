@@ -2,7 +2,6 @@ package com.joybike.server.api.service;
 
 
 import com.joybike.server.api.model.vehicleOrder;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 

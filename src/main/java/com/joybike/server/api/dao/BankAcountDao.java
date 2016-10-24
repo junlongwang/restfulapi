@@ -19,7 +19,7 @@ public interface BankAcountDao extends IRepository<bankAcount> {
      * @param price
      * @return
      */
-    int updateAcount(long userId,AcountType acountType,BigDecimal price);
+    int updateAcount(long userId,AcountType acountType,BigDecimal price) throws Exception;
 
 
     /**
@@ -28,13 +28,13 @@ public interface BankAcountDao extends IRepository<bankAcount> {
      * @param acountType
      * @return
      */
-    bankAcount getAcount(long userId ,AcountType acountType);
+    bankAcount getAcount(long userId ,AcountType acountType) throws Exception;
 
     /**
      * 获取用户账户总余额
      * @param userId
      * @return
      */
-    double getUserAmount(long userId);
+    double getUserAmount(long userId) throws Exception;
 
 }

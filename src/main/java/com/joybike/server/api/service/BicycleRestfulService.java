@@ -38,7 +38,7 @@ public interface BicycleRestfulService {
      * @param vehicleId
      * @return
      */
-    int updateSubscribeInfo(long userId, String vehicleId);
+    int updateSubscribeInfo(long userId, String vehicleId) throws Exception;
 
     /**
      * 根据用户ID查找预约信息
@@ -46,7 +46,7 @@ public interface BicycleRestfulService {
      * @param userId
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId);
+    subscribeInfo getSubscribeInfoByUserId(long userId)  throws Exception;
 
     /**
      * 根据车辆ID获取预约信息
@@ -54,7 +54,7 @@ public interface BicycleRestfulService {
      * @param vehicleId
      * @return
      */
-    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId);
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId)  throws Exception;
 
     /**
      * 获取骑行记录

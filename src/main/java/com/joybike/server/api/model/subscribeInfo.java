@@ -52,12 +52,8 @@ public class subscribeInfo implements Serializable {
      */
     private String subscribeCode;
 
-    /**
-     * 订单code，骑行订单的code
-     */
-    private String orderCode;
 
-    public subscribeInfo(Long id, Long userId, String vehicleId, Integer startAt, Integer endAt, Integer createAt, Integer status, Integer updateAt,String subscribeCode ,String orderCode) {
+    public subscribeInfo(Long id, Long userId, String vehicleId, Integer startAt, Integer endAt, Integer createAt, Integer status, Integer updateAt,String subscribeCode ) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
@@ -67,7 +63,6 @@ public class subscribeInfo implements Serializable {
         this.status = status;
         this.updateAt = updateAt;
         this.subscribeCode = subscribeCode;
-        this.orderCode = orderCode;
     }
 
     @Override
@@ -82,20 +77,11 @@ public class subscribeInfo implements Serializable {
                 ", status=" + status +
                 ", updateAt=" + updateAt +
                 ",subscribeCode=" + subscribeCode +
-                ",orderCode=" + orderCode +
                 '}';
     }
 
     public subscribeInfo(){
 
-    }
-
-    public void setOrderCode(String orderCode) {
-        this.orderCode = orderCode;
-    }
-
-    public String getOrderCode() {
-        return orderCode;
     }
 
     public void setSubscribeCode(String subscribeCode) {

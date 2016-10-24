@@ -5,6 +5,7 @@ import com.joybike.server.api.dao.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,12 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Override
     public List<bankConsumedOrder> getBankConsumedOrderList(long userId) throws Exception {
-        return bankConsumedOrderDao.getBankConsumedOrderList(userId, ConsumedStatus.susuccess);
+        try {
+            return bankConsumedOrderDao.getBankConsumedOrderList(userId, ConsumedStatus.susuccess);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
+        }
+
     }
 
     /**
@@ -53,8 +59,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
-    public void recharge(bankDepositOrder depositOrder) {
-
+    @Override
+    public void recharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
         depositOrder.setCreateAt(UnixTimeUtils.now());
         depositOrder.setRechargeType(RechargeType.balance.getValue());
@@ -87,7 +93,6 @@ public class PayRestfulServiceImpl implements PayRestfulService {
 
             }
         }
-
     }
 
     /**
@@ -95,8 +100,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
-    public void depositRecharge(bankDepositOrder depositOrder) {
-
+    @Override
+    public void depositRecharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
         depositOrder.setCreateAt(UnixTimeUtils.now());
         depositOrder.setRechargeType(RechargeType.deposit.getValue());
@@ -109,13 +114,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         userInfo userInfo = new userInfo();
         userInfo.setId(depositOrder.getUserId());
         userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
-        try {
-            userInfoService.updateUserInfo(userInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+        userInfoService.updateUserInfo(userInfo);
     }
 
     /**
@@ -136,7 +135,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userCoupon
      * @return
      */
-    public long addUserCoupon(userCoupon userCoupon) {
+    @Override
+    public long addUserCoupon(userCoupon userCoupon) throws Exception {
         return userCouponDao.save(userCoupon);
     }
 
@@ -146,7 +146,9 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
-    public long deleteUserCoupon(Map map) {
+    @Override
+    public long deleteUserCoupon(Map map) throws Exception {
+
         return userCouponDao.deleteUserCoupon(map);
     }
 
@@ -156,7 +158,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
-    public long updateCoupon(Map map) {
+    @Override
+    public long updateCoupon(Map map) throws Exception {
         return userCouponDao.updateCoupon(map);
     }
 
@@ -167,9 +170,28 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param useAt
      * @return
      */
-    public List<userCoupon> getValidCouponList(long userId, int useAt) {
+    @Override
+    public List<userCoupon> getValidCouponList(long userId, int useAt) throws Exception {
         return userCouponDao.getValidList(userId, useAt);
     }
+
+    /**
+     * 充值成功回调
+     *
+     * @param id
+     * @param payType
+     * @param payDocumentId
+     * @param merchantId
+     * @param payAt
+     * @return
+     */
+
+    @Override
+    public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception{
+        return depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
+    }
+
+
 
     /*==================================================*/
 
@@ -181,6 +203,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @return
      */
     public static bankAcount depositToAcount(bankDepositOrder order, AcountType acountType) {
+
         bankAcount acount = new bankAcount();
         acount.setUserId(order.getUserId());
         acount.setAcountType(acountType.getValue());
@@ -198,6 +221,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param order
      */
     public static bankMoneyFlow flowInfo(bankDepositOrder order, long depositId) {
+
         bankMoneyFlow moneyFlow = new bankMoneyFlow();
         moneyFlow.setUserId(order.getUserId());
         moneyFlow.setDealType(DealType.deposit.getValue());

@@ -1,9 +1,11 @@
 package com.joybike.server.api.dao.impl;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.userCoupon;
 import com.joybike.server.api.model.userInfo;
+import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -27,11 +29,15 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     final String userInfoSql = "select * from userInfo where id = :userId";
 
     @Override
-    public userInfo getUserInfo(long userId) {
+    public userInfo getUserInfo(long userId)  throws Exception{
         Map map = new HashMap();
         map.put("userId", userId);
         try {
-            return (userInfo) this.jdbcTemplate.queryForObject(userInfoSql, map, new BeanPropertyRowMapper(userInfo.class));
+            try {
+                return (userInfo) this.jdbcTemplate.queryForObject(userInfoSql, map, new BeanPropertyRowMapper(userInfo.class));
+            } catch (Exception e) {
+                return null;
+            }
         } catch (Exception e) {
             return null;
         }
@@ -47,13 +53,17 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     final String phoneSql = "select * from userInfo where iphone = ?";
 
     @Override
-    public userInfo getInfoByPhone(String phone) {
+    public userInfo getInfoByPhone(String phone)  throws Exception{
         Map map = new HashMap();
         map.put("mobile", phone);
         try {
-            return (userInfo) this.jdbcTemplate.queryForObject(phoneSql, map, new BeanPropertyRowMapper(userInfo.class));
+            try {
+                return (userInfo) this.jdbcTemplate.queryForObject(phoneSql, map, new BeanPropertyRowMapper(userInfo.class));
+            } catch (Exception e) {
+                return null;
+            }
         } catch (Exception e) {
-            return null;
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
 
     }

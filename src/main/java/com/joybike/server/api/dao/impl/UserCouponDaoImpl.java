@@ -1,8 +1,11 @@
 package com.joybike.server.api.dao.impl;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserCouponDao;
+import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.userCoupon;
+import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -25,8 +28,13 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
     final String deleteUserCouponSql = "delete from userCoupon where userId = :userId and couponId = :couponId";
 
     @Override
-    public long deleteUserCoupon(Map map) {
-        return execSQL(deleteUserCouponSql, map);
+    public long deleteUserCoupon(Map map)  throws Exception{
+        try {
+            return execSQL(deleteUserCouponSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
+
     }
 
     /**
@@ -38,8 +46,12 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
     final String updateCouponSql = "update userCoupon set status = :status where userId = :userId and couponId = :couponId ";
 
     @Override
-    public long updateCoupon(Map map) {
-        return execSQL(updateCouponSql, map);
+    public long updateCoupon(Map map)  throws Exception{
+        try {
+            return execSQL(updateCouponSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -51,10 +63,17 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
     final String validCouponSql = "select * from userCoupon where userId = ? and expireAt >= ?";
 
     @Override
-    public List<userCoupon> getValidList(long userId, int useAt) {
-        Object[] object = new Object[]{userId, useAt};
-        List<userCoupon> list = this.jdbcTemplate.getJdbcOperations().query(validCouponSql, object, new BeanPropertyRowMapper(userCoupon.class));
-        return list;
+    public List<userCoupon> getValidList(long userId, int useAt)  throws Exception{
+        try {
+            Object[] object = new Object[]{userId, useAt};
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(validCouponSql, object, new BeanPropertyRowMapper(userCoupon.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -66,11 +85,16 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
     final String validCountSql = "select count(*) from userCoupon where userId = :userId and expireAt >= :expireAt and status = 0";
 
     @Override
-    public int getValidCount(long userId, int expireAt) {
-        Map map = new HashMap();
-        map.put("userId", userId);
-        map.put("expireAt", expireAt);
-        return getCount(validCountSql, map);
+    public int getValidCount(long userId, int expireAt)  throws Exception{
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            map.put("expireAt", expireAt);
+            return getCount(validCountSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
+
     }
 
 

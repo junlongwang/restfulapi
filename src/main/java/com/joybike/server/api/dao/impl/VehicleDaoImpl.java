@@ -1,5 +1,8 @@
 package com.joybike.server.api.dao.impl;
 
+import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.model.userInfo;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixGps;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
@@ -29,12 +32,17 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
     final String vehicleStatusSql = "update vehicle set useStatus = :useStatus , updateAt = :updateAt where vehicleId = :vehicleId";
 
     @Override
-    public int updateVehicleStatus(String vehicleId, UseStatus useStatus) {
-        Map map = new HashMap();
-        map.put("vehicleId", vehicleId);
-        map.put("useStatus", useStatus.getValue());
-        map.put("updateAt", UnixTimeUtils.now());
-        return execSQL(vehicleStatusSql, map);
+    public int updateVehicleStatus(String vehicleId, UseStatus useStatus)  throws Exception{
+        try {
+            Map map = new HashMap();
+            map.put("vehicleId", vehicleId);
+            map.put("useStatus", useStatus.getValue());
+            map.put("updateAt", UnixTimeUtils.now());
+            return execSQL(vehicleStatusSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
+
     }
 
     /**
@@ -46,13 +54,17 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
     final String getVehicleUseStatusByBicycleCodeSql = "select useStatus from vehicle where status = 0 and vehicleId = :vehicleId";
 
     @Override
-    public int getVehicleUseStatusByBicycleCode(String bicycleCode) {
-        Map map = new HashMap();
-        map.put("vehicleId", bicycleCode);
+    public int getVehicleUseStatusByBicycleCode(String bicycleCode)  throws Exception{
         try {
-            return (Integer) this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            Map map = new HashMap();
+            map.put("vehicleId", bicycleCode);
+            try {
+                return (Integer) this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            } catch (Exception e) {
+                return -1;
+            }
         } catch (Exception e) {
-            return -1;
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
     }
 
@@ -65,13 +77,17 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
     final String getVehicleStatusByBicycleCodeSql = "select status from vehicle where vehicleId = :vehicleId";
 
     @Override
-    public int getVehicleStatusByBicycleCode(String bicycleCode) {
-        Map map = new HashMap();
-        map.put("vehicleId", bicycleCode);
+    public int getVehicleStatusByBicycleCode(String bicycleCode)  throws Exception{
         try {
-            return (Integer) this.jdbcTemplate.queryForObject(getVehicleStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            Map map = new HashMap();
+            map.put("vehicleId", bicycleCode);
+            try {
+                return (Integer) this.jdbcTemplate.queryForObject(getVehicleStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            } catch (Exception e) {
+                return -1;
+            }
         } catch (Exception e) {
-            return -1;
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
     }
 
@@ -86,17 +102,24 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
             "and (lastLongitude between ? and ?)";
 
     @Override
-    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) {
-        //最大小维度
-        Double maxLat = beginDimension + UnixGps.doDimension(beginDimension);
-        Double minLat = beginDimension - UnixGps.doDimension(beginDimension);
-        //最大小经度,经度是负数,+是小，-是大
-        Double maxLng = beginLongitude - UnixGps.doLongitude(beginLongitude);
-        Double minLng = beginLongitude + UnixGps.doLongitude(beginLongitude);
+    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude)  throws Exception{
+        try {
+            //最大小维度
+            Double maxLat = beginDimension + UnixGps.doDimension(beginDimension);
+            Double minLat = beginDimension - UnixGps.doDimension(beginDimension);
+            //最大小经度,经度是负数,+是小，-是大
+            Double maxLng = beginLongitude - UnixGps.doLongitude(beginLongitude);
+            Double minLng = beginLongitude + UnixGps.doLongitude(beginLongitude);
 
-        Object[] object = new Object[]{minLat, maxLat, minLng, maxLng};
-        List<vehicle> list = this.jdbcTemplate.getJdbcOperations().query(getVehicleListSql, object, new BeanPropertyRowMapper(vehicle.class));
-        return list;
+            Object[] object = new Object[]{minLat, maxLat, minLng, maxLng};
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getVehicleListSql, object, new BeanPropertyRowMapper(vehicle.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+        }
     }
 
     /**
@@ -108,13 +131,18 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
     final String getLockByBicycleCodeSql = "select lockId from vehicle where vehicleId = :vehicleId";
 
     @Override
-    public long getLockByBicycleCode(String bicycleCode) {
-        Map map = new HashMap();
-        map.put("vehicleId", bicycleCode);
+    public long getLockByBicycleCode(String bicycleCode)  throws Exception{
         try {
-            return (Integer) this.jdbcTemplate.queryForObject(getLockByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            Map map = new HashMap();
+            map.put("vehicleId", bicycleCode);
+
+            try {
+                return (Integer) this.jdbcTemplate.queryForObject(getLockByBicycleCodeSql, map, new BeanPropertyRowMapper(Integer.class));
+            } catch (Exception e) {
+                return -1;
+            }
         } catch (Exception e) {
-            return -1;
+            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
         }
     }
 }

@@ -17,5 +17,5 @@ public interface BankConsumedOrderDao extends IRepository<bankConsumedOrder> {
      * @param userId
      * @return
      */
-    List<bankConsumedOrder> getBankConsumedOrderList(long userId,ConsumedStatus consumedStatus);
+    List<bankConsumedOrder> getBankConsumedOrderList(long userId,ConsumedStatus consumedStatus) throws Exception;
 }

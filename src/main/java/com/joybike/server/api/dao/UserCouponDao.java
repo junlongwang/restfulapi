@@ -20,14 +20,14 @@ public interface UserCouponDao extends IRepository<userCoupon> {
      * @param map
      * @return
      */
-    long deleteUserCoupon(Map map);
+    long deleteUserCoupon(Map map) throws Exception;
 
     /**
      * 修改用户优惠券信息
      * @param map
      * @return
      */
-    long updateCoupon(Map map);
+    long updateCoupon(Map map) throws Exception;
 
     /**
      * 获取用户当前可使用的优惠券
@@ -35,12 +35,12 @@ public interface UserCouponDao extends IRepository<userCoupon> {
      * @param useAt
      * @return
      */
-    List<userCoupon> getValidList(long userId,int useAt);
+    List<userCoupon> getValidList(long userId,int useAt) throws Exception;
 
     /**
      * 获取用户有效的优惠券数量
      * @param userId
      * @return
      */
-    int getValidCount(long userId ,int expireAt);
+    int getValidCount(long userId ,int expireAt) throws Exception;
 }

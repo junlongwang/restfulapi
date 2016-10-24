@@ -19,7 +19,7 @@ public interface VehicleDao extends IRepository<vehicle> {
      * @param useStatus 车辆使用状态
      * @return
      */
-    int updateVehicleStatus(String vehicleId, UseStatus useStatus);
+    int updateVehicleStatus(String vehicleId, UseStatus useStatus) throws Exception;
 
 
     /**
@@ -28,7 +28,7 @@ public interface VehicleDao extends IRepository<vehicle> {
      * @param bicycleCode
      * @return
      */
-    int getVehicleUseStatusByBicycleCode(String bicycleCode);
+    int getVehicleUseStatusByBicycleCode(String bicycleCode) throws Exception;
 
 
     /**
@@ -37,7 +37,7 @@ public interface VehicleDao extends IRepository<vehicle> {
      * @param bicycleCode
      * @return
      */
-    int getVehicleStatusByBicycleCode(String bicycleCode);
+    int getVehicleStatusByBicycleCode(String bicycleCode) throws Exception;
 
 
     /**
@@ -47,7 +47,7 @@ public interface VehicleDao extends IRepository<vehicle> {
      * @param beginLongitude
      * @return
      */
-    List<vehicle> getVehicleList(double beginDimension, double beginLongitude);
+    List<vehicle> getVehicleList(double beginDimension, double beginLongitude) throws Exception;
 
 
     /**
@@ -55,6 +55,6 @@ public interface VehicleDao extends IRepository<vehicle> {
      * @param bicycleCode
      * @return
      */
-    long getLockByBicycleCode(String bicycleCode);
+    long getLockByBicycleCode(String bicycleCode) throws Exception;
 
 }

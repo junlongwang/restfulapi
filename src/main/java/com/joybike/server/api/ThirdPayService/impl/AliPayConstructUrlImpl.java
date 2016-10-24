@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -94,7 +95,7 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
     @Override
     public String callBack(HttpServletRequest request){
         boolean result = getPayfinishHandler(request);
-        return null;
+        return "";
     }
 
     private boolean getPayfinishHandler(HttpServletRequest request){
@@ -102,6 +103,25 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
         String merId = "";
         Map params = new HashMap();
         String sign=request.getParameter("sign");
+        Map requestParams = request.getParameterMap();
+        for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+            String name = (String) iter.next();
+            String[] values = (String[]) requestParams.get(name);
+            String valueStr = "";
+            for (int i = 0; i < values.length; i++) {
+                valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
+                if( "seller_id".equals(name) ){
+                    merId = values[i];
+                }
+            }
+            if(name.equals("sign")&&valueStr.contains(" ")){//此处用于get方式测试提交
+                valueStr=valueStr.replaceAll(" ", "+");
+            }
+            params.put(name, valueStr);
+        }
+        if (AlipayNotify.verify(params)) {
+            flag=AlipayAppUtil.checkTradeSucAndFin(request.getParameter("trade_status"));
+        }
         return flag;
     }
 }

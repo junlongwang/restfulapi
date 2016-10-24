@@ -1,11 +1,12 @@
 package com.joybike.server.api.ThirdPayService.impl;
 
-import com.joybike.server.api.ThirdPayService.appConstructUrlInter;
+import com.joybike.server.api.ThirdPayService.WxappConstructUrlInter;
 import org.springframework.stereotype.Service;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import com.joybike.server.api.thirdparty.wxtenpay.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Set;
@@ -15,7 +16,7 @@ import java.util.SortedMap;
  * Created by LongZiyuan on 2016/10/20.
  */
 @Service
-public class WxAppConstructUrlImpl implements appConstructUrlInter {
+public class WxappConstructUrlImpl implements WxappConstructUrlInter {
 
     private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     private static String mch_id = "1401808502";
@@ -182,7 +183,35 @@ public class WxAppConstructUrlImpl implements appConstructUrlInter {
 
     public static void main(String []str){
         HashMap<String, String> paraMap = new HashMap<>();
-        WxAppConstructUrlImpl wxAppConstructUrl = new WxAppConstructUrlImpl();
+        WxappConstructUrlImpl wxAppConstructUrl = new WxappConstructUrlImpl();
         wxAppConstructUrl.getUrl(paraMap);
+    }
+
+    @Override
+    public String callBack(HttpServletRequest request){
+        String result = "";
+        HashMap<String,String> hashMap  = (HashMap<String, String>) ReadRequestUtil.getRequestMap(request);
+        if (hashMap != null && hashMap.size() > 0){
+            String returnCode = hashMap.get("return_code");
+            String resultCode = hashMap.get("result_code");
+            if( "SUCCESS".equals(resultCode) && "SUCCESS".equals(returnCode) ){
+                String signRequest = hashMap.get("sign");
+                hashMap.remove("sign");//删除签名
+                //签名验证
+                String sign = WxDealUtil.getMd5SignPub((MapUtils.getSortedMap(hashMap).entrySet()), hashMap.get("appid"));
+                if( !StringUtil.isNullOrEmpty(signRequest) && signRequest.equals(sign) ){
+                    String totalFee = hashMap.get("total_fee");//总金额
+                    String outTradeNo = hashMap.get("out_trade_no");//商户订单号
+                    String openId =hashMap.get("openid");
+                    String appId=hashMap.get("appid");
+                    Double realTotalFee = (Double) (Double.parseDouble(totalFee != null ? totalFee : "0") / 100) ;
+                    result =outTradeNo+","+realTotalFee;
+                    if( !StringUtil.isNullOrEmpty(openId) ) result=result+","+openId+ ";" +appId;
+                }else{
+                    return result;
+                }
+            }
+        }
+        return result;
     }
 }

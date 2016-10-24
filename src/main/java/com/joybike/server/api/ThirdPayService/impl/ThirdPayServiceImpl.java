@@ -1,10 +1,13 @@
 package com.joybike.server.api.ThirdPayService.impl;
 
-import com.joybike.server.api.ThirdPayService.appConstructUrlInter;
+import com.joybike.server.api.ThirdPayService.WxappConstructUrlInter;
 import com.joybike.server.api.ThirdPayService.IThirdPayService;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.ThirdPayBean;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 /**
@@ -24,7 +27,7 @@ public class ThirdPayServiceImpl implements IThirdPayService {
             map.put("notify_url", payOrder.getNotifyUrl());
             map.put("spbill_create_ip",payOrder.getOperIP());
             map.put("body",payOrder.getOrderDesc());
-            RedirectParam redirectParam= new WxAppConstructUrlImpl().getUrl(map);
+            RedirectParam redirectParam= new WxappConstructUrlImpl().getUrl(map);
             if( redirectParam != null )
                 return redirectParam.getPara();
         }
@@ -50,12 +53,34 @@ public class ThirdPayServiceImpl implements IThirdPayService {
     }
 
 
+    public static void main(String[] args) {
+        ThirdPayBean payBean = new ThirdPayBean();
+        payBean.setId(Long.valueOf("12312321321312312"));
+        payBean.setRechargeType(1);
+        payBean.setChannelId(117);
+        payBean.setNotifyUrl("www.58.com");
+        payBean.setPruductDesc("joybike押金充值");
+        payBean.setOrderMoney(BigDecimal.valueOf(299));
+        payBean.setOperIP("192.168.0.1");
+        ThirdPayServiceImpl thirdPayService = new ThirdPayServiceImpl();
+        thirdPayService.execute(payBean);
+    }
+
     @Override
     public String queryPayResult(ThirdPayBean payOrder) {
         String queryResult = "";
         if (payOrder != null) {
-            appConstructUrlInter cui = new WxAppConstructUrlImpl();
+            WxappConstructUrlInter cui = new WxappConstructUrlImpl();
         }
         return queryResult;
+    }
+
+    @Override
+    public String callBack(HttpServletRequest request){
+        String channleId = request.getParameter("attach");
+        if (channleId.equals("117")){
+            return new WxappConstructUrlImpl().callBack(request);
+        }
+        return null;
     }
 }

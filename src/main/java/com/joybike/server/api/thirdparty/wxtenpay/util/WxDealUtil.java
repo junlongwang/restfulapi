@@ -14,6 +14,27 @@ import java.util.Set;
 public class WxDealUtil {
 
     /**
+     * @time:2015-08-25
+     * @description:微信新接口异步应答
+     * @return
+     */
+    public static String notifyResponseXml(){
+		/*
+	响应返回内容如下：
+	<xml>
+	  <return_code><![CDATA[SUCCESS]]></return_code>
+	  <return_msg><![CDATA[OK]]></return_msg>
+	</xml>
+		 */
+        StringBuffer str = new StringBuffer();
+        str.append("<xml>");
+        str.append("<return_code>SUCCESS</return_code>");
+        str.append("<return_msg>OK</return_msg>");
+        str.append("</xml>");
+        return str.toString();
+    }
+
+    /**
      * @time:2015-08-19
      * @description:生成md5签名
      * @param es

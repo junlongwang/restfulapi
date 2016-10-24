@@ -2,6 +2,8 @@ package com.joybike.server.api.ThirdPayService;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.ThirdPayBean;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * Created by LongZiyuan on 2016/10/20.
  */
@@ -18,4 +20,11 @@ public interface IThirdPayService {
      * @return
      */
     public String queryPayResult(ThirdPayBean payOrder);
+
+    /**
+     * 支付回调请求
+     * @param request
+     * @return
+     */
+    public String callBack(HttpServletRequest request);
 }

@@ -1,11 +1,8 @@
 package com.joybike.server.api.ThirdPayService.impl;
 import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
-import com.joybike.server.api.ThirdPayService.appConstructUrlInter;
 import com.joybike.server.api.model.ThirdPayBean;
-import org.springframework.stereotype.Service;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
-import com.joybike.server.api.thirdparty.wxtenpay.*;
 
 import java.math.BigDecimal;
 import java.util.*;

@@ -4,17 +4,19 @@ import com.joybike.server.api.ThirdPayService.IThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
+import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 /**
- * Created by 58 on 2016/10/16.
+ * Created by LongZiyuan on 2016/10/16.
  */
 //"/api/pay"
 @RestController()
@@ -35,6 +37,23 @@ public class PayRestfulApi {
     {
         String rechargeResult = forRecharge(payBean, userId);
         return ResponseEntity.ok(new Message<String>(true,null,"牛逼"));
+    }
+
+    @RequestMapping(value = "paynotify",method = RequestMethod.POST)
+    public ResponseEntity<Message<String>> payOfNotify(@RequestBody HttpServletRequest request){
+        String responseHtml = "success";
+        String channleId = request.getParameter("attach");
+        String returncode = "";
+        if(request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null){
+            returncode = iThirdPayService.callBack(request);
+        }
+        if(returncode != null){
+            if(channleId.equals("117")){
+                responseHtml = WxDealUtil.notifyResponseXml();
+
+            }
+        }
+
     }
 
     /**

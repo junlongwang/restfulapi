@@ -23,19 +23,19 @@ import javax.net.ssl.SSLSocketFactory;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 
 /**
- * 财付通http或�?�https网络通信客户�?<br/>
+ * 财付通http或�?�https网络通信客户�?<br/>
  * ========================================================================<br/>
- * api说明�?<br/>
+ * api说明�?<br/>
  * setReqContent($reqContent),设置请求内容，无论post和get，都用get方式提供<br/>
  * getResContent(), 获取应答内容<br/>
- * setMethod(method),设置请求方法,post或�?�get<br/>
+ * setMethod(method),设置请求方法,post或�?�get<br/>
  * getErrInfo(),获取错误信息<br/>
- * setCertInfo(certFile, certPasswd),设置证书，双向https时需要使�?<br/>
- * setCaInfo(caFile), 设置CA，格式未pem，不设置则不�?�?<br/>
- * setTimeOut(timeOut)�? 设置超时时间，单位秒<br/>
- * getResponseCode(), 取返回的http状�?�码<br/>
+ * setCertInfo(certFile, certPasswd),设置证书，双向https时需要使�?<br/>
+ * setCaInfo(caFile), 设置CA，格式未pem，不设置则不�?�?<br/>
+ * setTimeOut(timeOut)�? 设置超时时间，单位秒<br/>
+ * getResponseCode(), 取返回的http状�?�码<br/>
  * call(),真正调用接口<br/>
- * getCharset()/setCharset(),字符集编�?<br/>
+ * getCharset()/setCharset(),字符集编�?<br/>
  * 
  * ========================================================================<br/>
  *
@@ -73,7 +73,7 @@ public class TenpayHttpClient {
 	/** 错误信息 */
 	private String errInfo;
 	
-	/** 超时时间,以秒为单�? */
+	/** 超时时间,以秒为单�? */
 	private int timeOut;
 	
 	/** http应答编码 */
@@ -93,7 +93,7 @@ public class TenpayHttpClient {
 		this.resContent = "";
 		this.method = "POST";
 		this.errInfo = "";
-		this.timeOut = 30;//30�?
+		this.timeOut = 30;//30�?
 		
 		this.responseCode = 0;
 		this.charset = "GBK";
@@ -110,7 +110,11 @@ public class TenpayHttpClient {
 		this.certFile = certFile;
 		this.certPasswd = certPasswd;
 	}
-	
+
+	public void setCharset(String encoding){
+		this.charset=encoding;
+	}
+
 	/**
 	 * 设置ca
 	 * @param caFile
@@ -144,7 +148,7 @@ public class TenpayHttpClient {
 	}
 	
 	/**
-	 * 设置请求方法post或�?�get
+	 * 设置请求方法post或�?�get
 	 * @param method 请求方法post/get
 	 */
 	public void setMethod(String method) {
@@ -160,15 +164,15 @@ public class TenpayHttpClient {
 	}
 	
 	/**
-	 * 设置超时时间,以秒为单�?
-	 * @param timeOut 超时时间,以秒为单�?
+	 * 设置超时时间,以秒为单�?
+	 * @param timeOut 超时时间,以秒为单�?
 	 */
 	public void setTimeOut(int timeOut) {
 		this.timeOut = timeOut;
 	}
 	
 	/**
-	 * 获取http状�?�码
+	 * 获取http状�?�码
 	 * @return int
 	 */
 	public int getResponseCode() {
@@ -260,7 +264,7 @@ public class TenpayHttpClient {
 		SSLContext sslContext = HttpClientUtil.getSSLContext(trustStream,
 				TenpayHttpClient.JKS_CA_PASSWORD, keyStream, this.certPasswd);
 		
-		//关闭�?
+		//关闭�?
 		keyStream.close();
 		trustStream.close();
 		
@@ -359,7 +363,7 @@ public class TenpayHttpClient {
 	}
 	
 	/**
-	 * 设置http请求默认属�??
+	 * 设置http请求默认属�??
 	 * @param httpConnection
 	 */
 	protected void setHttpRequest(HttpURLConnection httpConnection) {
@@ -371,7 +375,7 @@ public class TenpayHttpClient {
 		httpConnection.setRequestProperty("User-Agent", 
 				TenpayHttpClient.USER_AGENT_VALUE);
 		
-		//不使用缓�?
+		//不使用缓�?
 		httpConnection.setUseCaches(false);
 		
 		//允许输入输出
@@ -393,7 +397,7 @@ public class TenpayHttpClient {
 		//获取应答内容
 		this.resContent=HttpClientUtil.InputStreamTOString(this.inputStream,this.charset); 
 
-		//关闭输入�?
+		//关闭输入�?
 		this.inputStream.close();
 		
 	}
@@ -410,7 +414,7 @@ public class TenpayHttpClient {
 		// 以post方式通信
 		conn.setRequestMethod("POST");
 
-		// 设置请求默认属�??
+		// 设置请求默认属�??
 		this.setHttpRequest(conn);
 
 		// Content-Type
@@ -423,13 +427,13 @@ public class TenpayHttpClient {
 		final int len = 1024; // 1KB
 		HttpClientUtil.doOutput(out, postData, len);
 
-		// 关闭�?
+		// 关闭�?
 		out.close();
 
-		// 获取响应返回状�?�码
+		// 获取响应返回状�?�码
 		this.responseCode = conn.getResponseCode();
 
-		// 获取应答输入�?
+		// 获取应答输入�?
 		this.inputStream = conn.getInputStream();
 
 	}
@@ -444,13 +448,13 @@ public class TenpayHttpClient {
 		//以GET方式通信
 		conn.setRequestMethod("GET");
 		
-		//设置请求默认属�??
+		//设置请求默认属�??
 		this.setHttpRequest(conn);
 		
-		//获取响应返回状�?�码
+		//获取响应返回状�?�码
 		this.responseCode = conn.getResponseCode();
 		
-		//获取应答输入�?
+		//获取应答输入�?
 		this.inputStream = conn.getInputStream();
 	}
 

@@ -44,7 +44,6 @@ public class ThirdPayServiceImpl implements IThirdPayService {
             map.put("body",payOrder.getOrderDesc());
             map.put("subject",payOrder.getPruductDesc());
             map.put("it_b_pay","3d"); //超时时间
-            map.put("show_url","http://www.alipay.com");   //商品展示网址
             RedirectParam redirectParam= new AliPayConstructUrlImpl().getUrl(map);
             if( redirectParam != null )
                 return redirectParam.getPara();

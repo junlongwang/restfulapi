@@ -14,7 +14,7 @@ import java.util.*;
 public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     private static String mch_id = "1401808502";
-    private static String appid = "longziyuan";
+    private static String appid = "wxa8d72207b41a315e";
     private static String key = "853D02D2F946329243B006C933A12E65";
 
     @Override
@@ -107,6 +107,18 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             return resultMsg;
         }
         return "";
+    }
+
+    public static void main(String[] args) {
+        ThirdPayBean payOrder = new ThirdPayBean();
+        payOrder.setPruductDesc("测试充值");
+        payOrder.setId(Long.valueOf("1415651231"));
+        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
+        payOrder.setOperIP("192.168.0.1");
+        payOrder.setNotifyUrl("www.baidu.com");
+        payOrder.setOpenid("123");
+        WxPublicConstructUrlImpl wxPublicConstructUrl = new WxPublicConstructUrlImpl();
+        wxPublicConstructUrl.getUrl(payOrder);
     }
 }
 

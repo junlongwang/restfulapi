@@ -1,7 +1,9 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.LoginData;
+import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -238,9 +240,16 @@ public class BicycleRestfulApi {
      * @return
      */
     @RequestMapping(value = "submit", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> submit(@RequestBody vehicleRepair form) {
+    public ResponseEntity<Message<String>> submit(@RequestBody vehicleRepairDto vehicleRepair) {
 
         try {
+            vehicleRepair form =new vehicleRepair();
+            form.setVehicleId(vehicleRepair.getBicycleCode());
+            form.setCause(vehicleRepair.getCause());
+            form.setFaultImg("");
+            form.setCreateId(vehicleRepair.getCreateId());
+            form.setCreateAt(vehicleRepair.getCreateAt());
+            form.setDisposeStatus(DisposeStatus.untreated.getValue());
             bicycleRestfulService.addVehicleRepair(form);
             return ResponseEntity.ok(new Message<String>(true, null, "提交成功！"));
         } catch (Exception e) {

@@ -43,7 +43,6 @@ public class UserRestfulApi {
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<userInfo>(false, "1001：" + "更新用户信息失败", null));
         }
-
     }
 
     /**

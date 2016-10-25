@@ -1,5 +1,8 @@
 import com.joybike.server.api.Message;
+import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.User;
+import com.joybike.server.api.model.vehicleRepair;
+import com.joybike.server.api.util.UnixTimeUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,5 +104,16 @@ public class UnitTest {
 
         String value=thirdpartyProperty.getProperty("key1");
         System.out.println(value);
+
+
+
+        //vehicleRepair(String vehicleId, String cause, String faultImg, Long createId, Integer createAt, Integer disposeStatus, String disposeDepict, Long operateId, Integer operateAt) {
+        vehicleRepairDto vehicleRepair=new vehicleRepairDto("车辆编码","车辆没轮子",value.getBytes(),333L, UnixTimeUtils.now());
+        System.out.println(JSON.toJSON(vehicleRepair));
+
+        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(true, null, "提交成功！")));
+
+        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(false, "1001", "故障申报失败")));
+
     }
 }

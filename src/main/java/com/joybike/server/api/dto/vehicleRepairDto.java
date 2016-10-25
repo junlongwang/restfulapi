@@ -1,0 +1,88 @@
+package com.joybike.server.api.dto;
+
+import java.io.Serializable;
+
+/**
+ * 车辆报修接口入参
+ * Created by 58 on 2016/10/25.
+ */
+public class vehicleRepairDto implements Serializable{
+
+    /**
+     * 车辆编码
+     *  @Author lisy
+     **/
+    private String bicycleCode;
+
+    /**
+     * 报修原因
+     *  @Author lisy
+     **/
+    private String cause;
+
+    /**
+     * 故障图片
+     *  @Author lisy
+     **/
+    private byte[] faultImg;
+
+    /**
+     * 信息提交人
+     *  @Author lisy
+     **/
+    private Long createId;
+
+    /**
+     * 创建时间
+     *  @Author lisy
+     **/
+    private Integer createAt;
+
+    public String getBicycleCode() {
+        return bicycleCode;
+    }
+
+    public void setBicycleCode(String bicycleCode) {
+        this.bicycleCode = bicycleCode;
+    }
+
+    public String getCause() {
+        return cause;
+    }
+
+    public void setCause(String cause) {
+        this.cause = cause;
+    }
+
+    public byte[] getFaultImg() {
+        return faultImg;
+    }
+
+    public void setFaultImg(byte[] faultImg) {
+        this.faultImg = faultImg;
+    }
+
+    public Long getCreateId() {
+        return createId;
+    }
+
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
+    public Integer getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(Integer createAt) {
+        this.createAt = createAt;
+    }
+
+    public vehicleRepairDto(String bicycleCode, String cause, byte[] faultImg, Long createId, Integer createAt) {
+        this.bicycleCode = bicycleCode;
+        this.cause = cause;
+        this.faultImg = faultImg;
+        this.createId = createId;
+        this.createAt = createAt;
+    }
+}

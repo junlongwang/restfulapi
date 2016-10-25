@@ -33,7 +33,7 @@ public class userInfo implements Serializable {
     private String nationality;
 
     /** 
-     * 头像
+     * 身份证和人合照，图片
      *  @Author lisy
     **/
     private String photo;

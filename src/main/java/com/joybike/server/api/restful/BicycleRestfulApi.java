@@ -2,16 +2,12 @@ package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
-import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
-import com.joybike.server.api.service.PayRestfulService;
-import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
-import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -178,11 +174,11 @@ public class BicycleRestfulApi {
     }
 
     /**
-     * 锁车动作，服务端回调地址
+     * 车锁GPS,每隔15秒上报数据，回调地址服务端回调地址
      *
      * @param param
      */
-    @RequestMapping(value = "lockCall", method = RequestMethod.POST)
+    @RequestMapping(value = "callback", method = RequestMethod.POST)
     public void lockCallBack(@RequestBody String param) {
 
 
@@ -237,7 +233,7 @@ public class BicycleRestfulApi {
     /**
      * 提交故障车辆信息
      *
-     * @param form
+     * @param vehicleRepair
      * @return
      */
     @RequestMapping(value = "submit", method = RequestMethod.POST)

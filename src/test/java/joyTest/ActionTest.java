@@ -160,4 +160,43 @@ public class ActionTest {
         }
 
     }
+
+    @Test
+    public void getAcountMoneyTest(){
+        long userid = 1;
+        try {
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userid);
+            System.out.println(acountMoney);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getConsumeLogsTest(){
+//        try {
+//            List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(1);
+//            list.forEach(new Consumer<bankConsumedOrder>() {
+//                @Override
+//                public void accept(bankConsumedOrder bankConsumedOrder) {
+//                    System.out.println(bankConsumedOrder);
+//                }
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        try {
+            List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(1);
+            list.forEach(new Consumer<bankDepositOrder>() {
+                @Override
+                public void accept(bankDepositOrder depositOrder) {
+                    System.out.println(depositOrder);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

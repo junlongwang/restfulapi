@@ -32,11 +32,15 @@ public enum ReturnEnum {
 
     /***********支付错误*******************/
     NoPay_Error(2001,"有未支付的订单"),
+    Acount_Error(2002,"获取账户余额失败"),
 
     ConsumedOrderList_Error(2006,"获取消费明细失败"),
 
     BankDepositOrderList_Error(2007,"获取充值明细失败"),
 
+    /***********用户*******************/
+    UpdateUer_ERROR(4001,"更新用户信息失败"),
+    UseRregister_Error(4002,"注册失败"),
     /***********车辆错误*******************/
 
     Appointment_Success(5001,"预约成功"),

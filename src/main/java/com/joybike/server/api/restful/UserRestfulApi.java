@@ -1,5 +1,6 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
@@ -41,7 +42,7 @@ public class UserRestfulApi {
             userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
             return ResponseEntity.ok(new Message<userInfo>(true, null, userInfo));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, "1001：" + "更新用户信息失败", null));
+            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.toString(), null));
         }
 
     }
@@ -64,7 +65,7 @@ public class UserRestfulApi {
             SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
             return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<LoginData>(false, "1001：" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<LoginData>(false, ReturnEnum.UseRregister_Error.toString(), null));
         }
     }
 
@@ -80,7 +81,7 @@ public class UserRestfulApi {
             double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userid);
             return ResponseEntity.ok(new Message<Double>(true, null, acountMoney));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<Double>(false, "1001：" + "获取余额信息失败", null));
+            return ResponseEntity.ok(new Message<Double>(false, ReturnEnum.Acount_Error.toString(), null));
         }
     }
 

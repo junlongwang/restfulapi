@@ -21,6 +21,8 @@ import java.util.List;
 /**
  * Created by LongZiyuan on 2016/10/16.
  */
+
+//"/api/pay"
 @RequestMapping("/pay")
 @RestController()
 public class PayRestfulApi {
@@ -32,69 +34,68 @@ public class PayRestfulApi {
 
     /**
      * 充值：可充值押金、预存现金
+     *
      * @param payBean
      * @return
      */
-    @RequestMapping(value = "deposit",method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId)
-    {
+    @RequestMapping(value = "deposit", method = RequestMethod.POST)
+    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean, @RequestParam("userId") long userId) {
         String rechargeResult = forRecharge(payBean, userId);
-        return ResponseEntity.ok(new Message<String>(true,null,"牛逼"));
+        return ResponseEntity.ok(new Message<String>(true, null, "牛逼"));
     }
 
-    @RequestMapping(value = "paynotify",method = RequestMethod.POST)
-    public String payOfNotify(@RequestBody HttpServletRequest request){
+
+    @RequestMapping(value = "paynotify", method = RequestMethod.POST)
+    public String payOfNotify(@RequestBody HttpServletRequest request) {
         String responseHtml = "success";
         String channleId = request.getParameter("attach");
         String returncode = "";
-        if(request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null){
+        if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
             returncode = iThirdPayService.callBack(request);
         }
-        if(returncode != null){
-            if(channleId.equals("117")){
+        if (returncode != null) {
+            if (channleId.equals("117")) {
                 responseHtml = WxDealUtil.notifyResponseXml();
                 String out_trade_no = request.getParameter("out_trade_no");
                 long id = Long.valueOf(out_trade_no);
                 String payDocumentId = request.getParameter("transaction_id");
                 String merchantId = "";
                 int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
-                try{
-                    int result = payRestfulService.updateDepositOrderById(id,PayType.weixin,payDocumentId,merchantId,pay_at);
-                    if(result > 0){
+                try {
+                    int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
+                    if (result > 0) {
                         return responseHtml;
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     return "";
                 }
-            }
-            else if(channleId.equals("118")){
+            } else if (channleId.equals("118")) {
                 responseHtml = WxDealUtil.notifyResponseXml();
                 String out_trade_no = request.getParameter("out_trade_no");
                 long id = Long.valueOf(out_trade_no);
                 String payDocumentId = request.getParameter("transaction_id");
                 String merchantId = "";
                 int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
-                try{
-                    int result = payRestfulService.updateDepositOrderById(id,PayType.weixin,payDocumentId,merchantId,pay_at);
-                    if(result > 0){
+                try {
+                    int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
+                    if (result > 0) {
                         return responseHtml;
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     return "";
                 }
-            }
-            else{
+            } else {
                 String out_trade_no = request.getParameter("out_trade_no");
                 long id = Long.valueOf(out_trade_no);
                 String payDocumentId = request.getParameter("transaction_id");
                 String merchantId = "";
                 int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
-                try{
-                    int result = payRestfulService.updateDepositOrderById(id,PayType.weixin,payDocumentId,merchantId,pay_at);
-                    if(result > 0){
+                try {
+                    int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
+                    if (result > 0) {
                         return responseHtml;
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     return "";
                 }
             }
@@ -104,10 +105,11 @@ public class PayRestfulApi {
 
     /**
      * 获取消费明细
+     *
      * @param userId
      * @return
      */
-    @RequestMapping(value = "getConsumeLogs",method = RequestMethod.GET)
+    @RequestMapping(value = "getConsumeLogs", method = RequestMethod.GET)
     public ResponseEntity<Message<List<bankConsumedOrder>>> getConsumeLogs(@RequestParam("userId") long userId) {
         try {
             List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(userId);
@@ -120,10 +122,11 @@ public class PayRestfulApi {
 
     /**
      * 获取充值明细
+     *
      * @param userId
      * @return
      */
-    @RequestMapping(value = "getDepositLogs",method = RequestMethod.GET)
+    @RequestMapping(value = "getDepositLogs", method = RequestMethod.GET)
     public ResponseEntity<Message<List<bankDepositOrder>>> getDepositLogs(@RequestParam("userId") long userId) {
 
         try {
@@ -134,22 +137,27 @@ public class PayRestfulApi {
         }
     }
 
-    @RequestMapping(value = "refund",method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> refund(@RequestParam("userId") long userId)
-    {
-        return ResponseEntity.ok(new Message<String>(true,null,"押金退款已经受理，后续状态在48小时内注意查看系统消息！"));
+    /**
+     * 押金退款
+     *
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "refund", method = RequestMethod.POST)
+    public ResponseEntity<Message<String>> refund(@RequestParam("userId") long userId) {
+        return ResponseEntity.ok(new Message<String>(true, null, "押金退款已经受理，后续状态在48小时内注意查看系统消息！"));
     }
 
-    public String forRecharge(ThirdPayBean payBean, long userId){
-        bankDepositOrder order = createDepositRechargeOrder(payBean,userId);
-        if(order != null && order.getId() != null){
+    public String forRecharge(ThirdPayBean payBean, long userId) {
+        bankDepositOrder order = createDepositRechargeOrder(payBean, userId);
+        if (order != null && order.getId() != null) {
             payBean.setId(order.getId());
             return iThirdPayService.execute(payBean);
         }
         return null;
     }
 
-    public bankDepositOrder createDepositRechargeOrder(ThirdPayBean payBean,long userId){
+    public bankDepositOrder createDepositRechargeOrder(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = new bankDepositOrder();
         order.setUserId(userId);
         order.setCash(payBean.getOrderMoney());
@@ -161,7 +169,7 @@ public class PayRestfulApi {
         try {
             payRestfulService.depositRecharge(order);
             return order;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }

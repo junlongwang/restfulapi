@@ -44,7 +44,6 @@ public class UserRestfulApi {
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.toString(), null));
         }
-
     }
 
     /**

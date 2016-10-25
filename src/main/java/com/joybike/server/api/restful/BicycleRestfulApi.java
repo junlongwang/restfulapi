@@ -2,10 +2,14 @@ package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
+import com.joybike.server.api.Enum.DisposeStatus;
+import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
+
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -211,13 +215,24 @@ public class BicycleRestfulApi {
     /**
      * 提交故障车辆信息
      *
-     * @param form
+     * @param vehicleRepair
      * @return
      */
     @RequestMapping(value = "submit", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> submit(@RequestBody vehicleRepair form) {
+    public ResponseEntity<Message<String>> submit(@RequestBody vehicleRepairDto vehicleRepair) {
 
         try {
+            vehicleRepair form = new vehicleRepair();
+            form.setVehicleId(vehicleRepair.getBicycleCode());
+            form.setCause(vehicleRepair.getCause());
+
+            if (vehicleRepair.getFaultImg() != null && vehicleRepair.getFaultImg().length > 0) {
+                String imageName = OSSClientUtil.uploadRepairImg(vehicleRepair.getFaultImg());
+                form.setFaultImg(imageName);
+            }
+            form.setCreateId(vehicleRepair.getCreateId());
+            form.setCreateAt(vehicleRepair.getCreateAt());
+            form.setDisposeStatus(DisposeStatus.untreated.getValue());
             bicycleRestfulService.addVehicleRepair(form);
             return ResponseEntity.ok(new Message<String>(true, null, "提交成功！"));
         } catch (Exception e) {

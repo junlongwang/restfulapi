@@ -60,12 +60,11 @@ public class UserRestfulApi {
             //根据用户号码，进行查询，存在返回信息；不存在创建
             userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);
             LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
+            //发送短信接口
+            SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
             return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<LoginData>(false, "1001：" + e.getMessage(), null));
-        } finally {
-            //发送短信接口
-            SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
         }
     }
 

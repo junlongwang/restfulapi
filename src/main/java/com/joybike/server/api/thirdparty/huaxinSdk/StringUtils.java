@@ -81,21 +81,21 @@ public abstract class StringUtils {
         return out.toString();
     }
 
-    public static String stripNonValidXMLCharacters(String input) {
-        if(input != null && !"".equals(input)) {
-            StringBuilder out = new StringBuilder();
-
-            for(int i = 0; i < input.length(); ++i) {
-                char current = input.charAt(i);
-                if(current == 9 || current == 10 || current == 13 || current >= 32 && current <= '\ud7ff' || current >= '\ue000' && current <= '�' || current >= 65536 && current <= 1114111) {
-                    out.append(current);
-                }
-            }
-
-            return out.toString();
-        } else {
-            return "";
-        }
-    }
+//    public static String stripNonValidXMLCharacters(String input) {
+//        if(input != null && !"".equals(input)) {
+//            StringBuilder out = new StringBuilder();
+//
+//            for(int i = 0; i < input.length(); ++i) {
+//                char current = input.charAt(i);
+//                if(current == 9 || current == 10 || current == 13 || current >= 32 && current <= '\ud7ff' || current >= '\ue000' && current <= ' ' || current >= 65536 && current <= 1114111) {
+//                    out.append(current);
+//                }
+//            }
+//
+//            return out.toString();
+//        } else {
+//            return "";
+//        }
+//    }
 }
 

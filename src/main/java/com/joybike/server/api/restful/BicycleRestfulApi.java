@@ -47,7 +47,7 @@ public class BicycleRestfulApi {
      * @param bicycleCode
      * @return
      */
-    @RequestMapping(value = "subscribe", method = RequestMethod.GET)
+    @RequestMapping(value = "subscribe", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> subscribe(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode, @RequestParam("beginAt") int beginAt) {
 
         logger.info(userId + ":" + bicycleCode);

@@ -38,12 +38,12 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @param userId         用户ID
      * @param vehicleId      车身印刷ID
      * @param beginAt        开始时间
-     * @param beginDimension 骑行开始的经度
-     * @param beginLongitude 骑行开始的维度
+     * @param beginLongitude 骑行开始的经度
+     * @param beginDimension 骑行开始的维度
      * @return
      */
     @Override
-    public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) throws Exception {
+    public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginLongitude ,BigDecimal beginDimension) throws Exception {
         subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
         subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
 

@@ -22,6 +22,7 @@ import java.util.List;
  * Created by LongZiyuan on 2016/10/16.
  */
 //"/api/pay"
+@RequestMapping("/pay")
 @RestController()
 public class PayRestfulApi {
 

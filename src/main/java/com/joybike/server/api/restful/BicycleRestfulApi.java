@@ -131,8 +131,8 @@ public class BicycleRestfulApi {
             @RequestParam("userId") long userId,
             @RequestParam("bicycleCode") String bicycleCode,
             @RequestParam("beginAt") int beginAt,
-            @RequestParam("beginDimension") BigDecimal beginDimension,
-            @RequestParam("beginLongitude") BigDecimal beginLongitude) {
+            @RequestParam("beginLongitude") BigDecimal beginLongitude,
+            @RequestParam("beginDimension") BigDecimal beginDimension) {
 
         logger.info(userId + ":" + bicycleCode);
         try {
@@ -153,7 +153,7 @@ public class BicycleRestfulApi {
                     }
                     if (useStatus == 0) {
                         VehicleComHelper.openLock(bicycleCode);
-                        orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginDimension, beginLongitude);
+                        orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude ,beginDimension);
                     }
                 }
                 if (status == 1) {

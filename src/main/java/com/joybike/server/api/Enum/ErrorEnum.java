@@ -21,29 +21,19 @@ public enum ErrorEnum {
      */
     DEPENDENCY_ERROR(1002, "dependencySys error"),
 
-
     /**
-     * 程序具体业务逻辑相关
+     * 服务层错误统一
      */
     SERVICE_ERROR(1003, "service error"),
 
 
-    // 参数相关{从1020010001~1020010099}
-    PARAMETER_ERROR(1004, "参数不符合要求"),
+    Repeat_Error(1004,"重复预约"),
 
-    // 接口执行相关{从1020010100开始}
-    ORDER_ERROR(1005, "订单操作失败"),
-    Bicycle_Error(1006,"车辆操作失败"),
-    Pay_Error(1007,"支付失败"),
-    User_Error(1008,"用户信息错误"),
+    BicycleUse_Error(1005,"车辆使用中"),
 
-    Repeat_Error(1009,"重复预约"),
+    ConsumedOrderList_Error(1006,"获取消费明细失败"),
 
-    BicycleUse_Error(1010,"车辆使用中"),
-
-    ConsumedOrderList_Error(1011,"获取消费明细失败"),
-
-    BankDepositOrderList_Error(1012,"获取充值明细失败"),
+    BankDepositOrderList_Error(1007,"获取充值明细失败"),
 
 
 

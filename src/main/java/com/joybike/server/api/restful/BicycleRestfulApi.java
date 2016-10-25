@@ -10,6 +10,7 @@ import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -246,7 +247,11 @@ public class BicycleRestfulApi {
             vehicleRepair form =new vehicleRepair();
             form.setVehicleId(vehicleRepair.getBicycleCode());
             form.setCause(vehicleRepair.getCause());
-            form.setFaultImg("");
+
+            if(vehicleRepair.getFaultImg()!=null && vehicleRepair.getFaultImg().length>0) {
+                String imageName = OSSClientUtil.uploadRepairImg(vehicleRepair.getFaultImg());
+                form.setFaultImg(imageName);
+            }
             form.setCreateId(vehicleRepair.getCreateId());
             form.setCreateAt(vehicleRepair.getCreateAt());
             form.setDisposeStatus(DisposeStatus.untreated.getValue());

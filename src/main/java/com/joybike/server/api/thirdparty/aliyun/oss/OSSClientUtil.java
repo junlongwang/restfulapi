@@ -4,13 +4,11 @@ import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.util.Date;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * Created by 58 on 2016/10/23.
@@ -25,92 +23,35 @@ public class OSSClientUtil {
 
     //Log log = LogFactory.getLog(OSSClientUtil.class);
     // endpoint以杭州为例，其它region请按实际情况填写
-    private String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
+    private static String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
     // accessKey
-    private String accessKeyId = "LTAIRYcpxEtj4Jo2";
-    private String accessKeySecret = "OhG9MVQzO092ZIif6kJk3pzl3bdvx9";
+    private static String accessKeyId = "LTAIRYcpxEtj4Jo2";
+    private static String accessKeySecret = "OhG9MVQzO092ZIif6kJk3pzl3bdvx9";
     //空间
-    private String bucketName = "joybike-user";
+    private static String bucketName = "joybike-user";
     //文件存储目录
-    private String filedir = "data/";
+    private static String filedir = "data/";
 
-    private OSSClient ossClient;
+    private static OSSClient ossClient;
 
-    public OSSClientUtil() {
-        ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
-    }
-
-    /**
-     * 初始化
-     */
-    public void init() {
+    static  {
         ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
     }
 
     /**
      * 销毁
      */
-    public void destory() {
+    public static void destory() {
         ossClient.shutdown();
     }
 
     public static void main(String[] args) {
 
-        OSSClientUtil util=new OSSClientUtil();
-        String url=util.uploadImg2Oss();
-        System.out.println(url);
-        System.out.println(util.getImgUrl(url));
-        util.destory();
-    }
-
-    public static String updateHead() throws IOException{
-//        if (file == null || file.getSize() <= 0) {
-//            //throw new ImgException("头像不能为空");
-//        }
-
-        String pic_path = "C:\\Users\\58\\Desktop\\图片1.jpg";//图片路径
-        FileInputStream is;
-        try {
-            is = new FileInputStream(pic_path);
-
-            int i = is.available(); // 得到文件大小
-            byte data[] = new byte[i];
-            is.read(data); // 读数据
-            is.close();
-            //response.setContentType("image/*"); // 设置返回的文件类型
-            //OutputStream toClient = response.getOutputStream(); // 得到向客户端输出二进制数据的对象
-            //toClient.write(data); // 输出数据
-            //toClient.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
-    }
-
-
-    /**
-     * 上传图片
-     *
-     */
-//    public void uploadImg2Oss(String url) {
-//        File fileOnServer = new File(url);
-//        FileInputStream fin;
-//        try {
-//            fin = new FileInputStream(fileOnServer);
-//            String[] split = url.split("/");
-//            this.uploadFile2OSS(fin, split[split.length - 1]);
-//        } catch (FileNotFoundException e) {
-//            throw new ImgException("图片上传失败");
-//        }
-//    }
-
-
-    public String uploadImg2Oss() {
-//        if (file.getSize() > 1024 * 1024) {
-//            throw new ImgException("上传图片大小不能超过1M！");
-//        }
+//        OSSClientUtil util=new OSSClientUtil();
+//        String url=util.uploadImg2Oss();
+//        System.out.println(url);
+//        System.out.println(util.getImgUrl(url));
+//        util.destory();
 
         String pic_path = "C:\\Users\\58\\Desktop\\图片1.jpg";//图片路径
         FileInputStream fileInputStream = null;
@@ -119,21 +60,30 @@ public class OSSClientUtil {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        String originalFilename = "图片1.jpg";
-        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
-        Random random = new Random();
-        String name = random.nextInt(10000) + System.currentTimeMillis() + substring;
         try {
-            InputStream inputStream = fileInputStream;
-            this.uploadFile2OSS(inputStream, name);
-            return name;
-        } catch (Exception e) {
+            String url=uploadRepairImg(input2byte(fileInputStream));
+            System.out.println(url);
+            fileInputStream.close();
+        } catch (IOException e) {
             e.printStackTrace();
-            //throw new ImgException("图片上传失败");
         }
-        return  null;
+
     }
+
+    public static String uploadRepairImg(byte[] bytes)
+    {
+        OSSClientUtil util=new OSSClientUtil();
+//        String url=util.uploadImg2Oss();
+//        System.out.println(url);
+//        System.out.println(util.getImgUrl(url));
+
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        String name = UUID.randomUUID().toString()+".jpg";
+        util.uploadFile2OSS(inputStream, name);
+        util.destory();
+        return name;
+    }
+
 
     /**
      * 获得图片路径
@@ -232,8 +182,8 @@ public class OSSClientUtil {
      * @return
      */
     public String getUrl(String key) {
-        // 设置URL过期时间为10年  3600l* 1000*24*365*10
-        Date expiration = new Date(new Date().getTime() + 3600l * 1000 * 24 * 365 * 10);
+        // 设置URL过期时间为50年  3600l* 1000*24*365*10
+        Date expiration = new Date(new Date().getTime() + 3600l * 1000 * 24 * 365 * 50);
         // 生成URL
         URL url = ossClient.generatePresignedUrl(bucketName, key, expiration);
         System.out.println(url);
@@ -241,5 +191,49 @@ public class OSSClientUtil {
             return url.toString();
         }
         return null;
+    }
+
+    private static InputStream byte2Input(byte[] buf) {
+        return new ByteArrayInputStream(buf);
+    }
+
+    private static byte[] input2byte(InputStream inStream)
+            throws IOException {
+        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        byte[] buff = new byte[100];
+        int rc = 0;
+        while ((rc = inStream.read(buff, 0, 100)) > 0) {
+            swapStream.write(buff, 0, rc);
+        }
+        byte[] in2b = swapStream.toByteArray();
+        return in2b;
+    }
+
+    private String uploadImg2Oss() {
+//        if (file.getSize() > 1024 * 1024) {
+//            throw new ImgException("上传图片大小不能超过1M！");
+//        }
+
+        String pic_path = "C:\\Users\\58\\Desktop\\图片1.jpg";//图片路径
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(pic_path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String originalFilename = "图片1.jpg";
+        String substring = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        Random random = new Random();
+        String name = random.nextInt(10000) + System.currentTimeMillis() + substring;
+        try {
+            InputStream inputStream = fileInputStream;
+            this.uploadFile2OSS(inputStream, name);
+            return name;
+        } catch (Exception e) {
+            e.printStackTrace();
+            //throw new ImgException("图片上传失败");
+        }
+        return  null;
     }
 }

@@ -20,7 +20,7 @@ public interface OrderRestfulService {
      * @param beginDimension 骑行开始的维度
      * @return
      */
-    void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginLongitude , BigDecimal beginDimension) throws Exception;
+    long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude , double beginDimension) throws Exception;
 
 
     /**

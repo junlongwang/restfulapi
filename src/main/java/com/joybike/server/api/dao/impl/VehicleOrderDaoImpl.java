@@ -1,10 +1,9 @@
 package com.joybike.server.api.dao.impl;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.VehicleOrderDao;
-import com.joybike.server.api.model.vehicleHeartbeat;
 import com.joybike.server.api.model.vehicleOrder;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -37,7 +36,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
             map.put("id", id);
             return execSQL(updateOrderCodeSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -47,14 +46,14 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param vehicleId
      * @return
      */
-    final String getNoPayByUserIdSql = "select * from vehicleOrder where userId = : userId and status = : status";
+    final String getNoPayByUserIdSql = "select * from vehicleOrder where userId = :userId and status = :status";
 
     @Override
     public vehicleOrder getNoPayByUserId(long userId)  throws Exception{
         try {
             Map map = new HashMap();
             map.put("userId", userId);
-            map.put("status", OrderStatus.complete.getValue());
+            map.put("status", OrderStatus.end.getValue());
 
             try {
                 return (vehicleOrder) this.jdbcTemplate.queryForObject(getNoPayByUserIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
@@ -63,7 +62,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
             }
 
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
     }

@@ -114,7 +114,7 @@ public class joyTest {
     public void ordertest() {
 
         try {
-            orderRestfulService.addOrder(1, "jy04", 1476983501, BigDecimal.valueOf(123.4), BigDecimal.valueOf(123.89));
+            orderRestfulService.addOrder(1, "jy04", 1476983501, 123.4, 123.89);
         } catch (Exception e) {
             e.printStackTrace();
         }

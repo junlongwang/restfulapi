@@ -1,7 +1,7 @@
 package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.AcountType;
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankAcountDao;
 import com.joybike.server.api.model.bankAcount;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +43,7 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
             map.put("updateAt", UnixTimeUtils.now());
             return execSQL(updateAcountSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
     }
@@ -67,12 +66,12 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
             map.put("acountType", acountType.getValue());
             try {
                 return (bankAcount) this.jdbcTemplate.queryForObject(acountSql, map, new BeanPropertyRowMapper(bankAcount.class));
-            }catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
 
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -91,9 +90,9 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
         try {
             Map map = new HashMap();
             map.put("userId", userId);
-            return getCount(userAmountSql, map);
+            return this.jdbcTemplate.queryForObject(userAmountSql, map, double.class);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
     }

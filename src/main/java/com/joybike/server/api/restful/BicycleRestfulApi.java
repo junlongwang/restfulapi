@@ -130,8 +130,8 @@ public class BicycleRestfulApi {
             @RequestParam("userId") long userId,
             @RequestParam("bicycleCode") String bicycleCode,
             @RequestParam("beginAt") int beginAt,
-            @RequestParam("beginLongitude") BigDecimal beginLongitude,
-            @RequestParam("beginDimension") BigDecimal beginDimension) {
+            @RequestParam("beginLongitude") Double beginLongitude,
+            @RequestParam("beginDimension") Double beginDimension) {
 
         logger.info(userId + ":" + bicycleCode);
         try {

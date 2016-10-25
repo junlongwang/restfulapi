@@ -1,11 +1,10 @@
 package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.DepositStatus;
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.BankDepositOrderDao;
-import com.joybike.server.api.model.bankConsumedOrder;
 import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -39,7 +38,7 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
                 return null;
             }
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -67,7 +66,7 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
             map.put("payAt", payAt);
             return execSQL(updateDepositOrderByIdSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 }

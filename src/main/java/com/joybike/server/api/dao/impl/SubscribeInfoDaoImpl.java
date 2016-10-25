@@ -1,17 +1,15 @@
 package com.joybike.server.api.dao.impl;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.SubscribeInfoDao;
-import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -40,7 +38,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
                 return null;
             }
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -61,7 +59,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
             map.put("vehicleId", vehicleId);
             return execSQL(deleteSubscribeInfoSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -84,7 +82,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
             map.put("status", subscribeStatus.getValue());
             return execSQL(updateSubscribeInfoSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -109,7 +107,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
                 return null;
             }
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -134,7 +132,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
                 return null;
             }
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 

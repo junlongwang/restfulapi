@@ -1,5 +1,6 @@
 package joyTest;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.model.Message;
 import com.joybike.server.api.model.vehicleOrder;
 import com.joybike.server.api.service.BicycleRestfulService;
@@ -47,5 +48,10 @@ public class ActionTest {
         } catch (Exception e) {
             System.out.println("错误"+ e.getMessage());
         }
+    }
+
+    @Test
+    public void errorTest(){
+        System.out.println(ErrorEnum.ConsumedOrderList_Error.toString());
     }
 }

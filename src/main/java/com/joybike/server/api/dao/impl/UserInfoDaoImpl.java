@@ -1,16 +1,14 @@
 package com.joybike.server.api.dao.impl;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserInfoDao;
-import com.joybike.server.api.model.userCoupon;
 import com.joybike.server.api.model.userInfo;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,12 +48,12 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
      * @param phone
      * @return
      */
-    final String phoneSql = "select * from userInfo where iphone = ?";
+    final String phoneSql = "select * from userInfo where iphone = :phone";
 
     @Override
     public userInfo getInfoByPhone(String phone)  throws Exception{
         Map map = new HashMap();
-        map.put("mobile", phone);
+        map.put("phone", phone);
         try {
             try {
                 return (userInfo) this.jdbcTemplate.queryForObject(phoneSql, map, new BeanPropertyRowMapper(userInfo.class));
@@ -63,7 +61,7 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
                 return null;
             }
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
     }

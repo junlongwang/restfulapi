@@ -1,9 +1,8 @@
 package com.joybike.server.api.restful;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.ThirdPayService.IThirdPayService;
-import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -115,7 +113,7 @@ public class PayRestfulApi {
             List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(userId);
             return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ErrorEnum.ConsumedOrderList_Error.toString(), null));
+            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ReturnEnum.ConsumedOrderList_Error.toString(), null));
         }
 
     }
@@ -133,7 +131,7 @@ public class PayRestfulApi {
             List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(userId);
             return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, ErrorEnum.BankDepositOrderList_Error.toString(), null));
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, ReturnEnum.BankDepositOrderList_Error.toString(), null));
         }
     }
 

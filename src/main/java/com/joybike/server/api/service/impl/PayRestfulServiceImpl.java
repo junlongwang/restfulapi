@@ -9,6 +9,7 @@ import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -44,12 +45,13 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userId
      * @return
      */
+    @Transactional
     @Override
     public List<bankConsumedOrder> getBankConsumedOrderList(long userId) throws Exception {
         try {
             return bankConsumedOrderDao.getBankConsumedOrderList(userId, ConsumedStatus.susuccess);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.SERVICE_ERROR);
+            throw new RestfulException(ReturnEnum.SERVICE_ERROR);
         }
 
     }
@@ -59,6 +61,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
+    @Transactional
     @Override
     public void recharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
@@ -100,6 +103,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
+    @Transactional
     @Override
     public void depositRecharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
@@ -135,6 +139,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userCoupon
      * @return
      */
+    @Transactional
     @Override
     public long addUserCoupon(userCoupon userCoupon) throws Exception {
         return userCouponDao.save(userCoupon);
@@ -146,6 +151,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
+    @Transactional
     @Override
     public long deleteUserCoupon(Map map) throws Exception {
 
@@ -158,6 +164,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
+    @Transactional
     @Override
     public long updateCoupon(Map map) throws Exception {
         return userCouponDao.updateCoupon(map);
@@ -185,7 +192,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param payAt
      * @return
      */
-
+    @Transactional
     @Override
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception{
         return depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);

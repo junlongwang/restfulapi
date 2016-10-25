@@ -5,6 +5,7 @@ import com.joybike.server.api.model.vehicle;
 import com.joybike.server.api.model.vehicleHeartbeat;
 import com.joybike.server.api.model.vehicleRepair;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public interface BicycleRestfulService {
      * @param userId
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId)  throws Exception;
+    subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception;
 
     /**
      * 根据车辆ID获取预约信息
@@ -54,7 +55,7 @@ public interface BicycleRestfulService {
      * @param vehicleId
      * @return
      */
-    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId)  throws Exception;
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception;
 
     /**
      * 获取骑行记录
@@ -99,4 +100,15 @@ public interface BicycleRestfulService {
      * @return
      */
     List<vehicle> getVehicleList(double beginDimension, double beginLongitude) throws Exception;
+
+    /**
+     * 解锁
+     *
+     * @param userId
+     * @param bicycleCode
+     * @param beginAt
+     * @param beginLongitude
+     * @param beginDimension
+     */
+    long unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception;
 }

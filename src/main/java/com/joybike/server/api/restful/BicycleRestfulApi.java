@@ -1,14 +1,11 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
-import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
-import com.joybike.server.api.service.PayRestfulService;
-import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
-import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,14 +53,10 @@ public class BicycleRestfulApi {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
 
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, "1001：" + "有未支付的订单", "null"));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(), "null"));
             } else {
-                try {
-                    bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                    return ResponseEntity.ok(new Message<String>(true, null, "预约成功！"));
-                } catch (Exception e) {
-                    return ResponseEntity.ok(new Message<String>(false, e.getMessage(), null));
-                }
+                bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
+                return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Appointment_Success.getErrorDesc()));
             }
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<String>(false, e.getMessage(), null));
@@ -81,10 +74,12 @@ public class BicycleRestfulApi {
     @RequestMapping(value = "cancle", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> cancle(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
         try {
-            bicycleRestfulService.deleteSubscribeInfo(userId, bicycleCode);
-            return ResponseEntity.ok(new Message<String>(true, null, "取消预约成功！"));
+            int cancle = bicycleRestfulService.deleteSubscribeInfo(userId, bicycleCode);
+            if (cancle > 0)
+                return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Cancel_Success.getErrorDesc()));
+            else return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.No_Subscribe.getErrorDesc()));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, "取消预约失败", null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Cancel_Error.toString(), null));
         }
     }
 
@@ -114,7 +109,7 @@ public class BicycleRestfulApi {
             List<vehicle> list = bicycleRestfulService.getVehicleList(longitude, dimension);
             return ResponseEntity.ok(new Message<List<vehicle>>(true, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<vehicle>>(false, "1001：" + "GPS信号丢失", null));
+            return ResponseEntity.ok(new Message<List<vehicle>>(false, ReturnEnum.No_Vehicle.toString(), null));
         }
     }
 
@@ -131,47 +126,29 @@ public class BicycleRestfulApi {
             @RequestParam("userId") long userId,
             @RequestParam("bicycleCode") String bicycleCode,
             @RequestParam("beginAt") int beginAt,
-            @RequestParam("beginLongitude") BigDecimal beginLongitude,
-            @RequestParam("beginDimension") BigDecimal beginDimension) {
+            @RequestParam("beginLongitude") double beginLongitude,
+            @RequestParam("beginDimension") double beginDimension) {
 
         logger.info(userId + ":" + bicycleCode);
+        long orderId = 0;
         try {
             //获取是否有未支付订单
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
-            //获取使用状态
-            int useStatus = bicycleRestfulService.getVehicleUseStatusByBicycleCode(bicycleCode);
-            //获取车的状态
-            int status = bicycleRestfulService.getVehicleStatusByBicycleCode(bicycleCode);
 
-            if (order == null) {
-                if (status == 0) {
-                    if (useStatus == 1) {
-                        return ResponseEntity.ok(new Message<String>(false, "1001：" + "该车已被预约", "null"));
-                    }
-                    if (useStatus == 2) {
-                        return ResponseEntity.ok(new Message<String>(false, "1001：" + "该车正在使用中", "null"));
-                    }
-                    if (useStatus == 0) {
-                        VehicleComHelper.openLock(bicycleCode);
-                        orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude ,beginDimension);
-                    }
-                }
-                if (status == 1) {
-                    return ResponseEntity.ok(new Message<String>(false, "1001：" + "该车为禁用状态,不可使用", "null"));
-                }
-                if (status == 2) {
-                    return ResponseEntity.ok(new Message<String>(false, "1001：" + "该车故障中,不可使用", "null"));
-                }
-
+            if (order != null) {
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(), null));
             } else {
-                return ResponseEntity.ok(new Message<String>(false, "1001：" + "有订单未支付,请完成支付", "null"));
+                orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+            }
+
+            if (orderId > 0) {
+                return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Unlock_Success.getErrorDesc()));
+            } else {
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.toString(), null));
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, "开锁失败", null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.toString(), null));
         }
-
-
-        return ResponseEntity.ok(new Message<String>(true, null, "开锁成功！"));
     }
 
     /**
@@ -244,7 +221,7 @@ public class BicycleRestfulApi {
             bicycleRestfulService.addVehicleRepair(form);
             return ResponseEntity.ok(new Message<String>(true, null, "提交成功！"));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, "1001：" + "故障申报失败", null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Submit_Error.toString(), null));
         }
 
 

@@ -13,6 +13,7 @@ import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -33,7 +34,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
 
 
     /**
-     * 扫码
+     * 创建订单
      *
      * @param userId         用户ID
      * @param vehicleId      车身印刷ID
@@ -42,8 +43,9 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @param beginDimension 骑行开始的维度
      * @return
      */
+    @Transactional
     @Override
-    public void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginLongitude ,BigDecimal beginDimension) throws Exception {
+    public long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude ,double beginDimension) throws Exception {
         subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
         subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
 
@@ -82,10 +84,10 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         item.setOrderCode(orderCode);
         item.setVehicleCode(vehicleId);
         item.setBeginAt(beginAt);
-        item.setBeginDimension(beginDimension);
-        item.setBeginLongitude(beginLongitude);
+        item.setBeginDimension(BigDecimal.valueOf(beginDimension));
+        item.setBeginLongitude(BigDecimal.valueOf(beginLongitude));
         orderItemDao.save(item);
-
+        return orderId;
     }
 
     /**

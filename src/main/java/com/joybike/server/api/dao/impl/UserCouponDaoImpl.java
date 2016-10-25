@@ -1,9 +1,8 @@
 package com.joybike.server.api.dao.impl;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserCouponDao;
-import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.userCoupon;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -32,7 +31,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
         try {
             return execSQL(deleteUserCouponSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
     }
@@ -50,7 +49,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
         try {
             return execSQL(updateCouponSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -72,7 +71,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
                 return null;
             }
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
@@ -92,7 +91,7 @@ public class UserCouponDaoImpl extends Reository<userCoupon> implements UserCoup
             map.put("expireAt", expireAt);
             return getCount(validCountSql, map);
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
     }

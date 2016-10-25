@@ -1,17 +1,14 @@
 package com.joybike.server.api.dao.impl;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by 58 on 2016/10/22.
@@ -38,7 +35,7 @@ public class VehicleHeartbeatDaoImpl extends Reository<vehicleHeartbeat> impleme
                 return null;
             }
         } catch (Exception e) {
-            throw new RestfulException(ErrorEnum.DATABASE_ERROR);
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
     }

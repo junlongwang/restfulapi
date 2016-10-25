@@ -41,9 +41,20 @@ public enum ErrorEnum {
 
     BicycleUse_Error(1010,"车辆使用中"),
 
+    ConsumedOrderList_Error(1011,"获取消费明细失败"),
+
+    BankDepositOrderList_Error(1012,"获取充值明细失败"),
+
+
+
     ;
 
-/*===================================================================================*/
+    @Override
+    public String toString() {
+        return errorCode + ":" + errorDesc;
+    }
+
+    /*===================================================================================*/
 
     private int errorCode;
     private String errorDesc;

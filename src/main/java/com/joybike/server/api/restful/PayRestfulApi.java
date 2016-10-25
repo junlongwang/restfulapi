@@ -1,5 +1,6 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.ThirdPayService.IThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
@@ -108,7 +109,13 @@ public class PayRestfulApi {
      */
     @RequestMapping(value = "getConsumeLogs",method = RequestMethod.GET)
     public ResponseEntity<Message<List<bankConsumedOrder>>> getConsumeLogs(@RequestParam("userId") long userId) {
-        return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, null, new ArrayList<bankConsumedOrder>()));
+        try {
+            List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(userId);
+            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, null, list));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ErrorEnum.ConsumedOrderList_Error.toString(), null));
+        }
+
     }
 
     /**
@@ -118,7 +125,13 @@ public class PayRestfulApi {
      */
     @RequestMapping(value = "getDepositLogs",method = RequestMethod.GET)
     public ResponseEntity<Message<List<bankDepositOrder>>> getDepositLogs(@RequestParam("userId") long userId) {
-        return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, new ArrayList<bankDepositOrder>()));
+
+        try {
+            List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(userId);
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, list));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, ErrorEnum.BankDepositOrderList_Error.toString(), null));
+        }
     }
 
     @RequestMapping(value = "refund",method = RequestMethod.POST)

@@ -60,7 +60,7 @@ public class BicycleRestfulApi {
             } else {
                 try {
                     bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                    return ResponseEntity.ok(new Message<String>(true, 0, null,"预约成功！"));
+                    return ResponseEntity.ok(new Message<String>(true, 0, null,ReturnEnum.Appointment_Success.getErrorDesc()));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false,ReturnEnum.UNKNOWN.getErrorCode(),ReturnEnum.UNKNOWN.getErrorDesc()+"-"+e.getMessage(), null));
                 }

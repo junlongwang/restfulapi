@@ -28,7 +28,7 @@ public class JsSdk {
 		    // jsapi_ticket 应该全局存储与更新，以下代码以写入到文件中做示例
 		    if (jsapi_ticket_expire_time<System.currentTimeMillis()) {
 		      String accessToken = getAccessToken();
-		      // 如果是企业号用以�? URL 获取 ticket
+		      // 如果是企业号用以  URL 获取 ticket
 		      String url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?type=jsapi&access_token="+accessToken;
 		      JSONObject json= HttpUtils.requestJsonData(url);
 		      if (json!=null&&json.get("ticket")!=null&&json.get("ticket").toString().trim().length()>0) {

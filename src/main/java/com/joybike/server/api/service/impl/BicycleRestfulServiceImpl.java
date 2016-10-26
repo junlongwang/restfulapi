@@ -278,7 +278,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //开锁
                 VehicleComHelper.openLock(bicycleCode);
                 //修改车的状态
-                vehicleDao.updateVehicleStatus(bicycleCode,UseStatus.use);
+                vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.use);
                 //创建订单
                 orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -290,6 +290,22 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         if (status == -1) throw new RestfulException(ReturnEnum.FaultIng);
 
         return orderId;
+    }
+
+    /**
+     * 锁车
+     *
+     * @param bicycleCode
+     * @param endAt
+     * @param beginLongitude
+     * @param beginDimension
+     * @return
+     */
+    @Override
+    public long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension) throws Exception{
+        //修改车状态
+        vehicleDao.updateVehicleStatus(bicycleCode , UseStatus.free);
+        return 0;
     }
 
 }

@@ -240,7 +240,8 @@ public class BicycleRestfulApi {
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Submit_Error.getErrorCode(), ReturnEnum.Submit_Error.getErrorDesc()+"-"+e.getMessage(),null));
         }
-
-
     }
+
+
+
 }

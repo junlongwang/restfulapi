@@ -2,7 +2,7 @@ package com.joybike.server.api.ThirdPayService.wechat;
 
 public class WeiXinConfig {
 	 public static String TRADE_TYPE	= "JSAPI" ;//交易类型
-	 public static String WECHAT_WEB_PARTNER	= "" ;//商户�?
+	 public static String WECHAT_WEB_PARTNER	= "" ;//商户
 	 public static String WECHAT_WEB_APP_ID		= "";	//公众号APPID
 	 public static String WECHAT_WEB_APP_SECRET	= "";  //公众号APPSECRET
 	 

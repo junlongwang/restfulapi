@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.io.UnsupportedEncodingException;  
 /**
- * 是jssdk微信�?口的加密，此加密并微信统�?加密�?
+ * 是jssdk微信 的加密，此加密并微信统 加密
  *
  */
 public class Sign {
@@ -19,7 +19,7 @@ public class Sign {
         String string1;
         String signature = "";
 
-        //注意这里参数名必须全部小写，且必须有�?
+        //注意这里参数名必须全部小写，且必须有
         string1 = "jsapi_ticket=" + jsapi_ticket +
                   "&noncestr=" + nonce_str +
                   "&timestamp=" + timestamp +

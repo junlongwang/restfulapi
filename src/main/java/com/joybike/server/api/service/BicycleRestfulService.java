@@ -111,4 +111,17 @@ public interface BicycleRestfulService {
      * @param beginDimension
      */
     long unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception;
+
+
+    /**
+     * 锁车
+     *
+     * @param bicycleCode
+     * @param endAt
+     * @param beginLongitude
+     * @param beginDimension
+     * @return
+     */
+    long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension) throws Exception;
+
 }

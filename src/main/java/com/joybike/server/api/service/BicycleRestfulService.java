@@ -124,4 +124,10 @@ public interface BicycleRestfulService {
      */
     long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension) throws Exception;
 
+    /**
+     * 修改订单支付状态
+     * @param orderCode
+     * @return
+     */
+    int updateVehicleStatausByCode(String orderCode);
 }

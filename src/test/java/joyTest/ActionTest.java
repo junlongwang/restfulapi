@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -209,5 +210,16 @@ public class ActionTest {
                 System.out.println(product);
             }
         });
+    }
+
+    @Test
+    public void aTest(){
+
+        int time = 1/60/30;
+        double t = (1800/60)/30;
+        if (t >0){
+            time = time + 1;
+        }
+        System.out.println(BigDecimal.valueOf(time));
     }
 }

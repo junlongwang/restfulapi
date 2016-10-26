@@ -6,6 +6,7 @@ import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.bankRefundOrder;
 import com.joybike.server.api.model.userCoupon;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -117,4 +118,13 @@ public interface PayRestfulService {
      * @return
      */
     int updateRefundOrderStatusById(Long id);
+
+     /* 支付消费
+     *
+     * @param orderCode
+     * @param payPrice
+     * @param userId
+     * @return
+     */
+    int consume(String orderCode, BigDecimal payPrice, long userId) throws Exception;
 }

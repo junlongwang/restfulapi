@@ -76,11 +76,16 @@ public class orderItem implements Serializable {
     **/
     private Integer createAt;
 
+    /**
+     * 骑行时间- 秒
+     */
+    private Integer cyclingTime;
+
     public orderItem(){
 
     }
 
-    public orderItem(Long id, Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, String cyclingImg, Integer createAt) {
+    public orderItem(Long id, Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, String cyclingImg, Integer createAt, Integer cyclingTime) {
         this.id = id;
         this.userId = userId;
         this.orderCode = orderCode;
@@ -93,6 +98,34 @@ public class orderItem implements Serializable {
         this.endLongitude = endLongitude;
         this.cyclingImg = cyclingImg;
         this.createAt = createAt;
+        this.cyclingTime = cyclingTime;
+    }
+
+    @Override
+    public String toString() {
+        return "orderItem{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", orderCode='" + orderCode + '\'' +
+                ", vehicleCode='" + vehicleCode + '\'' +
+                ", beginAt=" + beginAt +
+                ", endAt=" + endAt +
+                ", beginDimension=" + beginDimension +
+                ", beginLongitude=" + beginLongitude +
+                ", endDimension=" + endDimension +
+                ", endLongitude=" + endLongitude +
+                ", cyclingImg='" + cyclingImg + '\'' +
+                ", createAt=" + createAt +
+                ", cyclingTime=" + cyclingTime +
+                '}';
+    }
+
+    public void setCyclingTime(Integer cyclingTime) {
+        this.cyclingTime = cyclingTime;
+    }
+
+    public Integer getCyclingTime() {
+        return cyclingTime;
     }
 
     public Long getId() {

@@ -51,6 +51,7 @@ public enum ReturnEnum {
     UpdateUer_ERROR(4001, "更新用户信息失败"),
     UseRregister_Error(4002, "登录失败"),
     Iphone_Error(4003,"请使用正确的手机号"),
+    Iphone_Validate_Error(4004, "验证码验证失败！，请重新获取！"),
     /***********
      * 车辆错误
      *******************/

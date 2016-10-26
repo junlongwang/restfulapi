@@ -1,7 +1,7 @@
 package com.joybike.server.api.model;
 
 import java.io.Serializable;
-
+import com.alibaba.fastjson.annotation.JSONField;
 /**
  * 统一返回结果
  * Created by 58 on 2016/10/16.
@@ -11,19 +11,23 @@ public class Message<T> implements Serializable {
     /**
      * 请求是否成功
      */
+    @JSONField
     private boolean isSucess;
     /**
      * 错误码
      */
+    @JSONField
     private int errorCode;
 
     /**
      * 错误信息
      */
+    @JSONField
     private String errorMessage;
     /**
      * 返回数据
      */
+    @JSONField
     private T data;
 
     public Message()
@@ -58,6 +62,14 @@ public class Message<T> implements Serializable {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     @Override

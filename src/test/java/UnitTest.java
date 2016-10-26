@@ -122,7 +122,14 @@ public class UnitTest {
 //        System.out.println(JSON.toJSON(dto));
 
 
-        com.joybike.server.api.model.Message<userInfo> message=new com.joybike.server.api.model.Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(),ReturnEnum.UpdateUer_ERROR.getErrorDesc(),null);
+        //com.joybike.server.api.model.Message<userInfo> message=new com.joybike.server.api.model.Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(),ReturnEnum.UpdateUer_ERROR.getErrorDesc(),null);
+
+
+        com.joybike.server.api.model.Message<String> message=null;//new com.joybike.server.api.model.Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null);
+
+        message =new com.joybike.server.api.model.Message<String>(true,0,null,null);
+        //new com.joybike.server.api.model.Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc(), null);
+                //new com.joybike.server.api.model.Message<userInfo>(true, 0,null, new userInfo());
         System.out.println(JSON.toJSON(message));
         System.out.println(message);
 

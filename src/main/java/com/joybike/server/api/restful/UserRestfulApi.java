@@ -82,12 +82,16 @@ public class UserRestfulApi {
     public ResponseEntity<Message<String>> getValidateCode(@RequestParam("mobile") String mobile) {
         int randNo = 0;
         try {
+            //如果验证码没有过期，不允许重复请求发送
+            if(RedixUtil.exits(mobile)) {
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Iphone_Sender_Error.getErrorCode(),ReturnEnum.Iphone_Sender_Error.getErrorDesc(), null));
+            }
             randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
 
             //发送短信接口
             SMSResponse smsResponse = SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
             if (!smsResponse.getErrorCode().equals("0")){
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc(), null));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc()+"-"+smsResponse.getMsg(), null));
             }else {
                 //存放到REDIX
                 RedixUtil.setString(mobile, String.valueOf(randNo), 5 * 60);

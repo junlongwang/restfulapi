@@ -4,6 +4,7 @@ import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import com.joybike.server.api.thirdparty.wxtenpay.util.RSASignature;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * Created by LongZiyuan on 2016/10/24.
  */
+@Service
 public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
 
     private String partner = "";

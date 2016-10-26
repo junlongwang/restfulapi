@@ -2,7 +2,9 @@ package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.PayType;
-import com.joybike.server.api.ThirdPayService.IThirdPayService;
+import com.joybike.server.api.ThirdPayService.ThirdPayService;
+import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
+import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
@@ -28,7 +30,7 @@ public class PayRestfulApi {
     @Autowired
     private PayRestfulService payRestfulService;
     @Autowired
-    private IThirdPayService iThirdPayService;
+    private ThirdPayService ThirdPayService;
 
     /**
      * 充值：可充值押金、预存现金
@@ -36,10 +38,16 @@ public class PayRestfulApi {
      * @param payBean
      * @return
      */
-    @RequestMapping(value = "deposit", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean, @RequestParam("userId") long userId) {
-        String rechargeResult = forRecharge(payBean, userId);
-        return ResponseEntity.ok(new Message<String>(true, 0,null, "牛逼"));
+    @RequestMapping(value = "deposit",method = RequestMethod.POST)
+    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId)
+    {
+        //ThirdPayService.execute(payBean);
+        try{
+            String rechargeResult = forRecharge(payBean, userId);
+            return ResponseEntity.ok(new Message<String>(true,0,null,rechargeResult));
+        }catch (Exception e){
+            return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(),null));
+        }
     }
 
 
@@ -48,8 +56,8 @@ public class PayRestfulApi {
         String responseHtml = "success";
         String channleId = request.getParameter("attach");
         String returncode = "";
-        if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
-            returncode = iThirdPayService.callBack(request);
+        if(request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null){
+            returncode = ThirdPayService.callBack(request);
         }
         if (returncode != null) {
             if (channleId.equals("117")) {
@@ -150,7 +158,7 @@ public class PayRestfulApi {
         bankDepositOrder order = createDepositRechargeOrder(payBean, userId);
         if (order != null && order.getId() != null) {
             payBean.setId(order.getId());
-            return iThirdPayService.execute(payBean);
+            return ThirdPayService.execute(payBean);
         }
         return null;
     }

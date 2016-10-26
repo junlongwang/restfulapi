@@ -1,9 +1,12 @@
 package com.joybike.server.api.ThirdPayService.impl;
 
+import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
+import com.joybike.server.api.ThirdPayService.ThirdPayService;
+import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
 import com.joybike.server.api.ThirdPayService.WxappConstructUrlInter;
-import com.joybike.server.api.ThirdPayService.IThirdPayService;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.ThirdPayBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +17,16 @@ import java.util.HashMap;
  * Created by LongZiyuan on 2016/10/20.
  */
 @Service
-public class ThirdPayServiceImpl implements IThirdPayService {
+public class ThirdPayServiceImpl implements ThirdPayService {
+
+    @Autowired
+    private WxPublicConstructUrlInter wxPublicConstructUrlInter;
+
+    @Autowired
+    private WxappConstructUrlInter wxappConstructUrlInter;
+
+    @Autowired
+    private AliPayConstructUrlInter aliPayConstructUrlInter;
 
     @Override
     public String execute(ThirdPayBean payOrder) {
@@ -24,15 +36,16 @@ public class ThirdPayServiceImpl implements IThirdPayService {
             HashMap<String,String> map = new HashMap<String,String>();
             map.put("out_trade_no", payOrder.getId().toString());
             map.put("total_fee", payOrder.getOrderMoney().toString());
-            map.put("notify_url", payOrder.getNotifyUrl());
             map.put("spbill_create_ip",payOrder.getOperIP());
-            map.put("body",payOrder.getOrderDesc());
-            RedirectParam redirectParam= new WxappConstructUrlImpl().getUrl(map);
+            map.put("body",payOrder.getPruductDesc());
+            String channleId = String.valueOf(payOrder.getChannelId());
+            map.put("attach",channleId);
+            RedirectParam redirectParam= wxappConstructUrlInter.getUrl(map);
             if( redirectParam != null )
                 return redirectParam.getPara();
         }
         else if(payOrder.getChannelId() == 118){
-            RedirectParam redirectParam = new WxPublicConstructUrlImpl().getUrl(payOrder);
+            RedirectParam redirectParam = wxPublicConstructUrlInter.getUrl(payOrder);
             if (redirectParam != null)
                 return redirectParam.getPara();
         }
@@ -40,12 +53,10 @@ public class ThirdPayServiceImpl implements IThirdPayService {
             HashMap<String,String> map = new HashMap<String,String>();
             map.put("out_trade_no", payOrder.getId().toString());
             map.put("total_fee", payOrder.getOrderMoney().toString());
-            map.put("notify_url", payOrder.getNotifyUrl());
             map.put("body",payOrder.getOrderDesc());
             map.put("subject",payOrder.getPruductDesc());
-            map.put("it_b_pay","3d"); //超时时间
-            map.put("show_url","http://www.alipay.com");   //商品展示网址
-            RedirectParam redirectParam= new AliPayConstructUrlImpl().getUrl(map);
+            map.put("it_b_pay", "3d"); //超时时间
+            RedirectParam redirectParam= aliPayConstructUrlInter.getUrl(map);
             if( redirectParam != null )
                 return redirectParam.getPara();
         }
@@ -58,7 +69,6 @@ public class ThirdPayServiceImpl implements IThirdPayService {
         payBean.setId(Long.valueOf("12312321321312312"));
         payBean.setRechargeType(1);
         payBean.setChannelId(117);
-        payBean.setNotifyUrl("www.58.com");
         payBean.setPruductDesc("joybike押金充值");
         payBean.setOrderMoney(BigDecimal.valueOf(299));
         payBean.setOperIP("192.168.0.1");

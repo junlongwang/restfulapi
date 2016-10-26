@@ -23,4 +23,12 @@ public interface WxPublicConstructUrlInter {
      * @return
      */
     public String callBack(HttpServletRequest request);
+
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    public RedirectParam getRefundUrl(ThirdPayBean request);
 }

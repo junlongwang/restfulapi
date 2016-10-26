@@ -14,6 +14,7 @@ public class RedixUtil {
 
     private static String host = "r-2ze4892679511cf4.redis.rds.aliyuncs.com";
     private static int port = 6379;
+    private static String instanceAndPwd = "r-2ze4892679511cf4:841029JOYbike";
 
     public static void main(String[] args) {
         Jedis redis = new Jedis(host, port);//连接redis
@@ -30,6 +31,63 @@ public class RedixUtil {
 
         redis.quit();
         redis.close();
+    }
+
+    public static String getString(String key)
+    {
+        Jedis redis = null;
+        try {
+            new Jedis(host, port);//连接redis
+            redis.auth(instanceAndPwd);//验证密码
+            return redis.get(key);
+        }
+        finally {
+            redis.quit();
+            redis.close();
+        }
+    }
+
+    public static void setString(String key,String value)
+    {
+        Jedis redis = null;
+        try {
+            redis = new Jedis(host, port);//连接redis
+            redis.auth(instanceAndPwd);//验证密码
+            redis.set(key, value);
+        }
+        finally {
+            redis.quit();
+            redis.close();
+        }
+    }
+
+    public static void setString(String key,String value,int seconds)
+    {
+        Jedis redis = null;
+        try {
+            redis = new Jedis(host, port);//连接redis
+            redis.auth(instanceAndPwd);//验证密码
+            redis.set(key, value);
+            redis.expire(key,seconds);
+        }
+        finally {
+            redis.quit();
+            redis.close();
+        }
+    }
+
+    public static boolean exits(String key)
+    {
+        Jedis redis = null;
+        try {
+            redis = new Jedis(host, port);//连接redis
+            redis.auth(instanceAndPwd);//验证密码
+            return redis.exists(key);
+        }
+        finally {
+            redis.quit();
+            redis.close();
+        }
     }
 
     private void test() {

@@ -40,6 +40,7 @@ public enum ReturnEnum {
      *******************/
     NoPay_Error(2001, "有未支付的订单"),
     Acount_Error(2002, "获取账户余额失败"),
+    Recharge_Error(2003,"充值失败"),
 
     ConsumedOrderList_Error(2006, "获取消费明细失败"),
 
@@ -50,7 +51,9 @@ public enum ReturnEnum {
      *******************/
     UpdateUer_ERROR(4001, "更新用户信息失败"),
     UseRregister_Error(4002, "登录失败"),
-    Iphone_Error(4003,"请使用正确的手机号"),
+    Iphone_Error(4003,"验证码发送失败,发送通道异常！"),
+    Iphone_Validate_Error(4004, "验证码验证失败！，请重新获取！"),
+    Iphone_Sender_Error(4005,"验证码已经发送，5分钟内不允许重复请求！"),
     /***********
      * 车辆错误
      *******************/

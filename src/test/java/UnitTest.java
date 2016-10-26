@@ -1,9 +1,7 @@
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Message;
-import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.User;
-import com.joybike.server.api.model.vehicleRepair;
-import com.joybike.server.api.util.UnixTimeUtils;
+import com.joybike.server.api.model.userInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,21 +101,37 @@ public class UnitTest {
        // Message message=new Message<String>(true,null,"预约成功！");
         //System.out.println(JSON.toJSONString(message));
 
-        String value=thirdpartyProperty.getProperty("key1");
-        System.out.println(value);
+//        String value=thirdpartyProperty.getProperty("key1");
+//        System.out.println(value);
+//
+//
+//
+//        //vehicleRepair(String vehicleId, String cause, String faultImg, Long createId, Integer createAt, Integer disposeStatus, String disposeDepict, Long operateId, Integer operateAt) {
+//        vehicleRepairDto vehicleRepair=new vehicleRepairDto("车辆编码","车辆没轮子",value.getBytes(),333L, UnixTimeUtils.now());
+//        System.out.println(JSON.toJSON(vehicleRepair));
+//
+//        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(true, 0, null, "提交成功！")));
+//
+//        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(false, ReturnEnum.Submit_Error.getErrorCode(), ReturnEnum.Submit_Error.getErrorDesc(), null)));
+//
+//        System.out.println(ReturnEnum.Submit_Error.getErrorCode());
+//        System.out.println(ReturnEnum.Submit_Error.getErrorDesc());
+//
+//
+//        userInfoDto dto = new userInfoDto(111L,"手机号码","真实姓名","身份证号","国籍","人和身份证".getBytes(),"身份证图片".getBytes(),"头像".getBytes());
+//        System.out.println(JSON.toJSON(dto));
 
 
-
-        //vehicleRepair(String vehicleId, String cause, String faultImg, Long createId, Integer createAt, Integer disposeStatus, String disposeDepict, Long operateId, Integer operateAt) {
-        vehicleRepairDto vehicleRepair=new vehicleRepairDto("车辆编码","车辆没轮子",value.getBytes(),333L, UnixTimeUtils.now());
-        System.out.println(JSON.toJSON(vehicleRepair));
-
-        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(true,0, null, "提交成功！")));
-
-        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(false, 1001, "故障申报失败",null)));
+        //com.joybike.server.api.model.Message<userInfo> message=new com.joybike.server.api.model.Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(),ReturnEnum.UpdateUer_ERROR.getErrorDesc(),null);
 
 
-        System.out.println(ReturnEnum.Submit_Error.getErrorCode());
-        System.out.println(ReturnEnum.Submit_Error.getErrorDesc());
+        com.joybike.server.api.model.Message<String> message=null;//new com.joybike.server.api.model.Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null);
+
+        message =new com.joybike.server.api.model.Message<String>(true,0,null,null);
+        //new com.joybike.server.api.model.Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc(), null);
+                //new com.joybike.server.api.model.Message<userInfo>(true, 0,null, new userInfo());
+        System.out.println(JSON.toJSON(message));
+        System.out.println(message);
+
     }
 }

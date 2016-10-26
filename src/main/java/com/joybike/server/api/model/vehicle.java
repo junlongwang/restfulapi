@@ -1,6 +1,7 @@
 package com.joybike.server.api.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class vehicle implements Serializable {
     /** 
@@ -49,13 +50,13 @@ public class vehicle implements Serializable {
      * 最后一次上报的有效纬度
      *  @Author lisy
     **/
-    private String lastDimension;
+    private BigDecimal lastDimension;
 
     /** 
      * 最后一次上报的有效经度
      *  @Author lisy
     **/
-    private String lastLongitude;
+    private BigDecimal lastLongitude;
 
     /** 
      * 车辆图片
@@ -85,7 +86,7 @@ public class vehicle implements Serializable {
 
     }
 
-    public vehicle(String vehicleId, String lockId, String bundlingPhone, Integer agentId, Integer status, Integer useStatus, String lastDimension, String lastLongitude, String vehicleImg, String remark, Integer createAt, Integer updateAt) {
+    public vehicle(String vehicleId, String lockId, String bundlingPhone, Integer agentId, Integer status, Integer useStatus, BigDecimal lastDimension, BigDecimal lastLongitude, String vehicleImg, String remark, Integer createAt, Integer updateAt) {
         this.vehicleId = vehicleId;
         this.lockId = lockId;
         this.bundlingPhone = bundlingPhone;
@@ -100,6 +101,9 @@ public class vehicle implements Serializable {
         this.updateAt = updateAt;
     }
 
+
+
+
     @Override
     public String toString() {
         return "vehicle{" +
@@ -110,8 +114,8 @@ public class vehicle implements Serializable {
                 ", agentId=" + agentId +
                 ", status=" + status +
                 ", useStatus=" + useStatus +
-                ", lastDimension='" + lastDimension + '\'' +
-                ", lastLongitude='" + lastLongitude + '\'' +
+                ", lastDimension='" + lastDimension +
+                ", lastLongitude='" + lastLongitude +
                 ", vehicleImg='" + vehicleImg + '\'' +
                 ", remark='" + remark + '\'' +
                 ", createAt=" + createAt +
@@ -175,20 +179,20 @@ public class vehicle implements Serializable {
         this.useStatus = useStatus;
     }
 
-    public String getLastDimension() {
+    public BigDecimal getLastDimension() {
         return lastDimension;
     }
 
-    public void setLastDimension(String lastDimension) {
-        this.lastDimension = lastDimension == null ? null : lastDimension.trim();
+    public void setLastDimension(BigDecimal lastDimension) {
+        this.lastDimension = lastDimension;
     }
 
-    public String getLastLongitude() {
+    public BigDecimal getLastLongitude() {
         return lastLongitude;
     }
 
-    public void setLastLongitude(String lastLongitude) {
-        this.lastLongitude = lastLongitude == null ? null : lastLongitude.trim();
+    public void setLastLongitude(BigDecimal lastLongitude) {
+        this.lastLongitude = lastLongitude;
     }
 
     public String getVehicleImg() {

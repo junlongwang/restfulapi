@@ -15,7 +15,12 @@ public class Message<T> implements Serializable {
     /**
      * 错误码
      */
-    private String errorCode;
+    private int errorCode;
+
+    /**
+     * 错误信息
+     */
+    private String errorMessage;
     /**
      * 返回数据
      */
@@ -24,9 +29,10 @@ public class Message<T> implements Serializable {
     public Message()
     {}
 
-    public Message(boolean isSucess, String errorCode, T data) {
+    public Message(boolean isSucess, int errorCode, String errorMessage, T data) {
         this.isSucess = isSucess;
         this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
         this.data = data;
     }
 
@@ -38,11 +44,11 @@ public class Message<T> implements Serializable {
         this.isSucess = isSucess;
     }
 
-    public String getErrorCode() {
+    public int getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(String errorCode) {
+    public void setErrorCode(int errorCode) {
         this.errorCode = errorCode;
     }
 
@@ -52,5 +58,15 @@ public class Message<T> implements Serializable {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "isSucess=" + isSucess +
+                ", errorCode='" + errorCode + '\'' +
+                ", errorMessage='" + errorMessage + '\'' +
+                ", data=" + data +
+                '}';
     }
 }

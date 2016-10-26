@@ -10,6 +10,7 @@ import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by lishaoyong on 16/10/23.
@@ -43,6 +44,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param user
      * @return
      */
+    @Transactional
     @Override
     public int updateUserInfo(userInfo user) throws Exception {
         long userId = user.getId();
@@ -57,6 +59,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param phone
      * @return
      */
+    @Transactional
     @Override
     public userInfo getUserInfoByMobile(String phone) throws Exception {
 

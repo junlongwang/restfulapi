@@ -1,6 +1,6 @@
 package com.joybike.server.api.util;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import org.springframework.core.NestedExceptionUtils;
 
 /**
@@ -17,32 +17,32 @@ public class RestfulException extends RuntimeException {
 
     /**
      * 应用错误码枚举
-     * @param errorEnum
+     * @param returnEnum
      */
-    public RestfulException(ErrorEnum errorEnum){
-        super(errorEnum.getErrorDesc());
-        this.errorCode = errorEnum.getErrorCode();
+    public RestfulException(ReturnEnum returnEnum){
+        super(returnEnum.getErrorDesc());
+        this.errorCode = returnEnum.getErrorCode();
     }
 
     /**
      * 应用错误码枚举、异常对象(用于实现异常链)
-     * @param errorEnum
+     * @param returnEnum
      * @param cause
      */
-    public RestfulException(ErrorEnum errorEnum, Throwable cause){
-        super(errorEnum.getErrorDesc(), cause);
-        this.errorCode = errorEnum.getErrorCode();
+    public RestfulException(ReturnEnum returnEnum, Throwable cause){
+        super(returnEnum.getErrorDesc(), cause);
+        this.errorCode = returnEnum.getErrorCode();
     }
 
     /**
      * 应用错误码枚举、自定义报错信息
      * 在枚举定时错误消息满足不了时使用，例如：动态的生成报错提示信息
-     * @param errorEnum
+     * @param returnEnum
      * @param message
      */
-    public RestfulException(ErrorEnum errorEnum, String message){
+    public RestfulException(ReturnEnum returnEnum, String message){
         super(message);
-        this.errorCode = errorEnum.getErrorCode();
+        this.errorCode = returnEnum.getErrorCode();
     }
 
     public int getErrorCode() {

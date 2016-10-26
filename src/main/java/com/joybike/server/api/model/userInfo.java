@@ -33,12 +33,14 @@ public class userInfo implements Serializable {
     private String nationality;
 
     /** 
-     * 头像
+
+     * 身份证和人合照，图片
      *  @Author lisy
     **/
     private String photo;
 
-    /** 
+    /**
+     *
      * 身份证照片
      *  @Author lisy
     **/
@@ -112,6 +114,15 @@ public class userInfo implements Serializable {
                 '}';
     }
 
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
     public String getIphone() {
         return iphone;
     }
@@ -152,13 +163,6 @@ public class userInfo implements Serializable {
         this.nationality = nationality == null ? null : nationality.trim();
     }
 
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo == null ? null : photo.trim();
-    }
 
     public String getIdentityCardphoto() {
         return identityCardphoto;

@@ -43,17 +43,12 @@ public class subscribeInfo implements Serializable {
     private Integer status;
 
     /**
-     * 修改时间
-     */
-    private Integer updateAt;
-
-    /**
      * 预约单Code，生成规则为用户ID+车辆编号
      */
     private String subscribeCode;
 
 
-    public subscribeInfo(Long id, Long userId, String vehicleId, Integer startAt, Integer endAt, Integer createAt, Integer status, Integer updateAt,String subscribeCode ) {
+    public subscribeInfo(Long id, Long userId, String vehicleId, Integer startAt, Integer endAt, Integer createAt, Integer status,String subscribeCode ) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
@@ -61,7 +56,6 @@ public class subscribeInfo implements Serializable {
         this.endAt = endAt;
         this.createAt = createAt;
         this.status = status;
-        this.updateAt = updateAt;
         this.subscribeCode = subscribeCode;
     }
 
@@ -75,7 +69,6 @@ public class subscribeInfo implements Serializable {
                 ", endAt=" + endAt +
                 ", createAt=" + createAt +
                 ", status=" + status +
-                ", updateAt=" + updateAt +
                 ",subscribeCode=" + subscribeCode +
                 '}';
     }
@@ -90,14 +83,6 @@ public class subscribeInfo implements Serializable {
 
     public String getSubscribeCode() {
         return subscribeCode;
-    }
-
-    public void setUpdateAt(Integer updateAt) {
-        this.updateAt = updateAt;
-    }
-
-    public Integer getUpdateAt() {
-        return updateAt;
     }
 
     public void setStatus(Integer status) {

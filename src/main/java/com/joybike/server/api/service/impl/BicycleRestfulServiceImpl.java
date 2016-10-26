@@ -1,21 +1,22 @@
 package com.joybike.server.api.service.impl;
 
-import com.joybike.server.api.Enum.ErrorEnum;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Enum.UseStatus;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleDao;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dao.VehicleRepairDao;
-import com.joybike.server.api.model.subscribeInfo;
-import com.joybike.server.api.model.vehicle;
-import com.joybike.server.api.model.vehicleHeartbeat;
-import com.joybike.server.api.model.vehicleRepair;
+import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
+import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 
@@ -34,9 +35,14 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Autowired
     private VehicleHeartbeatDao vehicleHeartbeatDao;
 
+    @Autowired
+    private BicycleRestfulService bicycleRestfulService;
 
     @Autowired
     private VehicleRepairDao vehicleRepairDao;
+
+    @Autowired
+    private OrderRestfulService orderRestfulService;
 
 
     /**
@@ -46,6 +52,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param bicycleCode
      * @return
      */
+    @Transactional
     @Override
     public subscribeInfo vehicleSubscribe(long userId, String bicycleCode, int startAt) throws Exception {
 
@@ -68,7 +75,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
 
             } else {
-                throw new RestfulException(ErrorEnum.Repeat_Error);
+                throw new RestfulException(ReturnEnum.Repeat_Error);
             }
         }
 
@@ -85,11 +92,11 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //修改车辆使用状态
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
             } else {
-                throw new RestfulException(ErrorEnum.BicycleUse_Error);
+                throw new RestfulException(ReturnEnum.Repeat_Error);
             }
         }
 
-        if (vInfo != null && uInfo == null) {
+        if (uInfo == null && vInfo != null) {
             if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                 subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
                 //保存预约信息
@@ -99,10 +106,12 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
                 //修改车辆使用状态
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.subscribe);
+            } else {
+                throw new RestfulException(ReturnEnum.BicycleUse_Error);
             }
         }
 
-        if (vInfo == null && uInfo == null) {
+        if (uInfo == null && vInfo == null) {
             subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
             //保存预约信息
             long subscribeId = subscribeInfoDao.save(info);
@@ -124,7 +133,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         info.setEndAt(startAt + 900);
         info.setCreateAt(UnixTimeUtils.now());
         info.setStatus(subscribeStatus.getValue());
-        info.setUpdateAt(0);
         info.setSubscribeCode(subcribeCode);
         return info;
     }
@@ -136,9 +144,12 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param vehicleId
      * @return
      */
+    @Transactional
     @Override
     public int deleteSubscribeInfo(long userId, String vehicleId) throws Exception {
+
         return subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
+
     }
 
     /**
@@ -148,6 +159,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param vehicleId
      * @return
      */
+    @Transactional
     @Override
     public int updateSubscribeInfo(long userId, String vehicleId) throws Exception {
         return subscribeInfoDao.updateSubscribeInfo(userId, vehicleId, SubscribeStatus.use);
@@ -195,6 +207,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param vehicleRepair
      * @return
      */
+    @Transactional
     @Override
     public long addVehicleRepair(vehicleRepair vehicleRepair) throws Exception {
         vehicleRepair.setCreateAt(UnixTimeUtils.now());
@@ -234,8 +247,49 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     @Override
-    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) throws Exception{
+    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) throws Exception {
         return vehicleDao.getVehicleList(beginDimension, beginLongitude);
+    }
+
+    /**
+     * 解锁
+     *
+     * @param userId
+     * @param bicycleCode
+     * @param beginAt
+     * @param beginLongitude
+     * @param beginDimension
+     */
+    @Transactional
+    @Override
+    public long unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception {
+
+        long orderId = 0;
+
+        //获取使用状态
+        int useStatus = vehicleDao.getVehicleUseStatusByBicycleCode(bicycleCode);
+
+        //获取车的状态
+        int status = vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
+        if (status == 0) {
+            if (useStatus == 1) throw new RestfulException(ReturnEnum.BicycleUse_Error);
+            if (useStatus == 2) throw new RestfulException(ReturnEnum.Use_Vehicle);
+            if (useStatus == 0) {
+                //开锁
+                VehicleComHelper.openLock(bicycleCode);
+                //修改车的状态
+                vehicleDao.updateVehicleStatus(bicycleCode,UseStatus.use);
+                //创建订单
+                orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+            }
+            if (useStatus == -1) throw new RestfulException(ReturnEnum.FaultIng);
+        }
+        if (status == 1) throw new RestfulException(ReturnEnum.Disable_Vehicle);
+        if (status == 2) throw new RestfulException(ReturnEnum.FaultIng);
+        if (status == -1) throw new RestfulException(ReturnEnum.FaultIng);
+
+        return orderId;
     }
 
 }

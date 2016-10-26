@@ -124,6 +124,8 @@ public class bankDepositOrder implements Serializable {
         this.rechargeType = rechargeType;
     }
 
+
+
     @Override
     public String toString() {
         return "bankDepositOrder{" +

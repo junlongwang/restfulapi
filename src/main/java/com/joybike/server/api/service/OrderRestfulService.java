@@ -16,11 +16,11 @@ public interface OrderRestfulService {
      * @param userId         用户ID
      * @param vehicleId      车身印刷ID
      * @param beginAt        开始时间
-     * @param beginDimension 骑行开始的经度
-     * @param beginLongitude 骑行开始的维度
+     * @param beginLongitude 骑行开始的经度
+     * @param beginDimension 骑行开始的维度
      * @return
      */
-    void addOrder(long userId, String vehicleId, int beginAt, BigDecimal beginDimension, BigDecimal beginLongitude) throws Exception;
+    long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude , double beginDimension) throws Exception;
 
 
     /**

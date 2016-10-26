@@ -76,7 +76,7 @@ public class UserRestfulApi {
      * @param mobile 手机号码
      * @return
      */
-    @RequestMapping(value = "getValidateCode", method = RequestMethod.GET)
+    @RequestMapping(value = "getValidateCode", method = RequestMethod.POST)
     public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile) {
         int randNo = 0;
         try {

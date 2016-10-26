@@ -10,6 +10,7 @@ import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.SMSHelper;
+import com.joybike.server.api.thirdparty.SMSResponse;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -80,12 +81,17 @@ public class UserRestfulApi {
         int randNo = 0;
         try {
             randNo = new Random().nextInt(9999 - 1000 + 1) + 1000;
-            //根据用户号码，进行查询，存在返回信息；不存在创建
-            userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);
-            LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
+
             //发送短信接口
-            SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
-            return ResponseEntity.ok(new Message<LoginData>(true, 0,null, loginData));
+            SMSResponse smsResponse = SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
+            if (!smsResponse.getErrorCode().equals("0")){
+                return ResponseEntity.ok(new Message<LoginData>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc(), null));
+            }else{
+                //根据用户号码，进行查询，存在返回信息；不存在创建
+                userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);
+                LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
+                return ResponseEntity.ok(new Message<LoginData>(true, 0,null, loginData));
+            }
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<LoginData>(false, ReturnEnum.UseRregister_Error.getErrorCode(),ReturnEnum.UseRregister_Error.getErrorDesc()+"-"+e.getMessage(), null));
         }

@@ -1,0 +1,3 @@
+1.修改微信配置WeiXinConfig.java
+2.WxUtilController.java文件中getWaChatConfig方法是获取微信JS-config接口注入权限验证配置
+3.WxUtilController.java文件中code方法和baseCode方法是获取微信web的openid的，code方法（会弹出授权页面）baseCode方法（不会弹出授权页面）

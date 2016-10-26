@@ -199,4 +199,15 @@ public class ActionTest {
         }
 
     }
+
+    @Test
+    public void productTest(){
+        List<product> list = orderRestfulService.getProductList();
+        list.forEach(new Consumer<product>() {
+            @Override
+            public void accept(product product) {
+                System.out.println(product);
+            }
+        });
+    }
 }

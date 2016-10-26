@@ -46,14 +46,22 @@ public enum ReturnEnum {
 
     BankDepositOrderList_Error(2007, "获取充值明细失败"),
 
+
     refund_Error(2008, "退款失败"),
+    /**
+     * 订单 3
+     */
+    Product_Error(3001,"获取产品列表失败"),
+
 
     /***********
      * 用户
      *******************/
     UpdateUer_ERROR(4001, "更新用户信息失败"),
     UseRregister_Error(4002, "登录失败"),
-    Iphone_Error(4003,"请使用正确的手机号"),
+    Iphone_Error(4003,"验证码发送失败,发送通道异常！"),
+    Iphone_Validate_Error(4004, "验证码验证失败！，请重新获取！"),
+    Iphone_Sender_Error(4005,"验证码已经发送，5分钟内不允许重复请求！"),
     /***********
      * 车辆错误
      *******************/

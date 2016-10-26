@@ -6,6 +6,7 @@ import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.model.*;
+import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
 import com.joybike.server.api.util.UnixTimeUtils;
@@ -31,6 +32,8 @@ public class PayRestfulApi {
     private PayRestfulService payRestfulService;
     @Autowired
     private ThirdPayService ThirdPayService;
+    @Autowired
+    private OrderRestfulService orderRestfulService;
 
     /**
      * 充值：可充值押金、预存现金
@@ -39,23 +42,21 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "deposit",method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId)
-    {
-        if(payBean != null && String.valueOf(userId) != null){
-            if(payBean.getRechargeType() == 1){
-                try{
+    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId) {
+        if (payBean != null && String.valueOf(userId) != null) {
+            if (payBean.getRechargeType() == 1) {
+                try {
                     String rechargeResult = forRecharge(payBean, userId);
-                    return ResponseEntity.ok(new Message<String>(true,0,null,rechargeResult));
-                }catch (Exception e){
-                    return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(),null));
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
+                } catch (Exception e) {
+                    return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
                 }
-            }
-            else{
-                try{
+            } else {
+                try {
                     String rechargeResult = recharge(payBean, userId);
-                    return ResponseEntity.ok(new Message<String>(true,0,null,rechargeResult));
-                }catch (Exception e){
-                    return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(),null));
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
+                } catch (Exception e) {
+                    return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
                 }
             }
         }
@@ -68,7 +69,7 @@ public class PayRestfulApi {
         String responseHtml = "success";
         String channleId = request.getParameter("attach");
         String returncode = "";
-        if(request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null){
+        if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
             returncode = ThirdPayService.callBack(request);
         }
         if (returncode != null) {
@@ -131,9 +132,9 @@ public class PayRestfulApi {
     public ResponseEntity<Message<List<bankConsumedOrder>>> getConsumeLogs(@RequestParam("userId") long userId) {
         try {
             List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(userId);
-            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, 0,null, list));
+            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, 0, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ReturnEnum.ConsumedOrderList_Error.getErrorCode(),ReturnEnum.ConsumedOrderList_Error.getErrorDesc()+"-"+e.getMessage(), null));
+            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ReturnEnum.ConsumedOrderList_Error.getErrorCode(), ReturnEnum.ConsumedOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
 
     }
@@ -149,9 +150,9 @@ public class PayRestfulApi {
 
         try {
             List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(userId);
-            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true,0, null, list));
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, 0, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(false, ReturnEnum.BankDepositOrderList_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(), null));
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(false, ReturnEnum.BankDepositOrderList_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -219,6 +220,21 @@ public class PayRestfulApi {
             return order;
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /**
+     * 获取产品列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "product", method = RequestMethod.GET)
+    public ResponseEntity<Message<List<product>>> productList() {
+        try {
+            List<product> list = orderRestfulService.getProductList();
+            return ResponseEntity.ok(new Message<List<product>>(true, 0, null, list));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<List<product>>(false, ReturnEnum.Product_Error.getErrorCode(), ReturnEnum.Product_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 }

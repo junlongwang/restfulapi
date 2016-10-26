@@ -3,6 +3,9 @@ import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
 import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -11,11 +14,27 @@ import java.util.*;
 /**
  * Created by LongZiyuan on 2016/10/23.
  */
+@Service
 public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
-    private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-    private static String mch_id = "1401808502";
-    private static String appid = "wxa8d72207b41a315e";
-    private static String key = "853D02D2F946329243B006C933A12E65";
+
+    @Value("#{thirdparty}")
+    private Properties thirdpartyProperty;
+
+    private String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    private String mch_id = "1401808502";
+    private String appid = "wxa8d72207b41a315e";
+    private String key = "853D02D2F946329243B006C933A12E65";
+    private String notifyUrl = "www.baidu.com";
+
+//    public WxPublicConstructUrlImpl()
+//    {
+//        wxPreUrl = thirdpartyProperty.getProperty("wxPreUrl");
+//        mch_id = thirdpartyProperty.getProperty("wxPreUrl");
+//        appid = thirdpartyProperty.getProperty("wxPublicAppid");
+//        key = thirdpartyProperty.getProperty("wxPublicKey");
+//        notifyUrl = thirdpartyProperty.getProperty("wxNotifyUrl");
+//
+//    }
 
     @Override
     public RedirectParam getUrl(ThirdPayBean payOrder){
@@ -36,7 +55,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             String spbillCreateIp = payOrder.getOperIP();
             if( StringUtil.isEmpty(spbillCreateIp) || "null".equals(spbillCreateIp) ) spbillCreateIp = "127.0.0.1";
             map.put("spbill_create_ip", spbillCreateIp); //终端IP
-            map.put("notify_url",payOrder.getNotifyUrl());//通知地址. PayConfig.PAY_NOTIFY_URL
+            map.put("notify_url",notifyUrl);//通知地址. PayConfig.PAY_NOTIFY_URL
             map.put("trade_type", "JSAPI");//交易类型
             map.put("openid", payOrder.getOpenid());//openid
             String sign=SignUtil.sign(map,key).toUpperCase();
@@ -44,7 +63,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             String xml=ParseXml.parseXML(map);//转化为xml格式
             String httpType = "SSL";
             String timeOut = "60000";
-            String res = HttpRequestSimple.sendHttpMsg("www.weixinpay.com", xml, httpType, timeOut);
+            String res = HttpRequestSimple.sendHttpMsg(wxPreUrl, xml, httpType, timeOut);
             HashMap resMap=ParseXml.parseXml(res);
             if(resMap.get("return_code").equals("SUCCESS")){
                 String reqSign=String.valueOf(resMap.get("sign"));
@@ -109,16 +128,56 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
         return "";
     }
 
+    @Override
+    public RedirectParam getRefundUrl(ThirdPayBean payOrder){
+        String result = "fail";
+        RedirectParam redirectParam = new RedirectParam();
+        redirectParam.setAction(result);
+        if (payOrder == null){
+            return null;
+        }
+        try {
+            Map<String,String> map = new HashMap();
+            map.put("appid",appid);//公众账号ID
+            map.put("mch_id",mch_id);//商户号
+            map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
+            map.put("body", payOrder.getPruductDesc());//商品描述
+            map.put("attach","附加数据原样返回");//附加数据
+            map.put("out_trade_no", payOrder.getId().toString());//商户订单号
+            map.put("transaction_id",payOrder.getTransaction_id());//微信支付订单号
+            map.put("out_refund_no",payOrder.getRefundid().toString());//商户退款订单号
+            Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
+            BigDecimal total_fee = new BigDecimal(fMoney);
+            map.put("total_fee",String.valueOf(total_fee));//总金额
+            map.put("refund_fee",String.valueOf(total_fee));//总金额
+            map.put("op_user_id",mch_id);//总金额
+            String sign=SignUtil.sign(map,key).toUpperCase();
+            map.put("sign", sign);//签名
+            String xml=ParseXml.parseXML(map);//转化为xml格式
+            String httpType = "SSL";
+            String timeOut = "60000";
+            String res = HttpRequestSimple.sendHttpMsg("www.weixinpay.com", xml, httpType, timeOut);
+            HashMap resMap=ParseXml.parseXml(res);
+            if(resMap.get("return_code").equals("SUCCESS")){
+                String reqSign=String.valueOf(resMap.get("sign"));
+                String resSign=SignUtil.sign(resMap, key).toUpperCase();
+                if(reqSign.equals(resSign)){
+                    if (resMap.get("out_trade_no") == map.get("out_trade_no") && resMap.get("out_refund_no") == map.get("out_refund_no") &&resMap.get("transaction_id") == map.get("transaction_id")){
+                        result = "SUCCSE";
+                        String out_refund_no = resMap.get("out_refund_no").toString();
+                        redirectParam.setPara(out_refund_no);
+                        return redirectParam;
+                    }
+                }
+            }
+        }catch (Exception e){
+            return null;
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
-        ThirdPayBean payOrder = new ThirdPayBean();
-        payOrder.setPruductDesc("测试充值");
-        payOrder.setId(Long.valueOf("1415651231"));
-        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
-        payOrder.setOperIP("192.168.0.1");
-        payOrder.setNotifyUrl("www.baidu.com");
-        payOrder.setOpenid("123");
-        WxPublicConstructUrlImpl wxPublicConstructUrl = new WxPublicConstructUrlImpl();
-        wxPublicConstructUrl.getUrl(payOrder);
+
     }
 }
 

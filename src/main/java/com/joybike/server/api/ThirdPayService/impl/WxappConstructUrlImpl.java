@@ -20,7 +20,8 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
 
     private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     private static String mch_id = "1401808502";
-    private static String appid = "longziyuan";
+    private static String appid = "wxa8d72207b41a315e";
+    private static String key = "853D02D2F946329243B006C933A12E65";
 
     @Override
     public RedirectParam getUrl(HashMap<String, String> paraMap) {
@@ -164,7 +165,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         // 1、字符排序，&链接再 SHA1加密
         PaySignRequestHandler paySignReqHandler = new PaySignRequestHandler(null, null);
         paySignReqHandler.setParameter("appid",appid);
-        paySignReqHandler.setParameter("appkey","密钥");
+        paySignReqHandler.setParameter("appkey",key);
         paySignReqHandler.setParameter("package", "Sign=WXPay");
         paySignReqHandler.setParameter("partnerid",partnerId);
         paySignReqHandler.setParameter("timestamp", WXUtil.getTimeStamp());

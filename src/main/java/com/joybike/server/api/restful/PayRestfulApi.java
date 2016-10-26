@@ -2,7 +2,7 @@ package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ErrorEnum;
 import com.joybike.server.api.Enum.PayType;
-import com.joybike.server.api.ThirdPayService.IThirdPayService;
+import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
@@ -28,7 +28,7 @@ public class PayRestfulApi {
     @Autowired
     private PayRestfulService payRestfulService;
     @Autowired
-    private IThirdPayService iThirdPayService;
+    private ThirdPayService ThirdPayService;
 
     /**
      * 充值：可充值押金、预存现金
@@ -38,8 +38,13 @@ public class PayRestfulApi {
     @RequestMapping(value = "deposit",method = RequestMethod.POST)
     public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId)
     {
-        String rechargeResult = forRecharge(payBean, userId);
-        return ResponseEntity.ok(new Message<String>(true,null,"牛逼"));
+        //ThirdPayService.execute(payBean);
+        try{
+            String rechargeResult = forRecharge(payBean, userId);
+            return ResponseEntity.ok(new Message<String>(true,null,rechargeResult));
+        }catch (Exception e){
+            return ResponseEntity.ok(new Message<String>(false,null,e.getMessage()));
+        }
     }
 
     @RequestMapping(value = "paynotify",method = RequestMethod.POST)
@@ -48,7 +53,7 @@ public class PayRestfulApi {
         String channleId = request.getParameter("attach");
         String returncode = "";
         if(request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null){
-            returncode = iThirdPayService.callBack(request);
+            returncode = ThirdPayService.callBack(request);
         }
         if(returncode != null){
             if(channleId.equals("117")){
@@ -144,7 +149,7 @@ public class PayRestfulApi {
         bankDepositOrder order = createDepositRechargeOrder(payBean,userId);
         if(order != null && order.getId() != null){
             payBean.setId(order.getId());
-            return iThirdPayService.execute(payBean);
+            return ThirdPayService.execute(payBean);
         }
         return null;
     }

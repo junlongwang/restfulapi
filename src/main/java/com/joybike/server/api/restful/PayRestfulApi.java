@@ -131,7 +131,7 @@ public class PayRestfulApi {
             List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(userId);
             return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, ReturnEnum.BankDepositOrderList_Error.toString(), null));
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(false, ReturnEnum.BankDepositOrderList_Error.toString(), null));
         }
     }
 

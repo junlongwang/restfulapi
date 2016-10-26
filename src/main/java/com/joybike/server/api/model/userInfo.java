@@ -33,12 +33,6 @@ public class userInfo implements Serializable {
     private String nationality;
 
     /** 
-     * 头像
-     *  @Author lisy
-    **/
-    private String photo;
-
-    /** 
      * 身份证照片
      *  @Author lisy
     **/
@@ -79,13 +73,12 @@ public class userInfo implements Serializable {
 
     }
 
-    public userInfo(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
+    public userInfo(Long id, String iphone, String realName, String idNumber, String nationality, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
         this.id = id;
         this.iphone = iphone;
         this.realName = realName;
         this.idNumber = idNumber;
         this.nationality = nationality;
-        this.photo = photo;
         this.identityCardphoto = identityCardphoto;
         this.createAt = createAt;
         this.updateAt = updateAt;
@@ -102,7 +95,6 @@ public class userInfo implements Serializable {
                 ", realName='" + realName + '\'' +
                 ", idNumber='" + idNumber + '\'' +
                 ", nationality='" + nationality + '\'' +
-                ", photo='" + photo + '\'' +
                 ", identityCardphoto='" + identityCardphoto + '\'' +
                 ", createAt=" + createAt +
                 ", updateAt=" + updateAt +
@@ -152,13 +144,6 @@ public class userInfo implements Serializable {
         this.nationality = nationality == null ? null : nationality.trim();
     }
 
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo == null ? null : photo.trim();
-    }
 
     public String getIdentityCardphoto() {
         return identityCardphoto;

@@ -57,13 +57,13 @@ public class BicycleRestfulApi {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
 
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(), "null"));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(),ReturnEnum.NoPay_Error.getErrorDesc()));
             } else {
                 bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                 return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Appointment_Success.getErrorDesc()));
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, e.getMessage(), null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Appointment_Error.toString(), ReturnEnum.Appointment_Error.getErrorDesc()));
         }
     }
 
@@ -83,7 +83,7 @@ public class BicycleRestfulApi {
                 return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Cancel_Success.getErrorDesc()));
             else return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.No_Subscribe.getErrorDesc()));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Cancel_Error.toString(), null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Cancel_Error.toString(), ReturnEnum.Cancel_Error.getErrorDesc()));
         }
     }
 
@@ -140,7 +140,7 @@ public class BicycleRestfulApi {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
 
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(), null));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(), ReturnEnum.NoPay_Error.getErrorDesc()));
             } else {
                 orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
             }
@@ -148,10 +148,10 @@ public class BicycleRestfulApi {
             if (orderId > 0) {
                 return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Unlock_Success.getErrorDesc()));
             } else {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.toString(), null));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.toString(), ReturnEnum.Unlock_Error.getErrorDesc()));
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.toString(), null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.toString(), ReturnEnum.Unlock_Error.getErrorDesc()));
         }
     }
 
@@ -236,7 +236,7 @@ public class BicycleRestfulApi {
             bicycleRestfulService.addVehicleRepair(form);
             return ResponseEntity.ok(new Message<String>(true, null, "提交成功！"));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Submit_Error.toString(), null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Submit_Error.toString(), ReturnEnum.Submit_Error.getErrorDesc()));
         }
 
 

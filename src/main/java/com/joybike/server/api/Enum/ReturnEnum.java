@@ -30,48 +30,47 @@ public enum ReturnEnum {
      */
     SERVICE_ERROR(1003, "service error"),
 
-    /***********支付错误*******************/
-    NoPay_Error(2001,"有未支付的订单"),
-    Acount_Error(2002,"获取账户余额失败"),
+    /***********
+     * 支付错误
+     *******************/
+    NoPay_Error(2001, "有未支付的订单"),
+    Acount_Error(2002, "获取账户余额失败"),
 
-    ConsumedOrderList_Error(2006,"获取消费明细失败"),
+    ConsumedOrderList_Error(2006, "获取消费明细失败"),
 
-    BankDepositOrderList_Error(2007,"获取充值明细失败"),
+    BankDepositOrderList_Error(2007, "获取充值明细失败"),
 
-    /***********用户*******************/
-    UpdateUer_ERROR(4001,"更新用户信息失败"),
-    UseRregister_Error(4002,"注册失败"),
-    /***********车辆错误*******************/
+    /***********
+     * 用户
+     *******************/
+    UpdateUer_ERROR(4001, "更新用户信息失败"),
+    UseRregister_Error(4002, "登录失败"),
+    /***********
+     * 车辆错误
+     *******************/
 
-    Appointment_Success(5001,"预约成功"),
-    Cancel_Success(5002,"取消预约成功"),
-    Cancel_Error(5003,"取消预约失败"),
-    Repeat_Error(5004,"重复预约"),
+    Appointment_Success(5001, "预约成功"),
 
-    BicycleUse_Error(5005,"车辆已被预约"),
+    Cancel_Success(5002, "取消预约成功"),
+    Cancel_Error(5003, "取消预约失败"),
+    Repeat_Error(5004, "重复预约"),
 
-    No_Subscribe(5006,"没有可取消的预约"),
+    BicycleUse_Error(5005, "车辆已被预约"),
 
-    No_Vehicle(5007,"当前范围内没有车辆使用"),
-    Use_Vehicle(5008,"车辆使用中"),
-    Unlock_Success(5009,"开锁成功"),
-    Disable_Vehicle(5010,"车辆为禁用状态"),
-    FaultIng(5011,"车辆不可使用"),
-    Unlock_Error(5012,"开锁成功"),
-    Submit_Error(5013,"故障申报失败"),
+    No_Subscribe(5006, "没有可取消的预约"),
 
-
-
-
-
-
-
-
-    ;
+    No_Vehicle(5007, "当前范围内没有车辆使用"),
+    Use_Vehicle(5008, "车辆使用中"),
+    Unlock_Success(5009, "开锁成功"),
+    Disable_Vehicle(5010, "车辆为禁用状态"),
+    FaultIng(5011, "车辆不可使用"),
+    Unlock_Error(5012, "开锁失败"),
+    Submit_Error(5013, "故障申报失败"),
+    Appointment_Error(5014, "预约失败"),;
 
     @Override
     public String toString() {
-        return errorCode + ":" + errorDesc;
+        return String.valueOf(errorCode);
     }
 
     /*===================================================================================*/

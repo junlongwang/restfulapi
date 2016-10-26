@@ -57,9 +57,9 @@ public class test {
         }
         LoginData loginData = new LoginData(String.valueOf(1234), userInfo);
 
-        System.out.println(JSON.toJSON(new Message<LoginData>(false, ReturnEnum.UseRregister_Error.toString(), null)));
+        System.out.println(JSON.toJSON(new Message<LoginData>(false, ReturnEnum.UseRregister_Error.getErrorCode(),ReturnEnum.UseRregister_Error.getErrorDesc(), null)));
 
-        System.out.println(JSON.toJSON(new Message<LoginData>(true, null, loginData)));
+        System.out.println(JSON.toJSON(new Message<LoginData>(true, 0,null, loginData)));
     }
 }
 

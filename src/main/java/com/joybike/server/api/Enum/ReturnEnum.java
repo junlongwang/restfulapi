@@ -15,6 +15,11 @@ public enum ReturnEnum {
      */
 
     /**
+     * 全局未知错误
+     */
+    UNKNOWN(1000,"未知错误"),
+
+    /**
      * 数据库操作相关
      */
     DATABASE_ERROR(1001, "database error"),

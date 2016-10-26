@@ -39,7 +39,7 @@ public class PayRestfulApi {
     @RequestMapping(value = "deposit", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean, @RequestParam("userId") long userId) {
         String rechargeResult = forRecharge(payBean, userId);
-        return ResponseEntity.ok(new Message<String>(true, null, "牛逼"));
+        return ResponseEntity.ok(new Message<String>(true, 0,null, "牛逼"));
     }
 
 
@@ -111,9 +111,9 @@ public class PayRestfulApi {
     public ResponseEntity<Message<List<bankConsumedOrder>>> getConsumeLogs(@RequestParam("userId") long userId) {
         try {
             List<bankConsumedOrder> list = payRestfulService.getBankConsumedOrderList(userId);
-            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, null, list));
+            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(true, 0,null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ReturnEnum.ConsumedOrderList_Error.toString(), null));
+            return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ReturnEnum.ConsumedOrderList_Error.getErrorCode(),ReturnEnum.ConsumedOrderList_Error.getErrorDesc()+"-"+e.getMessage(), null));
         }
 
     }
@@ -129,9 +129,9 @@ public class PayRestfulApi {
 
         try {
             List<bankDepositOrder> list = payRestfulService.getBankDepositOrderList(userId);
-            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true, null, list));
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(true,0, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(false, ReturnEnum.BankDepositOrderList_Error.toString(), null));
+            return ResponseEntity.ok(new Message<List<bankDepositOrder>>(false, ReturnEnum.BankDepositOrderList_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(), null));
         }
     }
 
@@ -143,7 +143,7 @@ public class PayRestfulApi {
      */
     @RequestMapping(value = "refund", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> refund(@RequestParam("userId") long userId) {
-        return ResponseEntity.ok(new Message<String>(true, null, "押金退款已经受理，后续状态在48小时内注意查看系统消息！"));
+        return ResponseEntity.ok(new Message<String>(true, 0,null, "押金退款已经受理，后续状态在48小时内注意查看系统消息！"));
     }
 
     public String forRecharge(ThirdPayBean payBean, long userId) {

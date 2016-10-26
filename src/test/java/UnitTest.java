@@ -1,3 +1,4 @@
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Message;
 import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.User;
@@ -111,9 +112,12 @@ public class UnitTest {
         vehicleRepairDto vehicleRepair=new vehicleRepairDto("车辆编码","车辆没轮子",value.getBytes(),333L, UnixTimeUtils.now());
         System.out.println(JSON.toJSON(vehicleRepair));
 
-        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(true, null, "提交成功！")));
+        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(true,0, null, "提交成功！")));
 
-        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(false, "1001", "故障申报失败")));
+        System.out.println(JSON.toJSON(new com.joybike.server.api.model.Message<String>(false, 1001, "故障申报失败",null)));
 
+
+        System.out.println(ReturnEnum.Submit_Error.getErrorCode());
+        System.out.println(ReturnEnum.Submit_Error.getErrorDesc());
     }
 }

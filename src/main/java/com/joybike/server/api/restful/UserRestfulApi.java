@@ -1,5 +1,6 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.dto.userInfoDto;
@@ -62,9 +63,9 @@ public class UserRestfulApi {
             }
             userRestfulService.updateUserInfo(user);
             userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
-            return ResponseEntity.ok(new Message<userInfo>(true, null, userInfo));
+            return ResponseEntity.ok(new Message<userInfo>(true,0, null, userInfo));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, "1001:更新用户信息失败", null));
+            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(),ReturnEnum.UpdateUer_ERROR.getErrorDesc()+"-"+e.getMessage(), null));
         }
     }
 
@@ -84,9 +85,9 @@ public class UserRestfulApi {
             LoginData loginData = new LoginData(String.valueOf(randNo), userInfo);
             //发送短信接口
             SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
-            return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
+            return ResponseEntity.ok(new Message<LoginData>(true, 0,null, loginData));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<LoginData>(false, "1001：" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<LoginData>(false, ReturnEnum.UseRregister_Error.getErrorCode(),ReturnEnum.UseRregister_Error.getErrorDesc()+"-"+e.getMessage(), null));
         }
     }
 
@@ -100,9 +101,9 @@ public class UserRestfulApi {
     public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") long userid) {
         try {
             double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userid);
-            return ResponseEntity.ok(new Message<Double>(true, null, acountMoney));
+            return ResponseEntity.ok(new Message<Double>(true, 0,null, acountMoney));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<Double>(false, "1001：" + "获取余额信息失败", null));
+            return ResponseEntity.ok(new Message<Double>(false, ReturnEnum.Acount_Error.getErrorCode(),ReturnEnum.Acount_Error.getErrorDesc()+"-"+e.getMessage(), null));
         }
     }
 
@@ -113,6 +114,6 @@ public class UserRestfulApi {
      */
     @RequestMapping(value = "getMessages", method = RequestMethod.GET)
     public ResponseEntity<Message<List<SysMessage>>> getMessages() {
-        return ResponseEntity.ok(new Message<List<SysMessage>>(true, null, new ArrayList<SysMessage>()));
+        return ResponseEntity.ok(new Message<List<SysMessage>>(true,0, null, new ArrayList<SysMessage>()));
     }
 }

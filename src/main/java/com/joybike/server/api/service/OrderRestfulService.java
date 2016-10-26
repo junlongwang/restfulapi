@@ -1,9 +1,11 @@
 package com.joybike.server.api.service;
 
 
+import com.joybike.server.api.model.product;
 import com.joybike.server.api.model.vehicleOrder;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by lishaoyong on 16/10/23.
@@ -40,4 +42,37 @@ public interface OrderRestfulService {
     vehicleOrder getOrderByVehicleId(String vehicleId) throws Exception;
 
 
+    /**
+     * 修改产品信息
+     *
+     * @param id
+     * @param productName
+     * @param price
+     * @param publishedPrice
+     * @return
+     */
+    int updateProduct(long id, String productName, BigDecimal price, BigDecimal publishedPrice) throws Exception;
+
+
+    /**
+     * 删除产品
+     *
+     * @param id
+     * @return
+     */
+    int deleteById(long id) throws Exception;
+
+    /**
+     * 增加产品
+     *
+     * @param product
+     * @return
+     */
+    long insertProduct(product product) throws Exception;
+
+    /**
+     * 获取产品列表
+     * @return
+     */
+    List<product> getProductList();
 }

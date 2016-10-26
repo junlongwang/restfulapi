@@ -3,8 +3,10 @@ package com.joybike.server.api.service.impl;
 
 import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.dao.OrderItemDao;
+import com.joybike.server.api.dao.ProductDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
 import com.joybike.server.api.model.orderItem;
+import com.joybike.server.api.model.product;
 import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.vehicleOrder;
 import com.joybike.server.api.service.BicycleRestfulService;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by lishaoyong on 16/10/23.
@@ -28,6 +31,9 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
 
     @Autowired
     OrderItemDao orderItemDao;
+
+    @Autowired
+    ProductDao productDao;
 
     @Autowired
     BicycleRestfulService bicycleRestfulService;
@@ -45,7 +51,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      */
     @Transactional
     @Override
-    public long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude ,double beginDimension) throws Exception {
+    public long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude, double beginDimension) throws Exception {
         subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
         subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
 
@@ -125,5 +131,59 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
 //
 //    }
         return null;
+    }
+
+    /**
+     * 修改产品信息
+     *
+     * @param id
+     * @param productName
+     * @param price
+     * @param publishedPrice
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int updateProduct(long id, String productName, BigDecimal price, BigDecimal publishedPrice) throws Exception {
+        return productDao.updateProduct(id, productName, price, publishedPrice);
+    }
+
+    /**
+     * 删除产品信息
+     *
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int deleteById(long id) throws Exception {
+        return productDao.deleteById(id);
+    }
+
+    /**
+     * 增加产品
+     *
+     * @param product
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public long insertProduct(product product) throws Exception {
+        product.setProductCode("pd_recharge");
+        product.setCreateAt(UnixTimeUtils.now());
+        product.setCreateId(Long.valueOf(0));
+        product.setUpdateAt(0);
+        product.setUpdateId(Long.valueOf(0));
+        return productDao.save(product);
+    }
+
+    /**
+     * 获取产品列表
+     *
+     * @return
+     */
+    @Override
+    public List<product> getProductList() {
+        return productDao.getProductList();
     }
 }

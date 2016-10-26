@@ -39,27 +39,17 @@ public class test {
     @Test
     public void test(){
 
+        product p = new product(Long.valueOf(1),"pd_recharge","充90送10块",BigDecimal.valueOf(90),BigDecimal.valueOf(10),Long.valueOf(1),UnixTimeUtils.now(),Long.valueOf(0),0);
+        product p1 = new product(Long.valueOf(1),"pd_recharge","充85送5块",BigDecimal.valueOf(90),BigDecimal.valueOf(10),Long.valueOf(1),UnixTimeUtils.now(),Long.valueOf(0),0);
 
-            bankDepositOrder b = new bankDepositOrder(Long.valueOf(1),Long.valueOf(1),BigDecimal.valueOf(8),BigDecimal.valueOf(2),0,BigDecimal.valueOf(8),BigDecimal.valueOf(2),2,0,"","d_f_a1234","","",123,0,123);
+        List<product> l = new ArrayList<product>();
+        l.add(p);
+        l.add(p1);
 
-        bankDepositOrder b1 = new bankDepositOrder(Long.valueOf(2),Long.valueOf(0),BigDecimal.valueOf(8),BigDecimal.valueOf(2),0,BigDecimal.valueOf(8),BigDecimal.valueOf(2),2,0,"","d_f_a1234","","",123,0,123);
 
-        List<bankDepositOrder> l = new ArrayList<bankDepositOrder>();
-        l.add(b);
-        l.add(b1);
-        String mo = "13910991532";
+        System.out.println(JSON.toJSON(new Message<List<product>>(true, 0, null, l)));
 
-        userInfo userInfo = null;
-        try {
-            userInfo = userRestfulService.getUserInfoByMobile(mo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        LoginData loginData = new LoginData(String.valueOf(1234), userInfo);
-
-        System.out.println(JSON.toJSON(new Message<LoginData>(false, ReturnEnum.UseRregister_Error.getErrorCode(),ReturnEnum.UseRregister_Error.getErrorDesc(), null)));
-
-        System.out.println(JSON.toJSON(new Message<LoginData>(true, 0,null, loginData)));
+        System.out.println(new Message<List<product>>(false, ReturnEnum.Product_Error.getErrorCode(), ReturnEnum.Product_Error.getErrorDesc() + "-" + "error", null));
     }
 }
 

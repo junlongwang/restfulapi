@@ -7,6 +7,8 @@ import java.util.Date;
 public class ThirdPayBean {
     private Long   id;         //支付系统订单号
 
+    private Long   refundid;    //支付系统退款订单号
+
     private BigDecimal orderMoney; //订单金额(元)
 
     private String orderDesc;  //订单描述
@@ -14,8 +16,6 @@ public class ThirdPayBean {
     private String pruductDesc; //商品描述
 
     private String operIP;     //请求ip
-
-    private String notifyUrl;  //异步通知地址
 
     private String openid;     //openid
 
@@ -27,22 +27,41 @@ public class ThirdPayBean {
 
     private Integer rechargeType;  //充值类型 0余额 1押金
 
-    public ThirdPayBean() {
+    private String transaction_id;  //微信支付订单号
 
-    }
-
-    public ThirdPayBean(Long id, BigDecimal orderMoney, String orderDesc, String pruductDesc, String operIP, String notifyUrl, String openid, Date createTime, Date recordTime, int channelId, Integer rechargeType) {
+    public ThirdPayBean(Long id, Long refundid, BigDecimal orderMoney, String orderDesc, String pruductDesc, String operIP, String openid, Date createTime, Date recordTime, int channelId, Integer rechargeType, String transaction_id) {
         this.id = id;
+        this.refundid = refundid;
         this.orderMoney = orderMoney;
         this.orderDesc = orderDesc;
         this.pruductDesc = pruductDesc;
         this.operIP = operIP;
-        this.notifyUrl = notifyUrl;
         this.openid = openid;
         this.createTime = createTime;
         this.recordTime = recordTime;
         this.channelId = channelId;
         this.rechargeType = rechargeType;
+        this.transaction_id = transaction_id;
+    }
+
+    public String getTransaction_id() {
+        return transaction_id;
+    }
+
+    public void setTransaction_id(String transaction_id) {
+        this.transaction_id = transaction_id;
+    }
+
+    public Long getRefundid() {
+        return refundid;
+    }
+
+    public void setRefundid(Long refundid) {
+        this.refundid = refundid;
+    }
+
+    public ThirdPayBean() {
+
     }
 
     public Integer getRechargeType() {
@@ -91,14 +110,6 @@ public class ThirdPayBean {
 
     public void setOperIP(String operIP) {
         this.operIP = operIP;
-    }
-
-    public String getNotifyUrl() {
-        return notifyUrl;
-    }
-
-    public void setNotifyUrl(String notifyUrl) {
-        this.notifyUrl = notifyUrl;
     }
 
     public String getOpenid() {

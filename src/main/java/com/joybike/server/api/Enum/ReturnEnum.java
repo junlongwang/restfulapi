@@ -40,6 +40,7 @@ public enum ReturnEnum {
      *******************/
     NoPay_Error(2001, "有未支付的订单"),
     Acount_Error(2002, "获取账户余额失败"),
+    Recharge_Error(2003,"充值失败"),
 
     ConsumedOrderList_Error(2006, "获取消费明细失败"),
 

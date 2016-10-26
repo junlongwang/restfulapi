@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by LongZiyuan on 2016/10/20.
  */
-public interface IThirdPayService {
+public interface ThirdPayService {
     /**
      * 执行支付请求
      * @param payOrder

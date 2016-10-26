@@ -3,6 +3,7 @@ package com.joybike.server.api.service;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.model.bankConsumedOrder;
 import com.joybike.server.api.model.bankDepositOrder;
+import com.joybike.server.api.model.bankRefundOrder;
 import com.joybike.server.api.model.userCoupon;
 
 import java.util.List;
@@ -95,5 +96,25 @@ public interface PayRestfulService {
      */
     int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception;
 
+    /**
+     * 获取用户充值订单ID（有且只有唯一一条支付成功的充值订单ID）
+     * @param userid
+     * @return
+     */
+    bankDepositOrder getDepositOrderId(Long userid);
 
+
+    /**
+     * 创建退款订单并获取订单id
+     * @param bankRefundOrder
+     * @return
+     */
+    Long creatRefundOrder(bankRefundOrder bankRefundOrder);
+
+    /**
+     * 退款完毕并更新退款订单为退款成功状态
+     * @param id
+     * @return
+     */
+    int updateRefundOrderStatusById(Long id);
 }

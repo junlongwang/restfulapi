@@ -38,6 +38,9 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Autowired
     private UserCouponDao userCouponDao;
 
+    @Autowired
+    private BankRefundOrderDao bankRefundOrderDao;
+
 
     /**
      * 获取用户消费明细
@@ -162,6 +165,11 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         return userCouponDao.getValidList(userId, useAt);
     }
 
+    @Override
+    public bankDepositOrder getDepositOrderId(Long userId){
+        return depositOrderDao.getDepositOrder(userId);
+    }
+
     /**
      * 充值成功回调
      *
@@ -248,4 +256,22 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     }
     /*==================================================*/
 
+
+    /**
+     * 创建退款订单并获取订单id
+     * @param bankRefundOrder
+     * @return
+     */
+    public Long creatRefundOrder(bankRefundOrder bankRefundOrder){
+        return bankRefundOrderDao.save(bankRefundOrder);
+    }
+
+    /**
+     * 退款完毕并更新退款订单为退款成功状态
+     * @param Id
+     * @return
+     */
+    public int updateRefundOrderStatusById(Long Id){
+        return bankRefundOrderDao.updateRefundOrderStatusById(Id);
+    }
 }

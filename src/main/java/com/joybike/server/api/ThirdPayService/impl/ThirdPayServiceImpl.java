@@ -1,5 +1,6 @@
 package com.joybike.server.api.ThirdPayService.impl;
 
+import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
@@ -31,20 +32,23 @@ public class ThirdPayServiceImpl implements ThirdPayService {
     @Override
     public String execute(ThirdPayBean payOrder) {
         //payorderUtil
-        if(payOrder.getChannelId() == 117)
+        if(payOrder.getChannelId() == PayType.weixin.getValue())
         {
             HashMap<String,String> map = new HashMap<String,String>();
             map.put("out_trade_no", payOrder.getId().toString());
             map.put("total_fee", payOrder.getOrderMoney().toString());
             map.put("spbill_create_ip",payOrder.getOperIP());
             map.put("body",payOrder.getPruductDesc());
+            if (String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
+                map.put("attach",String.valueOf(payOrder.getCosumeid()));
+            }
             String channleId = String.valueOf(payOrder.getChannelId());
             map.put("attach",channleId);
             RedirectParam redirectParam= wxappConstructUrlInter.getUrl(map);
             if( redirectParam != null )
                 return redirectParam.getPara();
         }
-        else if(payOrder.getChannelId() == 118){
+        else if(payOrder.getChannelId() == PayType.weixinpublic.getValue()){
             RedirectParam redirectParam = wxPublicConstructUrlInter.getUrl(payOrder);
             if (redirectParam != null)
                 return redirectParam.getPara();
@@ -96,5 +100,26 @@ public class ThirdPayServiceImpl implements ThirdPayService {
         }else{
             return new AliPayConstructUrlImpl().callBack(request);
         }
+    }
+
+    /**
+     * 执行退款请求
+     * @param payBean
+     * @return
+     */
+    @Override
+    public String executeRefund(ThirdPayBean payBean){
+        String result = "fail";
+        if(payBean.getChannelId() == PayType.weixin.getValue())
+        {
+            //result = wxappConstructUrlInter.getUrl(payBean);
+        }
+        else if(payBean.getChannelId() == PayType.weixinpublic.getValue()){
+            result = wxPublicConstructUrlInter.getRefundUrl(payBean);
+        }
+        else{
+
+        }
+        return "";
     }
 }

@@ -27,4 +27,12 @@ public interface ThirdPayService {
      * @return
      */
     public String callBack(HttpServletRequest request);
+
+
+    /**
+     * 执行退款请求
+     * @param payBean
+     * @return
+     */
+    public String executeRefund(ThirdPayBean payBean);
 }

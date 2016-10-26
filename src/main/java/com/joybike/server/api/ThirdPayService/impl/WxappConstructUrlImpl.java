@@ -80,7 +80,9 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
             spbill_create_ip="127.0.0.1";
         }
         packageReqHandler.setParameter("spbill_create_ip", spbill_create_ip);
-        packageReqHandler.setParameter("attach",paraMap.get("attach"));
+        if(paraMap.get("attach") != null && paraMap.get("attach") != ""){
+            packageReqHandler.setParameter("attach",paraMap.get("attach"));
+        }
 
         //获取签名信息
         String sign =getMd5Sign(packageReqHandler);
@@ -111,7 +113,9 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         String appid = packageReqHandler.getParameter("appid");
         strXml.append("<xml>");
         strXml.append("<appid>").append(appid).append("</appid>");
-        strXml.append("<attach>").append(packageReqHandler.getParameter("attach")).append("</attach>");
+        if(packageReqHandler.getParameter("attach") != null && packageReqHandler.getParameter("attach") != ""){
+            strXml.append("<attach>").append(packageReqHandler.getParameter("attach")).append("</attach>");
+        }
         strXml.append("<body>").append(packageReqHandler.getParameter("body")).append("</body>");
         strXml.append("<mch_id>").append(packageReqHandler.getParameter("mch_id")).append("</mch_id>");
         strXml.append("<nonce_str>").append(packageReqHandler.getParameter("nonce_str")).append("</nonce_str>");

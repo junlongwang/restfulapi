@@ -27,8 +27,8 @@ public interface WxPublicConstructUrlInter {
 
     /**
      *
-     * @param request
+     * @param payBean
      * @return
      */
-    public RedirectParam getRefundUrl(ThirdPayBean request);
+    public String getRefundUrl(ThirdPayBean payBean);
 }

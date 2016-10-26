@@ -3,10 +3,7 @@ package com.joybike.server.api.service.impl;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Enum.UseStatus;
-import com.joybike.server.api.dao.SubscribeInfoDao;
-import com.joybike.server.api.dao.VehicleDao;
-import com.joybike.server.api.dao.VehicleHeartbeatDao;
-import com.joybike.server.api.dao.VehicleRepairDao;
+import com.joybike.server.api.dao.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -36,14 +34,16 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     private VehicleHeartbeatDao vehicleHeartbeatDao;
 
     @Autowired
-    private BicycleRestfulService bicycleRestfulService;
-
-    @Autowired
     private VehicleRepairDao vehicleRepairDao;
 
     @Autowired
     private OrderRestfulService orderRestfulService;
 
+    @Autowired
+    private VehicleOrderDao vehicleOrderDao;
+
+    @Autowired
+    private OrderItemDao orderItemDao;
 
     /**
      * 添加预约信息,如果返回的id>0则为该用户的预约ID
@@ -297,15 +297,51 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      *
      * @param bicycleCode
      * @param endAt
-     * @param beginLongitude
-     * @param beginDimension
+     * @param endLongitude
+     * @param endDimension
+     * @return
+     */
+    @Transactional
+    @Override
+    public long lock(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception {
+        //修改车状态
+        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode);
+
+        orderItem item = orderItemDao.getOrderItemByUser(subscribeInfo.getUserId(), bicycleCode);
+
+        int cyclingTime = endAt - item.getBeginAt();
+        BigDecimal payPrice = payPrice(cyclingTime);
+
+        int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+        int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
+        int o2 = subscribeInfoDao.deleteSubscribeInfo(subscribeInfo.getUserId(), bicycleCode);
+        int v3 = vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.free);
+
+        return v1 * o1 * o2 * v3;
+    }
+
+    /**
+     * 修改骑行订单支付状态
+     *
+     * @param orderCode
      * @return
      */
     @Override
-    public long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension) throws Exception{
-        //修改车状态
-        vehicleDao.updateVehicleStatus(bicycleCode , UseStatus.free);
-        return 0;
+    public int updateVehicleStatausByCode(String orderCode) {
+        return vehicleOrderDao.updateStatausByCode(orderCode);
     }
 
+
+    /***************************
+     * ===================
+     ********************/
+    public static BigDecimal payPrice(int cyclingTime) {
+        int time = cyclingTime / 60;
+        double t = (cyclingTime / 60) / 30;
+        if (t > 0) {
+            time = time + 1;
+        }
+        BigDecimal price = BigDecimal.valueOf(time);
+        return price;
+    }
 }

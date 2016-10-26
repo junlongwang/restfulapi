@@ -11,6 +11,8 @@ public class ThirdPayBean {
 
     private BigDecimal orderMoney; //订单金额(元)
 
+    private BigDecimal orderMoneyFree; //充值赠送优惠金额（元）
+
     private String orderDesc;  //订单描述
 
     private String pruductDesc; //商品描述
@@ -29,10 +31,19 @@ public class ThirdPayBean {
 
     private String transaction_id;  //微信支付订单号
 
-    public ThirdPayBean(Long id, Long refundid, BigDecimal orderMoney, String orderDesc, String pruductDesc, String operIP, String openid, Date createTime, Date recordTime, int channelId, Integer rechargeType, String transaction_id) {
+    public BigDecimal getOrderMoneyFree() {
+        return orderMoneyFree;
+    }
+
+    public void setOrderMoneyFree(BigDecimal orderMoneyFree) {
+        this.orderMoneyFree = orderMoneyFree;
+    }
+
+    public ThirdPayBean(Long id, Long refundid, BigDecimal orderMoney, BigDecimal orderMoneyFree, String orderDesc, String pruductDesc, String operIP, String openid, Date createTime, Date recordTime, int channelId, Integer rechargeType, String transaction_id) {
         this.id = id;
         this.refundid = refundid;
         this.orderMoney = orderMoney;
+        this.orderMoneyFree = orderMoneyFree;
         this.orderDesc = orderDesc;
         this.pruductDesc = pruductDesc;
         this.operIP = operIP;

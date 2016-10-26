@@ -69,4 +69,27 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
+
+    /**
+     * 根据充值ID获取充值记录
+     *
+     * @param id
+     * @return
+     */
+    final String getDepositOrderByIdSql = "select * from bankDepositOrder where id = :id";
+
+    @Override
+    public bankDepositOrder getDepositOrderById(long id) {
+        Map map = new HashMap();
+        map.put("id", id);
+        try {
+            try {
+                return (bankDepositOrder) this.jdbcTemplate.queryForObject(getDepositOrderByIdSql, map, new BeanPropertyRowMapper(bankDepositOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
 }

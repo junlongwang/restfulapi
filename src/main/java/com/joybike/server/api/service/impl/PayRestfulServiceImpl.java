@@ -67,35 +67,15 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         //先记录充值记录
         depositOrder.setCreateAt(UnixTimeUtils.now());
         depositOrder.setRechargeType(RechargeType.balance.getValue());
+        depositOrder.setResidualCash(depositOrder.getCash());
+        depositOrder.setResidualAward(depositOrder.getAward());
+        depositOrder.setStatus(DepositStatus.initial.getValue());
+        depositOrder.setDiscountAt(0);
         long depositId = depositOrderDao.save(depositOrder);
 
         //记录现金流水
         moneyFlowDao.save(flowInfo(depositOrder, depositId));
 
-        if (depositId > 0) {
-
-            bankAcount bankAcountCash = acountDao.getAcount(depositOrder.getUserId(), AcountType.cash);
-
-            //充值现金
-            if (bankAcountCash != null) {
-                acountDao.updateAcount(depositOrder.getUserId(), AcountType.cash, bankAcountCash.getPrice().add(depositOrder.getCash()));
-
-            } else {
-                acountDao.save(depositToAcount(depositOrder, AcountType.cash));
-
-            }
-
-            //充值优惠
-            bankAcount bankAcountbalance = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
-            if (bankAcountbalance != null) {
-                acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAcountCash.getPrice().add(depositOrder.getAward()));
-
-            } else {
-
-                acountDao.save(depositToAcount(depositOrder, AcountType.balance));
-
-            }
-        }
     }
 
     /**
@@ -194,8 +174,34 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Transactional
     @Override
-    public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception{
-        return depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
+    public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception {
+        int updateCount = depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
+        //充值回调成功的时候修改用户的余额信息
+        if (updateCount > 0) {
+            bankDepositOrder depositOrder = depositOrderDao.getDepositOrderById(id);
+            bankAcount bankAcountCash = acountDao.getAcount(depositOrder.getUserId(), AcountType.cash);
+
+            //充值现金
+            if (bankAcountCash != null) {
+                acountDao.updateAcount(depositOrder.getUserId(), AcountType.cash, bankAcountCash.getPrice().add(depositOrder.getCash()));
+
+            } else {
+                acountDao.save(depositToAcount(depositOrder, AcountType.cash));
+            }
+
+            //充值优惠
+            bankAcount bankAcountbalance = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
+            if (bankAcountbalance != null) {
+                acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAcountCash.getPrice().add(depositOrder.getAward()));
+
+            } else {
+
+                acountDao.save(depositToAcount(depositOrder, AcountType.balance));
+
+            }
+
+        }
+        return updateCount;
     }
 
 

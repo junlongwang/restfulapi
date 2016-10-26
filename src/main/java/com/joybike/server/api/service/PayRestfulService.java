@@ -94,4 +94,6 @@ public interface PayRestfulService {
      * @return
      */
     int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception;
+
+
 }

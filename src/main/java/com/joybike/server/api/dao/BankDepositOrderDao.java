@@ -32,4 +32,14 @@ public interface BankDepositOrderDao extends IRepository<bankDepositOrder> {
      * @return
      */
     int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt);
+
+
+    /**
+     * 根据充值ID获取充值记录
+     *
+     * @param id
+     * @return
+     */
+    bankDepositOrder getDepositOrderById(long id);
+
 }

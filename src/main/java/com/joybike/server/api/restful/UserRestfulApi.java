@@ -1,14 +1,15 @@
 package com.joybike.server.api.restful;
 
-import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.LoginData;
+import com.joybike.server.api.dto.userInfoDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.SMSHelper;
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,17 +33,38 @@ public class UserRestfulApi {
     /**
      * 更新用户信息
      *
-     * @param user
+     * @param userInfoDto
      * @return
      */
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public ResponseEntity<Message<userInfo>> update(@RequestBody userInfo user) {
+    public ResponseEntity<Message<userInfo>> update(@RequestBody userInfoDto userInfoDto) {
         try {
+            userInfo user = new userInfo();
+            user.setId(userInfoDto.getUserId());
+            user.setIphone(userInfoDto.getIphone());
+            user.setIdNumber(userInfoDto.getIdNumber());
+            user.setRealName(userInfoDto.getRealName());
+            user.setNationality(userInfoDto.getNationality());
+            if(userInfoDto.getIdentityCardphoto()!=null)
+            {
+                String fileName=OSSClientUtil.uploadUserImg(userInfoDto.getIdentityCardphoto());
+                user.setIdentityCardphoto(fileName);
+            }
+            if(userInfoDto.getPhoto()!=null)
+            {
+                String fileName=OSSClientUtil.uploadUserImg(userInfoDto.getPhoto());
+                user.setPhoto(fileName);
+            }
+            if(userInfoDto.getUserImg()!=null)
+            {
+                String fileName=OSSClientUtil.uploadUserImg(userInfoDto.getUserImg());
+                user.setUserImg(fileName);
+            }
             userRestfulService.updateUserInfo(user);
             userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
             return ResponseEntity.ok(new Message<userInfo>(true, null, userInfo));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.toString(), null));
+            return ResponseEntity.ok(new Message<userInfo>(false, "1001:更新用户信息失败", null));
         }
     }
 
@@ -52,7 +74,7 @@ public class UserRestfulApi {
      * @param mobile 手机号码
      * @return
      */
-    @RequestMapping(value = "getValidateCode", method = RequestMethod.POST)
+    @RequestMapping(value = "getValidateCode", method = RequestMethod.GET)
     public ResponseEntity<Message<LoginData>> getValidateCode(@RequestParam("mobile") String mobile) {
         int randNo = 0;
         try {
@@ -64,7 +86,7 @@ public class UserRestfulApi {
             SMSHelper.sendValidateCode(mobile, String.valueOf(randNo));
             return ResponseEntity.ok(new Message<LoginData>(true, null, loginData));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<LoginData>(false, ReturnEnum.UseRregister_Error.toString(), null));
+            return ResponseEntity.ok(new Message<LoginData>(false, "1001：" + e.getMessage(), null));
         }
     }
 
@@ -80,7 +102,7 @@ public class UserRestfulApi {
             double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userid);
             return ResponseEntity.ok(new Message<Double>(true, null, acountMoney));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<Double>(false, ReturnEnum.Acount_Error.toString(), null));
+            return ResponseEntity.ok(new Message<Double>(false, "1001：" + "获取余额信息失败", null));
         }
     }
 

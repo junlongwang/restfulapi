@@ -70,6 +70,20 @@ public class OSSClientUtil {
 
     }
 
+    public static String uploadUserImg(byte[] bytes)
+    {
+        OSSClientUtil util=new OSSClientUtil();
+//        String url=util.uploadImg2Oss();
+//        System.out.println(url);
+//        System.out.println(util.getImgUrl(url));
+
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        String name = UUID.randomUUID().toString()+".jpg";
+        util.uploadFile2OSS(inputStream, "userImg/",name);
+        util.destory();
+        return name;
+    }
+
     public static String uploadRepairImg(byte[] bytes)
     {
         OSSClientUtil util=new OSSClientUtil();
@@ -79,7 +93,7 @@ public class OSSClientUtil {
 
         InputStream inputStream = new ByteArrayInputStream(bytes);
         String name = UUID.randomUUID().toString()+".jpg";
-        util.uploadFile2OSS(inputStream, name);
+        util.uploadFile2OSS(inputStream, "RepairImg/",name);
         util.destory();
         return name;
     }
@@ -106,7 +120,7 @@ public class OSSClientUtil {
      * @param fileName 文件名称 包括后缀名
      * @return 出错返回"" ,唯一MD5数字签名
      */
-    public String uploadFile2OSS(InputStream instream, String fileName) {
+    public String uploadFile2OSS(InputStream instream,String dir, String fileName) {
         String ret = "";
         try {
             //创建上传Object的Metadata
@@ -117,7 +131,7 @@ public class OSSClientUtil {
             objectMetadata.setContentType(getcontentType(fileName.substring(fileName.lastIndexOf("."))));
             objectMetadata.setContentDisposition("inline;filename=" + fileName);
             //上传文件
-            PutObjectResult putResult = ossClient.putObject(bucketName, filedir + fileName, instream, objectMetadata);
+            PutObjectResult putResult = ossClient.putObject(bucketName, dir + fileName, instream, objectMetadata);
             ret = putResult.getETag();
         } catch (IOException e) {
             e.printStackTrace();
@@ -228,7 +242,7 @@ public class OSSClientUtil {
         String name = random.nextInt(10000) + System.currentTimeMillis() + substring;
         try {
             InputStream inputStream = fileInputStream;
-            this.uploadFile2OSS(inputStream, name);
+            this.uploadFile2OSS(inputStream,"temp", name);
             return name;
         } catch (Exception e) {
             e.printStackTrace();

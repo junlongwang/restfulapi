@@ -1,14 +1,13 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
-import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
-
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,10 +56,14 @@ public class BicycleRestfulApi {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
 
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(),ReturnEnum.NoPay_Error.getErrorDesc()));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(), ReturnEnum.NoPay_Error.getErrorDesc()));
             } else {
-                bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Appointment_Success.getErrorDesc()));
+                try {
+                    bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
+                    return ResponseEntity.ok(new Message<String>(true, null, "预约成功！"));
+                } catch (Exception e) {
+                    return ResponseEntity.ok(new Message<String>(false, e.getMessage(), null));
+                }
             }
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Appointment_Error.toString(), ReturnEnum.Appointment_Error.getErrorDesc()));
@@ -78,10 +81,8 @@ public class BicycleRestfulApi {
     @RequestMapping(value = "cancle", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> cancle(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
         try {
-            int cancle = bicycleRestfulService.deleteSubscribeInfo(userId, bicycleCode);
-            if (cancle > 0)
-                return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Cancel_Success.getErrorDesc()));
-            else return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.No_Subscribe.getErrorDesc()));
+            bicycleRestfulService.deleteSubscribeInfo(userId, bicycleCode);
+            return ResponseEntity.ok(new Message<String>(true, null, ReturnEnum.Cancel_Success.toString()));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Cancel_Error.toString(), ReturnEnum.Cancel_Error.getErrorDesc()));
         }
@@ -113,7 +114,7 @@ public class BicycleRestfulApi {
             List<vehicle> list = bicycleRestfulService.getVehicleList(longitude, dimension);
             return ResponseEntity.ok(new Message<List<vehicle>>(true, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<vehicle>>(false, ReturnEnum.No_Vehicle.toString(), null));
+            return ResponseEntity.ok(new Message<List<vehicle>>(false, "1001：" + "GPS信号丢失", null));
         }
     }
 
@@ -130,12 +131,13 @@ public class BicycleRestfulApi {
             @RequestParam("userId") long userId,
             @RequestParam("bicycleCode") String bicycleCode,
             @RequestParam("beginAt") int beginAt,
-            @RequestParam("beginLongitude") double beginLongitude,
-            @RequestParam("beginDimension") double beginDimension) {
+            @RequestParam("beginLongitude") Double beginLongitude,
+            @RequestParam("beginDimension") Double beginDimension) {
 
         logger.info(userId + ":" + bicycleCode);
-        long orderId = 0;
         try {
+            long orderId = 0;
+
             //获取是否有未支付订单
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
 
@@ -156,11 +158,11 @@ public class BicycleRestfulApi {
     }
 
     /**
-     * 锁车动作，服务端回调地址
+     * 车锁GPS,每隔15秒上报数据，回调地址服务端回调地址
      *
      * @param param
      */
-    @RequestMapping(value = "lockCall", method = RequestMethod.POST)
+    @RequestMapping(value = "callback", method = RequestMethod.POST)
     public void lockCallBack(@RequestBody String param) {
 
 

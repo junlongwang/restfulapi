@@ -46,6 +46,8 @@ public enum ReturnEnum {
 
     BankDepositOrderList_Error(2007, "获取充值明细失败"),
 
+    refund_Error(2008, "退款失败"),
+
     /***********
      * 用户
      *******************/

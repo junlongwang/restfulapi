@@ -19,9 +19,10 @@ import java.util.SortedMap;
 public class WxappConstructUrlImpl implements WxappConstructUrlInter {
 
     private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-    private static String mch_id = "1401808502";
-    private static String appid = "wxa8d72207b41a315e";
-    private static String key = "853D02D2F946329243B006C933A12E65";
+    private static String mch_id = "1404387302";
+    private static String appid = "wxbabc4e15389aff36";
+    private static String key = "F1BDA99703815CE223FF494A9039ADA3";
+    private static String notifyUrl = "http://bj.58.com";
 
     @Override
     public RedirectParam getUrl(HashMap<String, String> paraMap) {
@@ -72,7 +73,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         Double dMoney = Double.valueOf(String.valueOf(paraMap.get("total_fee"))) * 100;
         BigDecimal total_fee =NumberFormateUtil.getdoubleRoundOne(dMoney);
         packageReqHandler.setParameter("total_fee",String.valueOf(total_fee));
-        packageReqHandler.setParameter("notify_url", paraMap.get("notify_url"));
+        packageReqHandler.setParameter("notify_url", notifyUrl);
         packageReqHandler.setParameter("body",paraMap.get("body"));
         String spbill_create_ip=paraMap.get("spbill_create_ip");
         if(StringUtil.isNullOrEmpty(spbill_create_ip)){
@@ -149,7 +150,6 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
     }
 
     private String getWxAppJsonStr(String prepayId,HashMap<String, String> paraMap) {
-        String appid = paraMap.get("appid");
         String partnerId = mch_id;
         paraMap.put("prepayId", prepayId);
         paraMap.put("partnerid", partnerId);
@@ -157,7 +157,6 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
     }
 
     private String getWxAppJsonPub(HashMap<String, String> paraMap){
-        String appid = paraMap.get("appid");
         String partnerId = paraMap.get("partnerid");
         String prepayId = paraMap.get("prepayId");
         String sign = "";

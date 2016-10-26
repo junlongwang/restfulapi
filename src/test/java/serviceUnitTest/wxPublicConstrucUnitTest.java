@@ -27,7 +27,7 @@ public class wxPublicConstrucUnitTest {
     public void test()
     {
         ThirdPayBean payOrder = new ThirdPayBean();
-        payOrder.setPruductDesc("测试充值");
+        payOrder.setPruductDesc("longziyuan");
         payOrder.setId(Long.valueOf("1415651231"));
         payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
         payOrder.setOperIP("192.168.0.1");

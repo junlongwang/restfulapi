@@ -13,6 +13,8 @@ import java.util.Set;
  */
 public class WxDealUtil {
 
+    private static String key = "F1BDA99703815CE223FF494A9039ADA3";
+
     /**
      * @time:2015-08-25
      * @description:微信新接口异步应答
@@ -52,7 +54,7 @@ public class WxDealUtil {
                 sb.append((new StringBuilder(String.valueOf(k))).append("=")
                         .append(v).append("&").toString());
         }
-        sb.append("key=").append("853D02D2F946329243B006C933A12E65");
+        sb.append("key=").append(key);
         String enc =  TenpayUtil.getCharacterEncoding(null,null);
         //签名信息
         String sign = MD5Util.MD5Encode(sb.toString(), enc).toUpperCase();

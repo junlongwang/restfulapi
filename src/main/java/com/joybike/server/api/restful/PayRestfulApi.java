@@ -41,13 +41,25 @@ public class PayRestfulApi {
     @RequestMapping(value = "deposit",method = RequestMethod.POST)
     public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId)
     {
-        //ThirdPayService.execute(payBean);
-        try{
-            String rechargeResult = forRecharge(payBean, userId);
-            return ResponseEntity.ok(new Message<String>(true,0,null,rechargeResult));
-        }catch (Exception e){
-            return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(),null));
+        if(payBean != null && String.valueOf(userId) != null){
+            if(payBean.getRechargeType() == 1){
+                try{
+                    String rechargeResult = forRecharge(payBean, userId);
+                    return ResponseEntity.ok(new Message<String>(true,0,null,rechargeResult));
+                }catch (Exception e){
+                    return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(),null));
+                }
+            }
+            else{
+                try{
+                    String rechargeResult = recharge(payBean, userId);
+                    return ResponseEntity.ok(new Message<String>(true,0,null,rechargeResult));
+                }catch (Exception e){
+                    return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc()+"-"+e.getMessage(),null));
+                }
+            }
         }
+        return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc(),"payBean或userid为空"));
     }
 
 
@@ -151,7 +163,10 @@ public class PayRestfulApi {
      */
     @RequestMapping(value = "refund", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> refund(@RequestParam("userId") long userId) {
-        return ResponseEntity.ok(new Message<String>(true, 0,null, "押金退款已经受理，后续状态在48小时内注意查看系统消息！"));
+        if(String.valueOf(userId) != null){
+            return ResponseEntity.ok(new Message<String>(true, 0,null, "押金退款已经受理，后续状态在48小时内注意查看系统消息！"));
+        }
+        return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(),ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
     }
 
     public String forRecharge(ThirdPayBean payBean, long userId) {
@@ -161,6 +176,33 @@ public class PayRestfulApi {
             return ThirdPayService.execute(payBean);
         }
         return null;
+    }
+
+    public String recharge(ThirdPayBean payBean, long userId){
+        bankDepositOrder order = createRechargeOrder(payBean, userId);
+        if (order != null && order.getId() != null) {
+            payBean.setId(order.getId());
+            return ThirdPayService.execute(payBean);
+        }
+        return null;
+    }
+
+    public bankDepositOrder createRechargeOrder(ThirdPayBean payBean, long userId) {
+        bankDepositOrder order = new bankDepositOrder();
+        order.setUserId(userId);
+        order.setCash(payBean.getOrderMoney());
+        order.setAward(payBean.getOrderMoneyFree());
+        order.setPayType(payBean.getChannelId());
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Integer creatTime = Integer.valueOf(date.format(new Date()));
+        order.setCreateAt(creatTime);
+        order.setRechargeType(payBean.getRechargeType());
+        try {
+            payRestfulService.depositRecharge(order);
+            return order;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public bankDepositOrder createDepositRechargeOrder(ThirdPayBean payBean, long userId) {

@@ -105,5 +105,5 @@ public interface PayRestfulService {
      * @param userId
      * @return
      */
-    int consume(String orderCode, BigDecimal payPrice, long userId) throws Exception;
+    int consume(String orderCode, BigDecimal payPrice, long userId,long consumedDepositId) throws Exception;
 }

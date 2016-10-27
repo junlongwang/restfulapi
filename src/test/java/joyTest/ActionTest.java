@@ -222,4 +222,13 @@ public class ActionTest {
         }
         System.out.println(BigDecimal.valueOf(time));
     }
+
+    @Test
+    public void consumeTest(){
+        try {
+            int a  = payRestfulService.consume("20151010", BigDecimal.valueOf(0.3),1,100);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -55,7 +55,7 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
      * @param acountType
      * @return
      */
-    final String acountSql = "select * from bankAcount where userId = ? and acountType = ?";
+    final String acountSql = "select * from bankAcount where userId = :userId and acountType = :acountType";
 
     @Override
     public bankAcount getAcount(long userId, AcountType acountType) throws Exception {

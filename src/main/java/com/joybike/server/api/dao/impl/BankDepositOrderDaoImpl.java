@@ -92,4 +92,26 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
+
+    /**
+     * 获取用户充值记录
+     *
+     * @param userId
+     * @return
+     */
+    final String getConsumedDepositOrderList = "select * from bankDepositOrder where userId = ? and status = ?  and ((residualCash + residualAward)>0)";
+
+    @Override
+    public List<bankDepositOrder> getConsumedDepositOrderList(long userId, DepositStatus depositStatus) throws Exception {
+        Object[] object = new Object[]{userId, depositStatus.getValue()};
+        try {
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getConsumedDepositOrderList, object, new BeanPropertyRowMapper(bankDepositOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
 }

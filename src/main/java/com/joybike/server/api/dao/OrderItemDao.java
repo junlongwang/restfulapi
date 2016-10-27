@@ -14,7 +14,7 @@ public interface OrderItemDao extends IRepository<orderItem> {
     /**
      * 获取订单信息
      */
-    orderItem getOrderItemByUser(long userId, String bicycleCode) throws Exception;
+    orderItem getOrderItemByOrderCode(String orderCode) throws Exception;
 
 
     /**
@@ -25,7 +25,7 @@ public interface OrderItemDao extends IRepository<orderItem> {
      * @param endAt
      * @param endLongitude
      * @param endDimension
-     * @param beforePrice
+     * @param 
      * @return
      * @throws Exception
      */

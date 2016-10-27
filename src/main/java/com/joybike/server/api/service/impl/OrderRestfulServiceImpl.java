@@ -186,4 +186,15 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
     public List<product> getProductList() {
         return productDao.getProductList();
     }
+
+    @Override
+    public orderItem getOrderItemByOrderCode( String orderCode) throws Exception {
+        return orderItemDao.getOrderItemByOrderCode(orderCode);
+    }
+
+
+    @Override
+    public vehicleOrder getOrder(long id) {
+        return vehicleOrderDao.findById(id);
+    }
 }

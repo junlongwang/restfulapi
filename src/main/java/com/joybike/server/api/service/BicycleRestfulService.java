@@ -122,7 +122,7 @@ public interface BicycleRestfulService {
      * @param beginDimension
      * @return
      */
-    long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension) throws Exception;
+    long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension,long userId) throws Exception;
 
     /**
      * 修改订单支付状态

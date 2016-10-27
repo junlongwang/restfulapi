@@ -240,7 +240,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
 
         //可用余额不足,返回支付
         if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
-            throw new RestfulException(ReturnEnum.Pay_Low);
+//            throw new RestfulException(ReturnEnum.Pay_Low);
+            return -1;
             //可用余额充足,扣费
 
         } else if (BigDecimal.valueOf(amount).compareTo(payPrice) >= 0) {
@@ -346,6 +347,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     public vehicleOrder getNoPayByOrder(long userId, String orderCode) throws Exception {
         return vehicleOrderDao.getNoPayByOrder(userId, orderCode);
     }
+
+
 
 
 

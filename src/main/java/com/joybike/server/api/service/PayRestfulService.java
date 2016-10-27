@@ -130,4 +130,5 @@ public interface PayRestfulService {
      * 根据用户ID获取未完成订单
      */
     vehicleOrder getNoPayByOrder(long userId,String orderCode) throws Exception;
+
 }

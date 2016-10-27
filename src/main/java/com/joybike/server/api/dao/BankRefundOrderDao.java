@@ -9,4 +9,11 @@ import com.joybike.server.api.model.bankRefundOrder;
 public interface BankRefundOrderDao extends IRepository<bankRefundOrder> {
 
 
+    /**
+     * 退款完毕并更新退款订单为退款成功状态
+     * @param id
+     * @return
+     */
+    public int updateRefundOrderStatusById(Long id);
+
 }

@@ -31,6 +31,18 @@ public class ThirdPayBean {
 
     private String transaction_id;  //微信支付订单号
 
+    private Long cosumeid;  //充值消费关联订单号
+
+    private long userId;//用户ID
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     public BigDecimal getOrderMoneyFree() {
         return orderMoneyFree;
     }
@@ -39,7 +51,15 @@ public class ThirdPayBean {
         this.orderMoneyFree = orderMoneyFree;
     }
 
-    public ThirdPayBean(Long id, Long refundid, BigDecimal orderMoney, BigDecimal orderMoneyFree, String orderDesc, String pruductDesc, String operIP, String openid, Date createTime, Date recordTime, int channelId, Integer rechargeType, String transaction_id) {
+    public Long getCosumeid() {
+        return cosumeid;
+    }
+
+    public void setCosumeid(Long cosumeid) {
+        this.cosumeid = cosumeid;
+    }
+
+    public ThirdPayBean(Long id, Long refundid, BigDecimal orderMoney, BigDecimal orderMoneyFree, String orderDesc, String pruductDesc, String operIP, String openid, Date createTime, Date recordTime, int channelId, Integer rechargeType, String transaction_id,Long cosumeid) {
         this.id = id;
         this.refundid = refundid;
         this.orderMoney = orderMoney;
@@ -53,6 +73,8 @@ public class ThirdPayBean {
         this.channelId = channelId;
         this.rechargeType = rechargeType;
         this.transaction_id = transaction_id;
+        this.cosumeid = cosumeid;
+
     }
 
     public String getTransaction_id() {

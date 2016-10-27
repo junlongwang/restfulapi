@@ -54,6 +54,8 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      */
     final String updateDepositOrderByIdSql = "update bankDepositOrder set status = 2 ,payType = :payType , payDocumentId = :payDocumentId ,merchantId = :merchantId, payAt = :payAt where id = :id";
 
+    final String getDepositOrder = "select * from bankDepositOrder where userId = :userId and status = 1 and rechargeType = 1";
+
     @Override
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) {
 
@@ -93,6 +95,7 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
         }
     }
 
+
     /**
      * 获取用户充值记录
      *
@@ -107,6 +110,21 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
         try {
             try {
                 return this.jdbcTemplate.getJdbcOperations().query(getConsumedDepositOrderList, object, new BeanPropertyRowMapper(bankDepositOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    @Override
+    public bankDepositOrder getDepositOrder(Long userId) {
+        Map map = new HashMap();
+        map.put("userId", userId);
+        try {
+            try {
+                return (bankDepositOrder) this.jdbcTemplate.queryForObject(getDepositOrder, map, new BeanPropertyRowMapper(bankDepositOrder.class));
             } catch (Exception e) {
                 return null;
             }

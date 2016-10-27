@@ -13,6 +13,7 @@ import com.joybike.server.api.thirdparty.SMSHelper;
 import com.joybike.server.api.thirdparty.SMSResponse;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ import java.util.Random;
 @RestController()
 public class UserRestfulApi {
 
+    private final Logger logger = Logger.getLogger(UserRestfulApi.class);
 
     @Autowired
     private UserRestfulService userRestfulService;
@@ -140,12 +142,17 @@ public class UserRestfulApi {
     {
         try {
             //如果KEY 过期
-            if(!RedixUtil.exits(mobile))
-            {
-                return ResponseEntity.ok(new Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null));
-            }
+//            if(!RedixUtil.exits(mobile))
+//            {
+//                return ResponseEntity.ok(new Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null));
+//            }
+            logger.info("===========================================");
+
+            String redisValue = RedixUtil.getString(mobile);
+            logger.info(redisValue+"="+validateCode);
+
             //获取VALUE,进行验证
-            if(RedixUtil.getString(mobile).equals(validateCode))
+            if(validateCode.equals(redisValue))
             {
                 //根据用户号码，进行查询，存在返回信息；不存在创建
                 userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);

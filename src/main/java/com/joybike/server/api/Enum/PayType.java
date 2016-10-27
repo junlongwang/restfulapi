@@ -11,7 +11,12 @@ public enum PayType {
     /**
      * 支付宝
      */
-    Alipay(1);
+    Alipay(1),
+
+    /**
+     * 微信公众号支付
+     */
+    weixinpublic(2);
 
     private int value;
 

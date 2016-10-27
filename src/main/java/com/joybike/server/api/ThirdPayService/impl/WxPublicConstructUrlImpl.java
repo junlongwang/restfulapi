@@ -23,8 +23,9 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     private String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     private String mch_id = "1401808502";
     private String appid = "wxa8d72207b41a315e";
-    private String key = "853D02D2F946329243B006C933A12E65";
-    private String notifyUrl = "www.baidu.com";
+    private String key = "BBFE4D6275760AB175F9385AD7710A70";
+    private String notifyUrl = "http://api.joybike.com.cn/pay/paynotify";
+    private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
 //    public WxPublicConstructUrlImpl()
 //    {
@@ -46,8 +47,9 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             map.put("appid",appid);//公众账号ID
             map.put("mch_id",mch_id);//商户号
             map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
-            map.put("body", payOrder.getPruductDesc());//商品描述
-            map.put("attach","附加数据原样返回");//附加数据
+            if(String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
+                map.put("attach",String.valueOf(payOrder.getCosumeid()));//附加数据
+            }
             map.put("out_trade_no", payOrder.getId().toString());//商户订单号
             Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
             BigDecimal total_fee = new BigDecimal(fMoney);
@@ -105,13 +107,14 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     @Override
     public String callBack(HttpServletRequest request) {
         Map paraMap = ReadRequestUtil.getRequestMap(request);
+        String resultMsg="";
         if (paraMap == null || paraMap.size() == 0) {
-            return "";
+            return resultMsg;
         }
         String reqSign = String.valueOf(paraMap.get("sign"));
         String sign = SignUtil.sign(paraMap,key).toUpperCase();
         if (!sign.equals(reqSign)) {
-            return "";
+            return resultMsg;
         }
         String result = String.valueOf(paraMap.get("result_code"));
         if ("SUCCESS".equals(result)) {// 如果支付成功返回支付系统唯一订单号及支付金额
@@ -121,28 +124,26 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             String appId=String.valueOf(paraMap.get("appid"));
             String openId=String.valueOf(paraMap.get("openid"));
             String bank_type=String.valueOf(paraMap.get("bank_type"));
-            String resultMsg=noOrder + "," + realTotalFee;
-            if( !StringUtil.isNullOrEmpty(openId) ) resultMsg=resultMsg+","+openId+ ";" +appId+ ";" +bank_type;
+            resultMsg = "success";
             return resultMsg;
         }
-        return "";
+        return resultMsg;
     }
 
     @Override
-    public RedirectParam getRefundUrl(ThirdPayBean payOrder){
+    public String getRefundUrl(ThirdPayBean payOrder){
         String result = "fail";
-        RedirectParam redirectParam = new RedirectParam();
-        redirectParam.setAction(result);
         if (payOrder == null){
-            return null;
+            return result;
         }
         try {
             Map<String,String> map = new HashMap();
             map.put("appid",appid);//公众账号ID
             map.put("mch_id",mch_id);//商户号
             map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
-            map.put("body", payOrder.getPruductDesc());//商品描述
-            map.put("attach","附加数据原样返回");//附加数据
+//            if(String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
+//                map.put("attach",String.valueOf(payOrder.getCosumeid()));//附加数据
+//            }
             map.put("out_trade_no", payOrder.getId().toString());//商户订单号
             map.put("transaction_id",payOrder.getTransaction_id());//微信支付订单号
             map.put("out_refund_no",payOrder.getRefundid().toString());//商户退款订单号
@@ -156,7 +157,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             String xml=ParseXml.parseXML(map);//转化为xml格式
             String httpType = "SSL";
             String timeOut = "60000";
-            String res = HttpRequestSimple.sendHttpMsg("www.weixinpay.com", xml, httpType, timeOut);
+            String res = HttpRequestSimple.sendHttpMsg(wxRefundUrl, xml, httpType, timeOut);
             HashMap resMap=ParseXml.parseXml(res);
             if(resMap.get("return_code").equals("SUCCESS")){
                 String reqSign=String.valueOf(resMap.get("sign"));
@@ -164,16 +165,13 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
                 if(reqSign.equals(resSign)){
                     if (resMap.get("out_trade_no") == map.get("out_trade_no") && resMap.get("out_refund_no") == map.get("out_refund_no") &&resMap.get("transaction_id") == map.get("transaction_id")){
                         result = "SUCCSE";
-                        String out_refund_no = resMap.get("out_refund_no").toString();
-                        redirectParam.setPara(out_refund_no);
-                        return redirectParam;
                     }
                 }
             }
         }catch (Exception e){
-            return null;
+            return result;
         }
-        return null;
+        return result;
     }
 
     public static void main(String[] args) {

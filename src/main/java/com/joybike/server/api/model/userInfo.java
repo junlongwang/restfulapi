@@ -1,5 +1,7 @@
 package com.joybike.server.api.model;
 
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
+
 import java.io.Serializable;
 
 public class userInfo implements Serializable {
@@ -120,7 +122,7 @@ public class userInfo implements Serializable {
     }
 
     public String getPhoto() {
-        return photo;
+        return OSSConsts.PRE_IMG_URL+photo;
     }
 
     public String getIphone() {
@@ -165,7 +167,7 @@ public class userInfo implements Serializable {
 
 
     public String getIdentityCardphoto() {
-        return identityCardphoto;
+        return OSSConsts.PRE_IMG_URL+identityCardphoto;
     }
 
     public void setIdentityCardphoto(String identityCardphoto) {
@@ -189,7 +191,7 @@ public class userInfo implements Serializable {
     }
 
     public String getUserImg() {
-        return userImg;
+        return OSSConsts.PRE_IMG_URL+userImg;
     }
 
     public void setUserImg(String userImg) {

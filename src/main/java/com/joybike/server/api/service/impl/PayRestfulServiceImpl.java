@@ -43,6 +43,12 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Autowired
     private UserCouponDao userCouponDao;
 
+    @Autowired
+    private BankRefundOrderDao bankRefundOrderDao;
+
+    @Autowired
+    private VehicleOrderDao vehicleOrderDao;
+
 
     /**
      * 获取用户消费明细
@@ -170,6 +176,11 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         return userCouponDao.getValidList(userId, useAt);
     }
 
+    @Override
+    public bankDepositOrder getDepositOrderId(Long userId) {
+        return depositOrderDao.getDepositOrder(userId);
+    }
+
     /**
      * 充值成功回调
      *
@@ -230,13 +241,11 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         //可用余额不足,返回支付
         if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
             throw new RestfulException(ReturnEnum.Pay_Low);
-        }
+            //可用余额充足,扣费
 
+        } else if (BigDecimal.valueOf(amount).compareTo(payPrice) >= 0) {
 
-        //可用余额充足,扣费
-        if (BigDecimal.valueOf(amount).compareTo(payPrice) >= 0) {
-
-            BigDecimal price = BigDecimal.valueOf(0).add(payPrice) ;
+            BigDecimal price = BigDecimal.valueOf(0).add(payPrice);
 
             long consumedId = 0;
             //记录消费信息，如果有金额，先记录消费信息
@@ -308,20 +317,34 @@ public class PayRestfulServiceImpl implements PayRestfulService {
                 }
             }
 
-            bankAcount cashAmount = acountDao.getAcount(userId,AcountType.cash);
-            bankAcount blanceAmount = acountDao.getAcount(userId,AcountType.balance);
+            bankAcount cashAmount = acountDao.getAcount(userId, AcountType.cash);
+            bankAcount blanceAmount = acountDao.getAcount(userId, AcountType.balance);
 
-            if (blanceAmount.getPrice().compareTo(price) >= 0){
-                acountDao.updateAcount(userId,AcountType.balance,blanceAmount.getPrice().subtract(price));
+            if (blanceAmount.getPrice().compareTo(price) >= 0) {
+                acountDao.updateAcount(userId, AcountType.balance, blanceAmount.getPrice().subtract(price));
             }
-            if (blanceAmount.getPrice().compareTo(price) < 0){
+            if (blanceAmount.getPrice().compareTo(price) < 0) {
                 BigDecimal cash = price.subtract(blanceAmount.getPrice());
-                acountDao.updateAcount(userId,AcountType.balance,price.subtract(cash));
-                acountDao.updateAcount(userId,AcountType.cash,cashAmount.getPrice().subtract(cash));
+                acountDao.updateAcount(userId, AcountType.balance, price.subtract(cash));
+                acountDao.updateAcount(userId, AcountType.cash, cashAmount.getPrice().subtract(cash));
             }
-
+            return 0;
+        } else {
+            return -1;
         }
-        return 0;
+
+    }
+
+    /**
+     * 根据用户ID 与code获取支付订单
+     * @param userId
+     * @param orderCode
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public vehicleOrder getNoPayByOrder(long userId, String orderCode) throws Exception {
+        return vehicleOrderDao.getNoPayByOrder(userId, orderCode);
     }
 
 
@@ -386,4 +409,24 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     }
     /*==================================================*/
 
+
+    /**
+     * 创建退款订单并获取订单id
+     *
+     * @param bankRefundOrder
+     * @return
+     */
+    public Long creatRefundOrder(bankRefundOrder bankRefundOrder) {
+        return bankRefundOrderDao.save(bankRefundOrder);
+    }
+
+    /**
+     * 退款完毕并更新退款订单为退款成功状态
+     *
+     * @param Id
+     * @return
+     */
+    public int updateRefundOrderStatusById(Long Id) {
+        return bankRefundOrderDao.updateRefundOrderStatusById(Id);
+    }
 }

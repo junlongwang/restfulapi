@@ -31,7 +31,7 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
             String value = request.getHeader(key);
             map.put(key, value);
 
-            logger.info(key+" :  "+value);
+            //logger.info(key+" :  "+value);
 
 //            if("Authentication".equals(key))
 //            {

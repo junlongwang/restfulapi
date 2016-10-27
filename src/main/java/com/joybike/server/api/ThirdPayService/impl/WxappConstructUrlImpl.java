@@ -1,6 +1,7 @@
 package com.joybike.server.api.ThirdPayService.impl;
 
 import com.joybike.server.api.ThirdPayService.WxappConstructUrlInter;
+import com.joybike.server.api.model.ThirdPayBean;
 import org.springframework.stereotype.Service;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
@@ -9,6 +10,7 @@ import com.joybike.server.api.thirdparty.wxtenpay.*;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 
@@ -18,11 +20,12 @@ import java.util.SortedMap;
 @Service
 public class WxappConstructUrlImpl implements WxappConstructUrlInter {
 
-    private static String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-    private static String mch_id = "1404387302";
-    private static String appid = "wxbabc4e15389aff36";
-    private static String key = "F1BDA99703815CE223FF494A9039ADA3";
-    private static String notifyUrl = "http://bj.58.com";
+    private String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+    private String mch_id = "1404387302";
+    private String appid = "wxbabc4e15389aff36";
+    private String key = "F1BDA99703815CE223FF494A9039ADA3";
+    private String notifyUrl = "http://bj.58.com";
+    private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
     @Override
     public RedirectParam getUrl(HashMap<String, String> paraMap) {
@@ -42,7 +45,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         return para;
     }
 
-    public static String getPrePayIdNew(HashMap<String,String> paraMap){
+    public String getPrePayIdNew(HashMap<String,String> paraMap){
         String getPreIdContent="";
         try {
             getPreIdContent = getPreOrder(paraMap);
@@ -58,7 +61,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         return prepayId;
     }
 
-    public static String getPreOrder(HashMap<String,String> paraMap) {
+    public String getPreOrder(HashMap<String,String> paraMap) {
         // 生成package参数值
         PackageRequestHandler packageReqHandler = new PackageRequestHandler(
                 null, null);
@@ -215,6 +218,50 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
                     return result;
                 }
             }
+        }
+        return result;
+    }
+
+    @Override
+    public String getRefundUrl(ThirdPayBean payOrder){
+        String result = "fail";
+        if (payOrder == null){
+            return result;
+        }
+        try {
+            Map<String,String> map = new HashMap();
+            map.put("appid",appid);//公众账号ID
+            map.put("mch_id",mch_id);//商户号
+            map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
+//            if(String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
+//                map.put("attach",String.valueOf(payOrder.getCosumeid()));//附加数据
+//            }
+            map.put("out_trade_no", payOrder.getId().toString());//商户订单号
+            map.put("transaction_id",payOrder.getTransaction_id());//微信支付订单号
+            map.put("out_refund_no",payOrder.getRefundid().toString());//商户退款订单号
+            Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
+            BigDecimal total_fee = new BigDecimal(fMoney);
+            map.put("total_fee",String.valueOf(total_fee));//总金额
+            map.put("refund_fee",String.valueOf(total_fee));//总金额
+            map.put("op_user_id",mch_id);//总金额
+            String sign=SignUtil.sign(map,key).toUpperCase();
+            map.put("sign", sign);//签名
+            String xml=ParseXml.parseXML(map);//转化为xml格式
+            String httpType = "SSL";
+            String timeOut = "60000";
+            String res = HttpRequestSimple.sendHttpMsg(wxRefundUrl, xml, httpType, timeOut);
+            HashMap resMap=ParseXml.parseXml(res);
+            if(resMap.get("return_code").equals("SUCCESS")){
+                String reqSign=String.valueOf(resMap.get("sign"));
+                String resSign=SignUtil.sign(resMap, key).toUpperCase();
+                if(reqSign.equals(resSign)){
+                    if (resMap.get("out_trade_no") == map.get("out_trade_no") && resMap.get("out_refund_no") == map.get("out_refund_no") &&resMap.get("transaction_id") == map.get("transaction_id")){
+                        result = "SUCCSE";
+                    }
+                }
+            }
+        }catch (Exception e){
+            return result;
         }
         return result;
     }

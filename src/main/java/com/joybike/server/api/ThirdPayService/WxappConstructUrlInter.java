@@ -23,4 +23,11 @@ public interface WxappConstructUrlInter {
      * @return
      */
     public String callBack(HttpServletRequest request);
+
+    /**
+     *
+     * @param payBean
+     * @return
+     */
+    public String getRefundUrl(ThirdPayBean payBean);
 }

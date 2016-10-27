@@ -112,7 +112,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
         String result = "fail";
         if(payBean.getChannelId() == PayType.weixin.getValue())
         {
-            //result = wxappConstructUrlInter.getUrl(payBean);
+            result = wxappConstructUrlInter.getRefundUrl(payBean);
         }
         else if(payBean.getChannelId() == PayType.weixinpublic.getValue()){
             result = wxPublicConstructUrlInter.getRefundUrl(payBean);

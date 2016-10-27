@@ -46,7 +46,8 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "deposit",method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId) {
+    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean) {
+        long userId= payBean.getUserId();
         if (payBean != null && String.valueOf(userId) != null) {
             if (payBean.getRechargeType() == 1) {
                 try {

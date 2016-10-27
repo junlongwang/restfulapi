@@ -33,6 +33,16 @@ public class ThirdPayBean {
 
     private Long cosumeid;  //充值消费关联订单号
 
+    private long userId;//用户ID
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     public BigDecimal getOrderMoneyFree() {
         return orderMoneyFree;
     }

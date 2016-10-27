@@ -1,5 +1,6 @@
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Message;
+import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.model.User;
 import com.joybike.server.api.model.userInfo;
 import org.junit.Test;
@@ -125,13 +126,15 @@ public class UnitTest {
         //com.joybike.server.api.model.Message<userInfo> message=new com.joybike.server.api.model.Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(),ReturnEnum.UpdateUer_ERROR.getErrorDesc(),null);
 
 
-        com.joybike.server.api.model.Message<String> message=null;//new com.joybike.server.api.model.Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null);
+//        com.joybike.server.api.model.Message<String> message=null;//new com.joybike.server.api.model.Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null);
+//
+//        message =new com.joybike.server.api.model.Message<String>(true,0,null,null);
+//        //new com.joybike.server.api.model.Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc(), null);
+//                //new com.joybike.server.api.model.Message<userInfo>(true, 0,null, new userInfo());
+//        System.out.println(JSON.toJSON(message));
+//        System.out.println(message);
 
-        message =new com.joybike.server.api.model.Message<String>(true,0,null,null);
-        //new com.joybike.server.api.model.Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc(), null);
-                //new com.joybike.server.api.model.Message<userInfo>(true, 0,null, new userInfo());
-        System.out.println(JSON.toJSON(message));
-        System.out.println(message);
+        //ThirdPayBean
 
     }
 }

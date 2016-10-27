@@ -29,6 +29,10 @@ public class ThirdPayServiceImpl implements ThirdPayService {
     @Autowired
     private AliPayConstructUrlInter aliPayConstructUrlInter;
 
+
+    private String wxAppmch_id = "1404387302";
+    private String wxPubmch_id = "1401808502";
+
     @Override
     public String execute(ThirdPayBean payOrder) {
         //payorderUtil
@@ -39,6 +43,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
             map.put("total_fee", payOrder.getOrderMoney().toString());
             map.put("spbill_create_ip",payOrder.getOperIP());
             map.put("body",payOrder.getPruductDesc());
+            map.put("attach",String.valueOf(payOrder.getChannelId()));
             if (String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
                 map.put("attach",String.valueOf(payOrder.getCosumeid()));
             }
@@ -57,7 +62,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
             HashMap<String,String> map = new HashMap<String,String>();
             map.put("out_trade_no", payOrder.getId().toString());
             map.put("total_fee", payOrder.getOrderMoney().toString());
-            map.put("body",payOrder.getOrderDesc());
+            map.put("body",String.valueOf(payOrder.getCosumeid()));
             map.put("subject",payOrder.getPruductDesc());
             map.put("it_b_pay", "3d"); //超时时间
             RedirectParam redirectParam= aliPayConstructUrlInter.getUrl(map);
@@ -91,11 +96,11 @@ public class ThirdPayServiceImpl implements ThirdPayService {
 
     @Override
     public String callBack(HttpServletRequest request){
-        String channleId = request.getParameter("attach");
-        if (channleId.equals("117")){
+        String mch_id = request.getParameter("mch_id");
+        if (mch_id.equals(wxAppmch_id)){
             return new WxappConstructUrlImpl().callBack(request);
         }
-        else if(channleId.equals("118")){
+        else if(mch_id.equals(wxPubmch_id)){
             return new WxPublicConstructUrlImpl().callBack(request);
         }else{
             return new AliPayConstructUrlImpl().callBack(request);

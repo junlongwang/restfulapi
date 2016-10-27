@@ -24,7 +24,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
     private String mch_id = "1404387302";
     private String appid = "wxbabc4e15389aff36";
     private String key = "F1BDA99703815CE223FF494A9039ADA3";
-    private String notifyUrl = "http://bj.58.com";
+    private String notifyUrl = "http://api.joybike.com.cn/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
     @Override

@@ -24,7 +24,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     private String mch_id = "1401808502";
     private String appid = "wxa8d72207b41a315e";
     private String key = "BBFE4D6275760AB175F9385AD7710A70";
-    private String notifyUrl = "www.baidu.com";
+    private String notifyUrl = "http://api.joybike.com.cn/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
 //    public WxPublicConstructUrlImpl()

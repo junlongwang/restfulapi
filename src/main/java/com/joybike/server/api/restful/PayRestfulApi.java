@@ -39,6 +39,8 @@ public class PayRestfulApi {
     @Autowired
     private UserRestfulService userRestfulService;
 
+    private String wxAppmch_id = "1404387302";
+    private String wxPubmch_id = "1401808502";
     /**
      * 充值：可充值押金、预存现金
      *
@@ -67,17 +69,21 @@ public class PayRestfulApi {
         return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc(),"payBean或userid为空"));
     }
 
-
-    @RequestMapping(value = "paynotify", method = RequestMethod.POST)
+    /**
+     * 充值回调入口
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "paynotify")
     public String payOfNotify(@RequestBody HttpServletRequest request) {
         String responseHtml = "success";
-        String channleId = request.getParameter("attach");
+        String mch_id = request.getParameter("mch_id");
         String returncode = "";
         if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
             returncode = ThirdPayService.callBack(request);
         }
         if (returncode != null) {
-            if (channleId.equals("117")) {
+            if (mch_id.equals(wxAppmch_id)) {
                 responseHtml = WxDealUtil.notifyResponseXml();
                 String out_trade_no = request.getParameter("out_trade_no");
                 long id = Long.valueOf(out_trade_no);
@@ -87,16 +93,16 @@ public class PayRestfulApi {
                 try {
                     int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
                     String attach = request.getParameter("attach");
-//                    if(attach != null){
-//                        Long consumeid = Long.valueOf(attach);
-//                    }
+                    if(attach != null){
+                        Long consumeid = Long.valueOf(attach);
+                    }
                     if (result > 0) {
                         return responseHtml;
                     }
                 } catch (Exception e) {
                     return "";
                 }
-            } else if (channleId.equals("118")) {
+            } else if (mch_id.equals(wxPubmch_id)) {
                 responseHtml = WxDealUtil.notifyResponseXml();
                 String out_trade_no = request.getParameter("out_trade_no");
                 long id = Long.valueOf(out_trade_no);
@@ -114,11 +120,11 @@ public class PayRestfulApi {
             } else {
                 String out_trade_no = request.getParameter("out_trade_no");
                 long id = Long.valueOf(out_trade_no);
-                String payDocumentId = request.getParameter("transaction_id");
+                String payDocumentId = request.getParameter("trade_no");
                 String merchantId = "";
                 int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
                 try {
-                    int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
+                    int result = payRestfulService.updateDepositOrderById(id, PayType.Alipay, payDocumentId, merchantId, pay_at);
                     if (result > 0) {
                         return responseHtml;
                     }

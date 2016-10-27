@@ -86,7 +86,7 @@ public class PayRestfulApi {
         if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
             returncode = ThirdPayService.callBack(request);
         }
-        if (returncode != null) {
+        if (returncode.equals("success")) {
             if (mch_id.equals(wxAppmch_id)) {
                 responseHtml = WxDealUtil.notifyResponseXml();
                 String out_trade_no = request.getParameter("out_trade_no");

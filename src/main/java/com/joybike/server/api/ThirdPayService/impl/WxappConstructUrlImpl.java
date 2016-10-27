@@ -77,7 +77,6 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         BigDecimal total_fee =NumberFormateUtil.getdoubleRoundOne(dMoney);
         packageReqHandler.setParameter("total_fee",String.valueOf(total_fee));
         packageReqHandler.setParameter("notify_url", notifyUrl);
-        packageReqHandler.setParameter("body",paraMap.get("body"));
         String spbill_create_ip=paraMap.get("spbill_create_ip");
         if(StringUtil.isNullOrEmpty(spbill_create_ip)){
             spbill_create_ip="127.0.0.1";
@@ -119,7 +118,6 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         if(packageReqHandler.getParameter("attach") != null && packageReqHandler.getParameter("attach") != ""){
             strXml.append("<attach>").append(packageReqHandler.getParameter("attach")).append("</attach>");
         }
-        strXml.append("<body>").append(packageReqHandler.getParameter("body")).append("</body>");
         strXml.append("<mch_id>").append(packageReqHandler.getParameter("mch_id")).append("</mch_id>");
         strXml.append("<nonce_str>").append(packageReqHandler.getParameter("nonce_str")).append("</nonce_str>");
         strXml.append("<notify_url>").append(packageReqHandler.getParameter("notify_url")).append("</notify_url>");
@@ -196,7 +194,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
 
     @Override
     public String callBack(HttpServletRequest request){
-        String result = "";
+        String resultMsg="";
         HashMap<String,String> hashMap  = (HashMap<String, String>) ReadRequestUtil.getRequestMap(request);
         if (hashMap != null && hashMap.size() > 0){
             String returnCode = hashMap.get("return_code");
@@ -212,14 +210,14 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
                     String openId =hashMap.get("openid");
                     String appId=hashMap.get("appid");
                     Double realTotalFee = (Double) (Double.parseDouble(totalFee != null ? totalFee : "0") / 100) ;
-                    result =outTradeNo+","+realTotalFee;
-                    if( !StringUtil.isNullOrEmpty(openId) ) result=result+","+openId+ ";" +appId;
+                    resultMsg = "success";
+                    return resultMsg;
                 }else{
-                    return result;
+                    return resultMsg;
                 }
             }
         }
-        return result;
+        return resultMsg;
     }
 
     @Override

@@ -42,7 +42,6 @@ public class ThirdPayServiceImpl implements ThirdPayService {
             map.put("out_trade_no", payOrder.getId().toString());
             map.put("total_fee", payOrder.getOrderMoney().toString());
             map.put("spbill_create_ip",payOrder.getOperIP());
-            map.put("body",payOrder.getPruductDesc());
             map.put("attach",String.valueOf(payOrder.getChannelId()));
             if (String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
                 map.put("attach",String.valueOf(payOrder.getCosumeid()));
@@ -125,6 +124,6 @@ public class ThirdPayServiceImpl implements ThirdPayService {
         else{
 
         }
-        return "";
+        return result;
     }
 }

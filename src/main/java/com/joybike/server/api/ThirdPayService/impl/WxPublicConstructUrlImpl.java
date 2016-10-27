@@ -47,7 +47,6 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             map.put("appid",appid);//公众账号ID
             map.put("mch_id",mch_id);//商户号
             map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
-            map.put("body", payOrder.getPruductDesc());//商品描述
             if(String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
                 map.put("attach",String.valueOf(payOrder.getCosumeid()));//附加数据
             }
@@ -108,13 +107,14 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     @Override
     public String callBack(HttpServletRequest request) {
         Map paraMap = ReadRequestUtil.getRequestMap(request);
+        String resultMsg="";
         if (paraMap == null || paraMap.size() == 0) {
-            return "";
+            return resultMsg;
         }
         String reqSign = String.valueOf(paraMap.get("sign"));
         String sign = SignUtil.sign(paraMap,key).toUpperCase();
         if (!sign.equals(reqSign)) {
-            return "";
+            return resultMsg;
         }
         String result = String.valueOf(paraMap.get("result_code"));
         if ("SUCCESS".equals(result)) {// 如果支付成功返回支付系统唯一订单号及支付金额
@@ -124,11 +124,10 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             String appId=String.valueOf(paraMap.get("appid"));
             String openId=String.valueOf(paraMap.get("openid"));
             String bank_type=String.valueOf(paraMap.get("bank_type"));
-            String resultMsg=noOrder + "," + realTotalFee;
-            if( !StringUtil.isNullOrEmpty(openId) ) resultMsg=resultMsg+","+openId+ ";" +appId+ ";" +bank_type;
+            resultMsg = "success";
             return resultMsg;
         }
-        return "";
+        return resultMsg;
     }
 
     @Override

@@ -312,9 +312,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public long lock(String bicycleCode, int endAt, double endLongitude, double endDimension,long userId) throws Exception {
         //修改车状态
 
+        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
 
-
-        orderItem item = orderItemDao.getOrderItemByUser(userId, bicycleCode);
+        orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
 
         int cyclingTime = endAt - item.getBeginAt();
         BigDecimal payPrice = payPrice(cyclingTime);

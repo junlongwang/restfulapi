@@ -1,5 +1,7 @@
 package com.joybike.server.api.model;
 
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
+
 import java.io.Serializable;
 
 public class vehicleRepair implements Serializable {
@@ -120,7 +122,7 @@ public class vehicleRepair implements Serializable {
     }
 
     public String getFaultImg() {
-        return faultImg;
+        return OSSConsts.PRE_IMG_URL+faultImg;
     }
 
     public void setFaultImg(String faultImg) {

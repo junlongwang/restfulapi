@@ -11,6 +11,7 @@ import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
 import com.joybike.server.api.util.UnixTimeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,8 @@ import java.util.List;
 @RestController()
 public class PayRestfulApi {
 
+    private final Logger logger = Logger.getLogger(PayRestfulApi.class);
+
     @Autowired
     private PayRestfulService payRestfulService;
     @Autowired
@@ -48,7 +51,8 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "deposit",method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean,@RequestParam("userId") long userId) {
+    public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean) {
+        long userId= payBean.getUserId();
         if (payBean != null && String.valueOf(userId) != null) {
             if (payBean.getRechargeType() == 1) {
                 try {

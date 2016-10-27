@@ -2,6 +2,7 @@ package com.joybike.server.api;
 
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.User;
+import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class DemoRestController {
 
         Message message = new Message();
         message.setName(name);
-        message.setText("hello," + name);
+        message.setText("hello," + name + "code:"+ RedixUtil.getString("15110184829"));
 
         //userDao.test();
         return message;

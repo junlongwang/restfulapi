@@ -147,6 +147,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             map.put("out_trade_no", payOrder.getId().toString());//商户订单号
             map.put("transaction_id",payOrder.getTransaction_id());//微信支付订单号
             map.put("out_refund_no",payOrder.getRefundid().toString());//商户退款订单号
+            map.put("body",payOrder.getPruductDesc());
             Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
             BigDecimal total_fee = new BigDecimal(fMoney);
             map.put("total_fee",String.valueOf(total_fee));//总金额

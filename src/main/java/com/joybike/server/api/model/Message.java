@@ -12,7 +12,7 @@ public class Message<T> implements Serializable {
      * 请求是否成功
      */
     @JSONField
-    private boolean isSucess;
+    private boolean isSuccess;
     /**
      * 错误码
      */
@@ -33,19 +33,19 @@ public class Message<T> implements Serializable {
     public Message()
     {}
 
-    public Message(boolean isSucess, int errorCode, String errorMessage, T data) {
-        this.isSucess = isSucess;
+    public Message(boolean isSuccess, int errorCode, String errorMessage, T data) {
+        this.isSuccess = isSuccess;
         this.errorCode = errorCode;
         this.errorMessage = errorMessage;
         this.data = data;
     }
 
-    public boolean isSucess() {
-        return isSucess;
+    public boolean isSuccess() {
+        return isSuccess;
     }
 
-    public void setIsSucess(boolean isSucess) {
-        this.isSucess = isSucess;
+    public void setIsSuccess(boolean isSuccess) {
+        this.isSuccess = isSuccess;
     }
 
     public int getErrorCode() {
@@ -75,7 +75,7 @@ public class Message<T> implements Serializable {
     @Override
     public String toString() {
         return "Message{" +
-                "isSucess=" + isSucess +
+                "isSuccess=" + isSuccess +
                 ", errorCode='" + errorCode + '\'' +
                 ", errorMessage='" + errorMessage + '\'' +
                 ", data=" + data +

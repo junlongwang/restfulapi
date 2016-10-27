@@ -72,6 +72,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         packageReqHandler.setParameter("nonce_str", WXUtil.getNonceStr());
         packageReqHandler.setParameter("trade_type", "APP");
         packageReqHandler.setParameter("out_trade_no",paraMap.get("out_trade_no"));
+        packageReqHandler.setParameter("body", paraMap.get("body"));
         //充值金额以分为单位
         Double dMoney = Double.valueOf(String.valueOf(paraMap.get("total_fee"))) * 100;
         BigDecimal total_fee =NumberFormateUtil.getdoubleRoundOne(dMoney);
@@ -120,6 +121,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         }
         strXml.append("<mch_id>").append(packageReqHandler.getParameter("mch_id")).append("</mch_id>");
         strXml.append("<nonce_str>").append(packageReqHandler.getParameter("nonce_str")).append("</nonce_str>");
+        strXml.append("<body>").append(packageReqHandler.getParameter("body")).append("</body>");
         strXml.append("<notify_url>").append(packageReqHandler.getParameter("notify_url")).append("</notify_url>");
         strXml.append("<out_trade_no>").append(packageReqHandler.getParameter("out_trade_no")).append("</out_trade_no>");
         strXml.append("<spbill_create_ip>").append(packageReqHandler.getParameter("spbill_create_ip")).append("</spbill_create_ip>");

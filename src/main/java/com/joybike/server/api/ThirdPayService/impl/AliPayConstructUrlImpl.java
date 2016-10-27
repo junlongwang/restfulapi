@@ -68,7 +68,8 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
                 requestParams.put("partner",signature+ partner +signature);
                 requestParams.put("_input_charset",signature+"utf-8"+signature);
                 //AlipayPropertiesConfigEnum.ALIPAY_NOTIFY_URL.getEnumValues()
-                requestParams.put("notify_url",notifyUrl);
+                requestParams.put("notify_url",notifyUrl + "?"
+                        + "attach" + "=" + paraMap.get("consumeid") + signature);
                 requestParams.put("out_trade_no",signature+outTradeNo+signature);
                 requestParams.put("subject",signature+subject+signature);
                 requestParams.put("body",signature+body+signature);

@@ -37,13 +37,15 @@ public class RedixUtil {
     {
         Jedis redis = null;
         try {
-            new Jedis(host, port);//连接redis
+            redis=new Jedis(host, port);//连接redis
             redis.auth(instanceAndPwd);//验证密码
             return redis.get(key);
         }
         finally {
-            redis.quit();
-            redis.close();
+            if(redis!=null) {
+                redis.quit();
+                redis.close();
+            }
         }
     }
 

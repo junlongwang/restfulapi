@@ -23,9 +23,9 @@ public class PlatformRestfulApi {
 
     static
     {
-        appKeys.add("");
-        appKeys.add("");
-        appKeys.add("");
+        appKeys.add("6cf6ead412df6ad88880c4742be3d2f6"); //安卓
+        appKeys.add("6566567b50be0ac7b85076ae76acbaa7");//IOS
+        appKeys.add("f3c75e05f57b4385bdf5f0a0812d996a");//h5
     }
 
     /**

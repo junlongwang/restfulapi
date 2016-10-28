@@ -23,7 +23,7 @@
         <param name="Threshold" value="ERROR"/>
         <param name="DatePattern" value="'_'yyyy-MM-dd'.log'"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%c-%l] %m%n"/>
+            <param name="ConversionPattern" value="[%p] %d{yy-MM-dd HH:mm:ss} %m%n"/>
         </layout>
     </appender>
     <appender name="infoLog" class="org.apache.log4j.DailyRollingFileAppender">
@@ -33,7 +33,7 @@
         <param name="Threshold" value="INFO"/>
         <param name="DatePattern" value="'_'yyyy-MM-dd'.log'"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [%c-%l] %m%n"/>
+            <param name="ConversionPattern" value="[%p] %d{yy-MM-dd HH:mm:ss} %m%n"/>
         </layout>
     </appender>
     <logger name="requestLogger" additivity="false">

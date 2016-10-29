@@ -50,7 +50,7 @@ public class UserRestfulApi {
      * @param userInfoDto
      * @return
      */
-    @SystemControllerLog(description = "更新用户信息")
+    //@SystemControllerLog(description = "更新用户信息")
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public ResponseEntity<Message<userInfo>> update(@RequestBody userInfoDto userInfoDto) {
         try {
@@ -86,7 +86,7 @@ public class UserRestfulApi {
      * @param mobile 手机号码
      * @return
      */
-    @SystemControllerLog(description = "获取手机验证码")
+    //@SystemControllerLog(description = "获取手机验证码")
     @RequestMapping(value = "getValidateCode", method = RequestMethod.GET)
     public ResponseEntity<Message<String>> getValidateCode(@RequestParam("mobile") String mobile) {
         int randNo = 0;
@@ -117,7 +117,7 @@ public class UserRestfulApi {
      * @param userId
      * @return
      */
-    @SystemControllerLog(description = "获取用户账户余额")
+    //@SystemControllerLog(description = "获取用户账户余额")
     @RequestMapping(value = "getAcountMoney", method = RequestMethod.GET)
     public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userId") long userId) {
         try {
@@ -133,7 +133,7 @@ public class UserRestfulApi {
      *
      * @return
      */
-    @SystemControllerLog(description = "获取系统推送信息")
+    //@SystemControllerLog(description = "获取系统推送信息")
     @RequestMapping(value = "getMessages", method = RequestMethod.GET)
     public ResponseEntity<Message<List<SysMessage>>> getMessages() {
         return ResponseEntity.ok(new Message<List<SysMessage>>(true, 0, null, new ArrayList<SysMessage>()));
@@ -147,7 +147,7 @@ public class UserRestfulApi {
      * @param validateCode
      * @return
      */
-    @SystemControllerLog(description = "验证码验证登录")
+    //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
     public ResponseEntity<Message<userInfo>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
         try {
@@ -179,7 +179,7 @@ public class UserRestfulApi {
      * @param userId
      * @return
      */
-    @SystemControllerLog(description = "获取用户已完成订单")
+    //@SystemControllerLog(description = "获取用户已完成订单")
     @RequestMapping(value = "getSuccessOrder", method = RequestMethod.GET)
     public ResponseEntity<Message<List<VehicleOrderDto>>> getOrderPaySuccess(@RequestParam("userId") long userId) {
         try {

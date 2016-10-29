@@ -5,6 +5,7 @@ import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.CancleDto;
 import com.joybike.server.api.dto.SubscribeDto;
+import com.joybike.server.api.dto.UnlockDto;
 import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
@@ -123,29 +124,22 @@ public class BicycleRestfulApi {
     /**
      * 扫描开锁
      *
-     * @param userId
-     * @param bicycleCode
-     * @return
+     * @param unlockDto
      */
     @RequestMapping(value = "unlock", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> unlock(
-            @RequestParam("userId") long userId,
-            @RequestParam("bicycleCode") String bicycleCode,
-            @RequestParam("beginAt") int beginAt,
-            @RequestParam("beginLongitude") Double beginLongitude,
-            @RequestParam("beginDimension") Double beginDimension) {
+    public ResponseEntity<Message<String>> unlock(@RequestBody UnlockDto unlockDto) {
 
-        logger.info(userId + ":" + bicycleCode);
+        logger.info(unlockDto.toString());
         try {
             long orderId = 0;
 
             //获取是否有未支付订单
-            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
+            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(unlockDto.getUserId());
 
             if (order != null) {
                 return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
-                orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                orderId = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
             }
 
             if (orderId > 0) {

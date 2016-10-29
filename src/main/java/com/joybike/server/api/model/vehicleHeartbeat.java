@@ -38,7 +38,7 @@ public class vehicleHeartbeat implements Serializable {
      * GPS模式下的utc时间
      *  @Author lisy
     **/
-    private Integer gpsTime;
+    private Long gpsTime;
 
     /** 
      * GPS的纬度
@@ -56,7 +56,7 @@ public class vehicleHeartbeat implements Serializable {
      * 基站的锁内时间
      *  @Author lisy
     **/
-    private Integer lockTime;
+    private Long lockTime;
 
     /** 
      * 小区号
@@ -130,7 +130,7 @@ public class vehicleHeartbeat implements Serializable {
     **/
     private Integer createAt;
 
-    public vehicleHeartbeat(Long id, Long lockId, String firmwareVersion, String allocation, String baseStationType, Integer gpsTime, BigDecimal dimension, BigDecimal longitude, Integer lockTime, String cellId, String stationId, String speed, String direction, Integer arousalType, String custom, Integer lockStatus, Integer batteryStatus, String batteryPercent, Integer unlockNumber, String orderCode, Integer createAt) {
+    public vehicleHeartbeat(Long id, Long lockId, String firmwareVersion, String allocation, String baseStationType, Long gpsTime, BigDecimal dimension, BigDecimal longitude, Long lockTime, String cellId, String stationId, String speed, String direction, Integer arousalType, String custom, Integer lockStatus, Integer batteryStatus, String batteryPercent, Integer unlockNumber, String orderCode, Integer createAt) {
         this.id = id;
         this.lockId = lockId;
         this.firmwareVersion = firmwareVersion;
@@ -225,11 +225,11 @@ public class vehicleHeartbeat implements Serializable {
         this.baseStationType = baseStationType == null ? null : baseStationType.trim();
     }
 
-    public Integer getGpsTime() {
+    public Long getGpsTime() {
         return gpsTime;
     }
 
-    public void setGpsTime(Integer gpsTime) {
+    public void setGpsTime(Long gpsTime) {
         this.gpsTime = gpsTime;
     }
 
@@ -249,11 +249,11 @@ public class vehicleHeartbeat implements Serializable {
         this.longitude = longitude;
     }
 
-    public Integer getLockTime() {
+    public Long getLockTime() {
         return lockTime;
     }
 
-    public void setLockTime(Integer lockTime) {
+    public void setLockTime(Long lockTime) {
         this.lockTime = lockTime;
     }
 

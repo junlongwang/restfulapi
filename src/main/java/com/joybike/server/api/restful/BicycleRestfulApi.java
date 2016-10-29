@@ -9,6 +9,7 @@ import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
+import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -181,12 +182,12 @@ public class BicycleRestfulApi {
         heartbeat.setAllocation(values[2]);
         heartbeat.setBaseStationType(values[3]);
         if (values[3] == "0") {
-            heartbeat.setGpsTime(Integer.valueOf(values[4]));
+            heartbeat.setGpsTime(Long.valueOf(values[4]));
             heartbeat.setDimension(BigDecimal.valueOf(Double.valueOf(values[5])));
             heartbeat.setLongitude(BigDecimal.valueOf(Double.valueOf(values[6])));
         }
         if (values[3] == "1") {
-            heartbeat.setLockTime(Integer.valueOf(values[4]));
+            heartbeat.setLockTime(Long.valueOf(values[4]));
             heartbeat.setCellId(values[5]);
             heartbeat.setStationId(values[6]);
         }
@@ -198,7 +199,7 @@ public class BicycleRestfulApi {
         heartbeat.setLockStatus(Integer.valueOf(values[11]));
         heartbeat.setBatteryStatus(Integer.valueOf(values[12]));
         heartbeat.setBatteryPercent(values[13]);
-        //heartbeat.setCreateAt();
+        heartbeat.setCreateAt(UnixTimeUtils.now());
         vehicleHeartbeatDao.save(heartbeat);
 
     }

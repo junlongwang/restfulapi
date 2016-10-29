@@ -43,10 +43,22 @@ public interface BankDepositOrderDao extends IRepository<bankDepositOrder> {
     bankDepositOrder getDepositOrderById(long id);
 
     /**
+     * 获取可消费的充值
+     *
+     * @param userId
+     * @param depositStatus
+     * @return
+     */
+    List<bankDepositOrder> getConsumedDepositOrderList(long userId, DepositStatus depositStatus) throws Exception;
+
+
+
+    /**
      * 获取用户押金充值成功订单id和支付通路id
      * @param userId
      * @return
      */
     bankDepositOrder getDepositOrder(Long userId);
+
 
 }

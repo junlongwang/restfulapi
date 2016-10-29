@@ -33,7 +33,7 @@ public enum ReturnEnum {
     /**
      * 服务层错误统一
      */
-    SERVICE_ERROR(1003, "service error"),
+    SERVICE_ERROR(1003, "服务不可达"),
 
     /***********
      * 支付错误

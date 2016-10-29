@@ -105,7 +105,37 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
         Map orderMap = new HashMap();
         orderMap.put("orderCode", orderCode);
         orderMap.put("status", OrderStatus.complete.getValue());
-        return execSQL(updateOrderByLockSql, orderMap);
+        return execSQL(updateByIdSql, orderMap);
     }
+
+    /**
+     * 根据用户ID跟code获取未支付订单
+     *
+     * @param userId
+     * @param orderCode
+     * @return
+     * @throws Exception
+     */
+    final String getNoPayByOrder = "select * from vehicleOrder where userId = :userId and orderCode = :orderCode and status = :status";
+
+    @Override
+    public vehicleOrder getNoPayByOrder(long userId, String orderCode) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            map.put("orderCode", orderCode);
+            map.put("status", OrderStatus.end.getValue());
+
+            try {
+                return (vehicleOrder) this.jdbcTemplate.queryForObject(getNoPayByOrder, map, new BeanPropertyRowMapper(vehicleOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
+
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
 
 }

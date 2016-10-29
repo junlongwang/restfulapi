@@ -3,12 +3,15 @@ package com.joybike.server.api.restful;
 import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
+import com.joybike.server.api.dto.CancleDto;
+import com.joybike.server.api.dto.SubscribeDto;
 import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
+import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,30 +46,29 @@ public class BicycleRestfulApi {
     /**
      * 预约车辆
      *
-     * @param userId
-     * @param bicycleCode
+     * @param subscribeDto
      * @return
      */
     @RequestMapping(value = "subscribe", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> subscribe(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode, @RequestParam("beginAt") int beginAt) {
+    public ResponseEntity<Message<subscribeInfo>> subscribe(@RequestBody SubscribeDto subscribeDto) {
 
-        logger.info(userId + ":" + bicycleCode);
+        logger.info(subscribeDto.getUserId() + ":" + subscribeDto.getBicycleCode() + ":" + subscribeDto.getBeginAt());
 
         try {
-            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
+            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(subscribeDto.getUserId());
 
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(),null));
+                return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
                 try {
-                    bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                    return ResponseEntity.ok(new Message<String>(true, 0, null,ReturnEnum.Appointment_Success.getErrorDesc()));
+                    subscribeInfo info = bicycleRestfulService.vehicleSubscribe(subscribeDto.getUserId(), subscribeDto.getBicycleCode(), subscribeDto.getBeginAt());
+                    return ResponseEntity.ok(new Message<subscribeInfo>(true, 0, ReturnEnum.Appointment_Success.getErrorDesc(), info));
                 } catch (Exception e) {
-                    return ResponseEntity.ok(new Message<String>(false,ReturnEnum.UNKNOWN.getErrorCode(),ReturnEnum.UNKNOWN.getErrorDesc()+"-"+e.getMessage(), null));
+                    return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.UNKNOWN.getErrorCode(), ReturnEnum.UNKNOWN.getErrorDesc() + "-" + e.getMessage(), null));
                 }
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Appointment_Error.getErrorCode(), ReturnEnum.Appointment_Error.getErrorDesc()+"-"+e.getMessage(),null));
+            return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.Appointment_Error.getErrorCode(), ReturnEnum.Appointment_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -74,17 +76,16 @@ public class BicycleRestfulApi {
     /**
      * 取消预约车辆
      *
-     * @param userId
-     * @param bicycleCode
+     * @param cancleDto
      * @return
      */
     @RequestMapping(value = "cancle", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> cancle(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
+    public ResponseEntity<Message<String>> cancle(@RequestBody CancleDto cancleDto) {
         try {
-            bicycleRestfulService.deleteSubscribeInfo(userId, bicycleCode);
-            return ResponseEntity.ok(new Message<String>(true, 0,null,"操作成功！"));
+            bicycleRestfulService.deleteSubscribeInfo(cancleDto.getUserId(), cancleDto.getBicycleCode());
+            return ResponseEntity.ok(new Message<String>(true, 0, null, ReturnEnum.Cancel_Success.getErrorDesc()));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Cancel_Success.getErrorCode(),ReturnEnum.Cancel_Success.getErrorDesc()+"-"+e.getMessage(),null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Cancel_Success.getErrorCode(), ReturnEnum.Cancel_Success.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -98,7 +99,7 @@ public class BicycleRestfulApi {
     @RequestMapping(value = "lookup", method = RequestMethod.GET)
     public ResponseEntity<Message<String>> lookup(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
         VehicleComHelper.find(bicycleCode);
-        return ResponseEntity.ok(new Message<String>(true,0,null,"寻车成功！"));
+        return ResponseEntity.ok(new Message<String>(true, 0, null, "寻车成功！"));
     }
 
     /**
@@ -111,10 +112,10 @@ public class BicycleRestfulApi {
     @RequestMapping(value = "available", method = RequestMethod.GET)
     public ResponseEntity<Message<List<vehicle>>> getAvailable(double longitude, double dimension) {
         try {
-            List<vehicle> list = bicycleRestfulService.getVehicleList(longitude, dimension);
-            return ResponseEntity.ok(new Message<List<vehicle>>(true, 0,null, list));
+            List<vehicle> list = bicycleRestfulService.getVehicleList(dimension, longitude);
+            return ResponseEntity.ok(new Message<List<vehicle>>(true, 0, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<vehicle>>(false, ReturnEnum.UNKNOWN.getErrorCode(),ReturnEnum.UNKNOWN.getErrorDesc()+"-"+e.getMessage(), null));
+            return ResponseEntity.ok(new Message<List<vehicle>>(false, ReturnEnum.UNKNOWN.getErrorCode(), ReturnEnum.UNKNOWN.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -142,18 +143,18 @@ public class BicycleRestfulApi {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
 
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(),null));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
                 orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
             }
 
             if (orderId > 0) {
-                return ResponseEntity.ok(new Message<String>(true, 0,null, "操作成功！"));
+                return ResponseEntity.ok(new Message<String>(true, 0, null, "操作成功！"));
             } else {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.getErrorCode(),ReturnEnum.Unlock_Error.getErrorDesc(),null));
+                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc()+"-"+e.getMessage(),null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -168,39 +169,40 @@ public class BicycleRestfulApi {
 
         logger.info(param);
 
+        try {
+            String token = param.split(";")[0];
+            String content = param.split(";")[1];
+            String[] values = content.split(",");
 
-        String token = param.split(";")[0];
+            vehicleHeartbeat heartbeat = new vehicleHeartbeat();
 
-        String content = param.split(";")[1];
-        String[] values = content.split(",");
+            heartbeat.setLockId(Long.valueOf(values[0]));
+            heartbeat.setFirmwareVersion(values[1]);
+            heartbeat.setAllocation(values[2]);
+            heartbeat.setBaseStationType(values[3]);
+            if (values[3].equals("0")) {
+                heartbeat.setGpsTime(Long.valueOf(values[4]));
+                heartbeat.setDimension(BigDecimal.valueOf(Double.valueOf(values[5])));
+                heartbeat.setLongitude(BigDecimal.valueOf(Double.valueOf(values[6])));
+            }
+            if (values[3].equals("1")) {
+                heartbeat.setLockTime(Long.valueOf(values[4]));
+                heartbeat.setCellId(values[5]);
+                heartbeat.setStationId(values[6]);
+            }
 
-        vehicleHeartbeat heartbeat = new vehicleHeartbeat();
-
-        heartbeat.setLockId(Long.valueOf(values[0]));
-        heartbeat.setFirmwareVersion(values[1]);
-        heartbeat.setAllocation(values[2]);
-        heartbeat.setBaseStationType(values[3]);
-        if (values[3] == "0") {
-            heartbeat.setGpsTime(Integer.valueOf(values[4]));
-            heartbeat.setDimension(BigDecimal.valueOf(Double.valueOf(values[5])));
-            heartbeat.setLongitude(BigDecimal.valueOf(Double.valueOf(values[6])));
+            heartbeat.setSpeed(values[7]);
+            heartbeat.setDirection(values[8]);
+            heartbeat.setArousalType(Integer.valueOf(values[9]));
+            heartbeat.setCustom(values[10]);
+            heartbeat.setLockStatus(Integer.valueOf(values[11]));
+            heartbeat.setBatteryStatus(Integer.valueOf(values[12]));
+            heartbeat.setBatteryPercent(values[13]);
+            heartbeat.setCreateAt(UnixTimeUtils.now());
+            vehicleHeartbeatDao.save(heartbeat);
+        } catch (Exception e) {
+            logger.error("车锁GPS,每隔15秒上报数据发生异常：" + e.getMessage(), e);
         }
-        if (values[3] == "1") {
-            heartbeat.setLockTime(Integer.valueOf(values[4]));
-            heartbeat.setCellId(values[5]);
-            heartbeat.setStationId(values[6]);
-        }
-
-        heartbeat.setSpeed(values[7]);
-        heartbeat.setDirection(values[8]);
-        heartbeat.setArousalType(Integer.valueOf(values[9]));
-        heartbeat.setCustom(values[10]);
-        heartbeat.setLockStatus(Integer.valueOf(values[11]));
-        heartbeat.setBatteryStatus(Integer.valueOf(values[12]));
-        heartbeat.setBatteryPercent(values[13]);
-        //heartbeat.setCreateAt();
-        vehicleHeartbeatDao.save(heartbeat);
-
     }
 
     /**
@@ -236,12 +238,11 @@ public class BicycleRestfulApi {
             form.setCreateAt(vehicleRepair.getCreateAt());
             form.setDisposeStatus(DisposeStatus.untreated.getValue());
             bicycleRestfulService.addVehicleRepair(form);
-            return ResponseEntity.ok(new Message<String>(true, 0,null, "提交成功！"));
+            return ResponseEntity.ok(new Message<String>(true, 0, null, "提交成功！"));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Submit_Error.getErrorCode(), ReturnEnum.Submit_Error.getErrorDesc()+"-"+e.getMessage(),null));
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Submit_Error.getErrorCode(), ReturnEnum.Submit_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
-
 
 
 }

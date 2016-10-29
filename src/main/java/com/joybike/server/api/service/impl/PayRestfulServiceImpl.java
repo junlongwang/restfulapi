@@ -46,7 +46,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Autowired
     private BankRefundOrderDao bankRefundOrderDao;
 
-
+    @Autowired
+    private VehicleOrderDao vehicleOrderDao;
 
 
     /**
@@ -84,7 +85,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         long depositId = depositOrderDao.save(depositOrder);
 
         //记录现金流水
-        moneyFlowDao.save(flowInfo(depositOrder, depositId));
+        //userId,order.getPayType(),consumedId,order.getCash(),order.getAward()
+        moneyFlowDao.save(flowInfo(depositOrder.getUserId(), depositOrder.getPayType(), depositId, depositOrder.getCash(), depositOrder.getAward(), 0, "", DealType.deposit, 0));
 
     }
 
@@ -102,7 +104,9 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         long depositId = depositOrderDao.save(depositOrder);
 
         //记录现金流水
-        moneyFlowDao.save(flowInfo(depositOrder, depositId));
+        //        //userId,order.getPayType(),consumedId,order.getCash(),order.getAward()
+
+        moneyFlowDao.save(flowInfo(depositOrder.getUserId(), depositOrder.getPayType(), depositId, depositOrder.getCash(), depositOrder.getAward(), 0, "", DealType.deposit, 0));
 
         //修改用户押金状态
         userInfo userInfo = new userInfo();
@@ -173,7 +177,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     }
 
     @Override
-    public bankDepositOrder getDepositOrderId(Long userId){
+    public bankDepositOrder getDepositOrderId(Long userId) {
         return depositOrderDao.getDepositOrder(userId);
     }
 
@@ -227,109 +231,128 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userId
      * @return
      */
+    @Transactional
     @Override
-    public int consume(String orderCode, BigDecimal payPrice, long userId) throws Exception{
+    public int consume(String orderCode, BigDecimal payPrice, long userId, long consumedDepositId) throws Exception {
 
         double amount = acountDao.getUserAmount(userId);
+        bankDepositOrder bankDepositOrder = depositOrderDao.getDepositOrderById(consumedDepositId);
 
-        if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0){
-            throw new RestfulException(ReturnEnum.Pay_Low);
-        }else{
-            List<bankDepositOrder> depositList = depositOrderDao.getBankDepositOrderList(userId, DepositStatus.susuccess);
+        //可用余额不足,返回支付
+        if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
+//            throw new RestfulException(ReturnEnum.Pay_Low);
+            return -1;
+            //可用余额充足,扣费
 
-            depositList.stream().sorted((p, p2) -> (p.getPayAt() - p2.getPayAt())).collect(toList());
-            depositList.forEach(new Consumer<bankDepositOrder>() {
-                @Override
-                public void accept(bankDepositOrder order) {
-                    if (order.getAward().add(order.getCash()).compareTo(payPrice) == 0){
-                        try {
-                            //修改余额
-                            acountDao.updateAcount(userId, AcountType.cash, order.getCash());
-                            acountDao.updateAcount(userId, AcountType.balance, order.getAward());
-                            order.setResidualCash(BigDecimal.valueOf(0));
+        } else if (BigDecimal.valueOf(amount).compareTo(payPrice) >= 0) {
+
+            BigDecimal price = BigDecimal.valueOf(0).add(payPrice);
+
+            long consumedId = 0;
+            //记录消费信息，如果有金额，先记录消费信息
+            if (bankDepositOrder != null) {
+                consumedId = bankConsumedOrderDao.save(bankConsumedOrderInfo(userId, orderCode, payPrice, bankDepositOrder.getAward().add(bankDepositOrder.getCash()), ConsumedStatus.susuccess, 0));
+
+            } else {
+                consumedId = bankConsumedOrderDao.save(bankConsumedOrderInfo(userId, orderCode, payPrice, BigDecimal.valueOf(0), ConsumedStatus.susuccess, 0));
+            }
+
+            List<bankDepositOrder> depositList = depositOrderDao.getConsumedDepositOrderList(userId, DepositStatus.susuccess);
+
+            depositList.stream().sorted((p, p2) -> (p.getPayAt().compareTo(p2.getPayAt()))).collect(toList());
+
+            //充值扣款
+            for (bankDepositOrder order : depositList) {
+
+                if (order.getResidualAward().add(order.getResidualCash()).compareTo(payPrice) >= 0) {
+
+                    try {
+
+                        if (order.getResidualAward().compareTo(payPrice) >= 0) {
+
+                            order.setResidualAward(order.getResidualAward().subtract(payPrice));
+
+                            //修改充值
+                            depositOrderDao.update(order);
+                            //保存流水
+                            moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), BigDecimal.valueOf(0), payPrice, consumedId, orderCode, DealType.consumed, 3));
+                            payPrice = BigDecimal.valueOf(0);
+                        }
+
+                        if (order.getResidualAward().compareTo(payPrice) < 0) {
+
+                            //修改账户信息
+                            BigDecimal cash = payPrice.subtract(order.getResidualAward());
+
+                            order.setResidualCash(order.getResidualCash().subtract(cash));
                             order.setResidualAward(BigDecimal.valueOf(0));
                             //修改充值
                             depositOrderDao.update(order);
-                            //保存消费信息
-                            bankConsumedOrder consumedOrder = new bankConsumedOrder();
-                            consumedOrder.setUserId(userId);
-                            consumedOrder.setOrderCode(orderCode);
-                            consumedOrder.setPayAmount(payPrice);
-                            consumedOrder.setDepositAmount(BigDecimal.valueOf(0));
-                            consumedOrder.setPayAt(UnixTimeUtils.now());
-                            consumedOrder.setStatus(ConsumedStatus.susuccess.getValue());
-                            consumedOrder.setDepositId(order.getId());
-                            consumedOrder.setCreateAt(UnixTimeUtils.now());
-                            long consumedId = bankConsumedOrderDao.save(consumedOrder);
                             //保存流水
-                            bankMoneyFlow flow = new bankMoneyFlow();
-                            flow.setUserId(userId);
-                            flow.setDealType(DealType.consumed.getValue());
-                            flow.setSourceType(order.getPayType());
-                            flow.setDepositId(order.getId());
-                            flow.setSourceOrderCode(orderCode);
-                            flow.setPayAt(UnixTimeUtils.now());
-                            flow.setConsumedId(consumedId);
-                            flow.setCash(order.getCash());
-                            flow.setAward(order.getAward());
-                            flow.setRefundAt(0);
-                            flow.setCreateAt(UnixTimeUtils.now());
-                            moneyFlowDao.save(flow);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), cash, payPrice.subtract(cash), consumedId, orderCode, DealType.consumed, 3));
+                            payPrice = BigDecimal.valueOf(0);
                         }
-                    }else if (order.getAward().add(order.getCash()).compareTo(payPrice) == 0){
-                        try {
-                            //修改余额
-                            if (order.getAward().compareTo(payPrice) > 0){
-                                // todoz这里了
-//                                acountDao.updateAcount(userId, AcountType.cash, order.getCash().subtract(payPrice));
-                                acountDao.updateAcount(userId, AcountType.balance, order.getAward().subtract(payPrice));
-                                order.setResidualCash(BigDecimal.valueOf(0));
-                                order.setResidualAward(BigDecimal.valueOf(0));
-                                //修改充值
-                                depositOrderDao.update(order);
-                                //保存消费信息
-                                bankConsumedOrder consumedOrder = new bankConsumedOrder();
-                                consumedOrder.setUserId(userId);
-                                consumedOrder.setOrderCode(orderCode);
-                                consumedOrder.setPayAmount(payPrice);
-                                consumedOrder.setDepositAmount(BigDecimal.valueOf(0));
-                                consumedOrder.setPayAt(UnixTimeUtils.now());
-                                consumedOrder.setStatus(ConsumedStatus.susuccess.getValue());
-                                consumedOrder.setDepositId(order.getId());
-                                consumedOrder.setCreateAt(UnixTimeUtils.now());
-                                long consumedId = bankConsumedOrderDao.save(consumedOrder);
-                                //保存流水
-                                bankMoneyFlow flow = new bankMoneyFlow();
-                                flow.setUserId(userId);
-                                flow.setDealType(DealType.consumed.getValue());
-                                flow.setSourceType(order.getPayType());
-                                flow.setDepositId(order.getId());
-                                flow.setSourceOrderCode(orderCode);
-                                flow.setPayAt(UnixTimeUtils.now());
-                                flow.setConsumedId(consumedId);
-                                flow.setCash(order.getCash());
-                                flow.setAward(order.getAward());
-                                flow.setRefundAt(0);
-                                flow.setCreateAt(UnixTimeUtils.now());
-                                moneyFlowDao.save(flow);
-                            }
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
-            });
 
+                if (order.getResidualAward().add(order.getResidualCash()).compareTo(payPrice) < 0) {
 
-            List<bankConsumedOrder> consumedList = bankConsumedOrderDao.getBankConsumedOrderList(userId, ConsumedStatus.susuccess);
+                    payPrice = payPrice.subtract(order.getResidualCash()).subtract(order.getResidualAward());
 
+                    try {
+
+                        order.setResidualCash(BigDecimal.valueOf(0));
+                        order.setResidualAward(BigDecimal.valueOf(0));
+                        //修改充值
+                        depositOrderDao.update(order);
+                        //保存流水
+
+                        moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), order.getResidualCash(), order.getResidualAward(), consumedId, orderCode, DealType.consumed, 3));
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+
+            bankAcount cashAmount = acountDao.getAcount(userId, AcountType.cash);
+            bankAcount blanceAmount = acountDao.getAcount(userId, AcountType.balance);
+
+            if (blanceAmount.getPrice().compareTo(price) >= 0) {
+                acountDao.updateAcount(userId, AcountType.balance, blanceAmount.getPrice().subtract(price));
+            }
+            if (blanceAmount.getPrice().compareTo(price) < 0) {
+                BigDecimal cash = price.subtract(blanceAmount.getPrice());
+                acountDao.updateAcount(userId, AcountType.balance, price.subtract(cash));
+                acountDao.updateAcount(userId, AcountType.cash, cashAmount.getPrice().subtract(cash));
+            }
+
+            //修改订单支付状态为付款完成
+            vehicleOrderDao.updateStatausByCode(orderCode);
+
+            return 0;
+        } else {
+            return -1;
         }
-        return 0;
+
     }
+
+    /**
+     * 根据用户ID 与code获取支付订单
+     * @param userId
+     * @param orderCode
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public vehicleOrder getNoPayByOrder(long userId, String orderCode) throws Exception {
+        return vehicleOrderDao.getNoPayByOrder(userId, orderCode);
+    }
+
+
 
 
 
@@ -358,39 +381,59 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     /**
      * 现金流记录
      *
-     * @param order
+     * @param
      */
-    public static bankMoneyFlow flowInfo(bankDepositOrder order, long depositId) {
+    public static bankMoneyFlow flowInfo(long userId, int payType, long depositId, BigDecimal cash, BigDecimal award, long consumedId, String orderCode, DealType dealType, int status) {
 
         bankMoneyFlow moneyFlow = new bankMoneyFlow();
-        moneyFlow.setUserId(order.getUserId());
-        moneyFlow.setDealType(DealType.deposit.getValue());
-        moneyFlow.setSourceType(order.getPayType());
-        moneyFlow.setPayAt(order.getPayAt());
-        moneyFlow.setCash(order.getCash());
-        moneyFlow.setAward(order.getAward());
+        moneyFlow.setUserId(userId);
+        moneyFlow.setDealType(dealType.getValue());
+        moneyFlow.setSourceType(payType);
+        moneyFlow.setPayAt(UnixTimeUtils.now());
+        moneyFlow.setCash(cash);
+        moneyFlow.setAward(award);
         moneyFlow.setDepositId(depositId);
         moneyFlow.setCreateAt(UnixTimeUtils.now());
+        moneyFlow.setConsumedId(consumedId);
+        moneyFlow.setSourceOrderCode(orderCode);
+        moneyFlow.setStatus(status);
         return moneyFlow;
+    }
+
+    public static bankConsumedOrder bankConsumedOrderInfo(long userId, String orderCode, BigDecimal payPrice, BigDecimal depositAmount, ConsumedStatus consumedStatus, long depositId) {
+
+        //保存消费信息
+        bankConsumedOrder consumedOrder = new bankConsumedOrder();
+        consumedOrder.setUserId(userId);
+        consumedOrder.setOrderCode(orderCode);
+        consumedOrder.setPayAmount(payPrice);
+        consumedOrder.setDepositAmount(depositAmount);
+        consumedOrder.setPayAt(UnixTimeUtils.now());
+        consumedOrder.setStatus(consumedStatus.getValue());
+        consumedOrder.setDepositId(depositId);
+        consumedOrder.setCreateAt(UnixTimeUtils.now());
+        return consumedOrder;
     }
     /*==================================================*/
 
 
     /**
      * 创建退款订单并获取订单id
+     *
      * @param bankRefundOrder
      * @return
      */
-    public Long creatRefundOrder(bankRefundOrder bankRefundOrder){
+    public Long creatRefundOrder(bankRefundOrder bankRefundOrder) {
         return bankRefundOrderDao.save(bankRefundOrder);
     }
 
     /**
      * 退款完毕并更新退款订单为退款成功状态
+     *
      * @param Id
      * @return
      */
-    public int updateRefundOrderStatusById(Long Id){
+    public int updateRefundOrderStatusById(Long Id) {
         return bankRefundOrderDao.updateRefundOrderStatusById(Id);
     }
 }

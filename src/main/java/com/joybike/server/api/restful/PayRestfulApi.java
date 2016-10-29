@@ -154,7 +154,6 @@ public class PayRestfulApi {
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<List<bankConsumedOrder>>(false, ReturnEnum.ConsumedOrderList_Error.getErrorCode(), ReturnEnum.ConsumedOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
-
     }
 
     /**

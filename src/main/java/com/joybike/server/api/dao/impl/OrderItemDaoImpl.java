@@ -26,14 +26,13 @@ public class OrderItemDaoImpl extends Reository<orderItem> implements OrderItemD
      * @return
      * @throws Exception
      */
-    final String getOrderItemByUserSql = "select * from orderItem where where userId = :userId and vehicleId = :vehicleId";
+    final String getOrderItemByUserSql = "select * from orderItem where where orderCode = :orderCode";
 
     @Override
-    public orderItem getOrderItemByUser(long userId, String bicycleCode) throws Exception {
+    public orderItem getOrderItemByOrderCode(String orderCode) throws Exception {
         try {
             Map map = new HashMap();
-            map.put("userId", userId);
-            map.put("vehicleId", bicycleCode);
+            map.put("orderCode", orderCode);
             try {
                 return (orderItem) this.jdbcTemplate.queryForObject(getOrderItemByUserSql, map, new BeanPropertyRowMapper(orderItem.class));
             } catch (Exception e) {

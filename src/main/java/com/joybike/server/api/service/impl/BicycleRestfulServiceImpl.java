@@ -57,7 +57,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public subscribeInfo vehicleSubscribe(long userId, String bicycleCode, int startAt) throws Exception {
 
         subscribeInfo bscribeInfo = new subscribeInfo();
+
         String subcribeCode = String.valueOf(userId) + String.valueOf(bicycleCode);
+
         subscribeInfo uInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
         subscribeInfo vInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode);
 
@@ -282,6 +284,12 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //创建订单
                 orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
+                //修改预约信息
+                subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
+                subscribeInfo.setSubscribeCode(orderRestfulService.getOrder(orderId).getOrderCode());
+                subscribeInfoDao.update(subscribeInfo);
+
+
             }
             if (useStatus == -1) throw new RestfulException(ReturnEnum.FaultIng);
         }
@@ -303,18 +311,19 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Transactional
     @Override
-    public long lock(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception {
+    public long lock(String bicycleCode, int endAt, double endLongitude, double endDimension,long userId) throws Exception {
         //修改车状态
-        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode);
 
-        orderItem item = orderItemDao.getOrderItemByUser(subscribeInfo.getUserId(), bicycleCode);
+        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
+
+        orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
 
         int cyclingTime = endAt - item.getBeginAt();
         BigDecimal payPrice = payPrice(cyclingTime);
 
-        int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
-        int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
-        int o2 = subscribeInfoDao.deleteSubscribeInfo(subscribeInfo.getUserId(), bicycleCode);
+        int v1 = vehicleOrderDao.updateOrderByLock(userId, bicycleCode, payPrice);
+        int o1 = orderItemDao.updateOrderByLock(userId, bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
+        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
         int v3 = vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.free);
 
         return v1 * o1 * o2 * v3;

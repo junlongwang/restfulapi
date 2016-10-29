@@ -94,8 +94,13 @@ public class bankRefundOrder implements Serializable {
     **/
     private Integer createAt;
 
-    public bankRefundOrder(){
+    /**
+     * 退款状态：0 未完成；1：完成
+     */
+    private Integer status;
 
+    public bankRefundOrder(){
+        this.status=0;
     }
 
     public bankRefundOrder(Long userId, String colleAcount, BigDecimal refundAmount, String remark, Integer notifyAt, Integer notifyStatus, String notifyLog, String callbackUrl, Integer callbackStatus, Integer callbackNumbers, Integer lastcallAt, Integer refundType, Long orderId, Integer createAt) {
@@ -113,6 +118,7 @@ public class bankRefundOrder implements Serializable {
         this.refundType = refundType;
         this.orderId = orderId;
         this.createAt = createAt;
+        this.status=0;
     }
 
     @Override
@@ -254,5 +260,13 @@ public class bankRefundOrder implements Serializable {
 
     public void setCreateAt(Integer createAt) {
         this.createAt = createAt;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

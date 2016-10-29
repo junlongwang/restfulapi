@@ -1,10 +1,7 @@
 package com.joybike.server.api.service;
 
 import com.joybike.server.api.Enum.PayType;
-import com.joybike.server.api.model.bankConsumedOrder;
-import com.joybike.server.api.model.bankDepositOrder;
-import com.joybike.server.api.model.bankRefundOrder;
-import com.joybike.server.api.model.userCoupon;
+import com.joybike.server.api.model.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -126,5 +123,12 @@ public interface PayRestfulService {
      * @param userId
      * @return
      */
-    int consume(String orderCode, BigDecimal payPrice, long userId) throws Exception;
+    int consume(String orderCode, BigDecimal payPrice, long userId,long consumedDepositId) throws Exception;
+
+
+    /**
+     * 根据用户ID获取未完成订单
+     */
+    vehicleOrder getNoPayByOrder(long userId,String orderCode) throws Exception;
+
 }

@@ -43,7 +43,7 @@ public class subscribeInfo implements Serializable {
     private Integer status;
 
     /**
-     * 预约单Code，生成规则为用户ID+车辆编号
+     * orderCode
      */
     private String subscribeCode;
 

@@ -1,6 +1,7 @@
 package com.joybike.server.api.service;
 
 
+import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.product;
 import com.joybike.server.api.model.vehicleOrder;
 
@@ -22,7 +23,7 @@ public interface OrderRestfulService {
      * @param beginDimension 骑行开始的维度
      * @return
      */
-    long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude , double beginDimension) throws Exception;
+    long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude, double beginDimension) throws Exception;
 
 
     /**
@@ -72,7 +73,25 @@ public interface OrderRestfulService {
 
     /**
      * 获取产品列表
+     *
      * @return
      */
     List<product> getProductList();
+
+    /**
+     * 获取用户订单资源
+     *
+     * @param  orderCode
+     * @return
+     * @throws Exception
+     */
+    orderItem getOrderItemByOrderCode( String orderCode) throws Exception;
+
+    /**
+     * 获取订单信息
+     *
+     * @param id
+     * @return
+     */
+    vehicleOrder getOrder(long id);
 }

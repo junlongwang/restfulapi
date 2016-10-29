@@ -7,8 +7,6 @@
  */
 package com.joybike.server.api.thirdparty.wxtenpay.util;
 
-import handles.ganji.GanjiRechargeHandler;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;

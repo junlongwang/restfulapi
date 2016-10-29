@@ -32,7 +32,7 @@ public class wxPublicConstrucUnitTest {
         payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
         payOrder.setOperIP("192.168.0.1");
         payOrder.setOpenid("123");
-        payOrder.setChannelId(117);
+        payOrder.setChannelId(0);
         ThirdPayService.execute(payOrder);
     }
 }

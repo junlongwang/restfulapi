@@ -3,6 +3,7 @@ package com.joybike.server.api.restful;
 import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
+import com.joybike.server.api.dto.SubscribeDto;
 import com.joybike.server.api.dto.vehicleRepairDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
@@ -44,23 +45,22 @@ public class BicycleRestfulApi {
     /**
      * 预约车辆
      *
-     * @param userId
-     * @param bicycleCode
+     * @param subscribeDto
      * @return
      */
     @RequestMapping(value = "subscribe", method = RequestMethod.POST)
-    public ResponseEntity<Message<subscribeInfo>> subscribe(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode, @RequestParam("beginAt") int beginAt) {
+    public ResponseEntity<Message<subscribeInfo>> subscribe(@RequestBody SubscribeDto subscribeDto ) {
 
-        logger.info(userId + ":" + bicycleCode);
+        logger.info(subscribeDto.getUserId() + ":" + subscribeDto.getBicycleCode() + ":" + subscribeDto.getBeginAt());
 
         try {
-            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
+            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(subscribeDto.getUserId());
 
             if (order != null) {
                 return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(),null));
             } else {
                 try {
-                    subscribeInfo info = bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
+                    subscribeInfo info = bicycleRestfulService.vehicleSubscribe(subscribeDto.getUserId(), subscribeDto.getBicycleCode(), subscribeDto.getBeginAt());
                     return ResponseEntity.ok(new Message<subscribeInfo>(true, 0,ReturnEnum.Appointment_Success.getErrorDesc(),info));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<subscribeInfo>(false,ReturnEnum.UNKNOWN.getErrorCode(),ReturnEnum.UNKNOWN.getErrorDesc()+"-"+e.getMessage(), null));

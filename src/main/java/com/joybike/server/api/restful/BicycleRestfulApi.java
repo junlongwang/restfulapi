@@ -49,7 +49,7 @@ public class BicycleRestfulApi {
      * @return
      */
     @RequestMapping(value = "subscribe", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> subscribe(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode, @RequestParam("beginAt") int beginAt) {
+    public ResponseEntity<Message<subscribeInfo>> subscribe(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode, @RequestParam("beginAt") int beginAt) {
 
         logger.info(userId + ":" + bicycleCode);
 
@@ -57,17 +57,17 @@ public class BicycleRestfulApi {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
 
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(),null));
+                return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(),null));
             } else {
                 try {
-                    bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                    return ResponseEntity.ok(new Message<String>(true, 0, null,ReturnEnum.Appointment_Success.getErrorDesc()));
+                    subscribeInfo info = bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
+                    return ResponseEntity.ok(new Message<subscribeInfo>(true, 0,ReturnEnum.Appointment_Success.getErrorDesc(),info));
                 } catch (Exception e) {
-                    return ResponseEntity.ok(new Message<String>(false,ReturnEnum.UNKNOWN.getErrorCode(),ReturnEnum.UNKNOWN.getErrorDesc()+"-"+e.getMessage(), null));
+                    return ResponseEntity.ok(new Message<subscribeInfo>(false,ReturnEnum.UNKNOWN.getErrorCode(),ReturnEnum.UNKNOWN.getErrorDesc()+"-"+e.getMessage(), null));
                 }
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Appointment_Error.getErrorCode(), ReturnEnum.Appointment_Error.getErrorDesc()+"-"+e.getMessage(),null));
+            return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.Appointment_Error.getErrorCode(), ReturnEnum.Appointment_Error.getErrorDesc()+"-"+e.getMessage(),null));
         }
     }
 

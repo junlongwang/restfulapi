@@ -186,8 +186,8 @@ public class UserRestfulApi {
      * @return
      */
     @SystemControllerLog(description = "骑行与支付信息")
-    @RequestMapping(value = "cyclingPyOrder", method = RequestMethod.POST)
-    public ResponseEntity<Message<orderItem>> cyclingPyOrder(@RequestBody String bicycleCode, int endAt, double endLongitude, double endDimension) {
+    @RequestMapping(value = "cyclingPayOrder", method = RequestMethod.POST)
+    public ResponseEntity<Message<orderItem>> cyclingPayOrder(@RequestBody String bicycleCode, int endAt, double endLongitude, double endDimension) {
         try {
 
             subscribeInfo subscribeInfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(bicycleCode);

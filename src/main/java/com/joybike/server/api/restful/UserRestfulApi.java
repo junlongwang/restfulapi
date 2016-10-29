@@ -2,8 +2,6 @@ package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.SystemControllerLog;
-import com.joybike.server.api.dao.VehicleHeartbeatDao;
-import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.dto.userInfoDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
@@ -19,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -175,41 +172,4 @@ public class UserRestfulApi {
         }
     }
 
-
-    /**
-     * 骑行与支付信息
-     *
-     * @param bicycleCode
-     * @param endAt
-     * @param endLongitude
-     * @param endDimension
-     * @return
-     */
-    @SystemControllerLog(description = "骑行与支付信息")
-    @RequestMapping(value = "cyclingPayOrder", method = RequestMethod.POST)
-    public ResponseEntity<Message<orderItem>> cyclingPayOrder(@RequestBody String bicycleCode, int endAt, double endLongitude, double endDimension) {
-        try {
-
-            subscribeInfo subscribeInfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(bicycleCode);
-
-            //锁车
-            long status = bicycleRestfulService.lock(bicycleCode, endAt, endLongitude,endDimension,subscribeInfo.getUserId());
-            if (status < 0){
-                return ResponseEntity.ok(new Message<orderItem>(false, ReturnEnum.SERVICE_ERROR.getErrorCode(), ReturnEnum.SERVICE_ERROR.getErrorDesc() , null));
-            }else {
-                vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(subscribeInfo.getUserId());
-                int payLow = payRestfulService.consume(order.getOrderCode(), order.getAfterPrice(), subscribeInfo.getUserId(), 0);
-                if (payLow == -1){
-                    //todo
-                    return ResponseEntity.ok(new Message<orderItem>(false, ReturnEnum.SERVICE_ERROR.getErrorCode(), ReturnEnum.SERVICE_ERROR.getErrorDesc() , null));
-                }else{
-                    orderItem item = orderRestfulService.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
-
-                    return ResponseEntity.ok(new Message<orderItem>(true, 0, null, item));
-                }
-            }
-        } catch (Exception e) {
-            return ResponseEntity.ok(new Message<orderItem>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
-        }
-    }
 }

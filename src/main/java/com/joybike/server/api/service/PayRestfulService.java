@@ -35,7 +35,7 @@ public interface PayRestfulService {
      *
      * @param depositOrder
      */
-    void depositRecharge(bankDepositOrder depositOrder) throws Exception;
+    long depositRecharge(bankDepositOrder depositOrder) throws Exception;
 
 
     /**
@@ -130,5 +130,6 @@ public interface PayRestfulService {
      * 根据用户ID获取未完成订单
      */
     vehicleOrder getNoPayByOrder(long userId,String orderCode) throws Exception;
+
 
 }

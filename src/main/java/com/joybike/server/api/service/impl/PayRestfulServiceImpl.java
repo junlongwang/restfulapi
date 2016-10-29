@@ -97,7 +97,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Transactional
     @Override
-    public void depositRecharge(bankDepositOrder depositOrder) throws Exception {
+    public long depositRecharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
         depositOrder.setCreateAt(UnixTimeUtils.now());
         depositOrder.setRechargeType(RechargeType.deposit.getValue());
@@ -113,6 +113,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         userInfo.setId(depositOrder.getUserId());
         userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
         userInfoService.updateUserInfo(userInfo);
+        return depositId;
     }
 
     /**

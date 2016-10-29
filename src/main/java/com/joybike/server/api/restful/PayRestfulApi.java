@@ -10,6 +10,7 @@ import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,14 +55,17 @@ public class PayRestfulApi {
     public ResponseEntity<Message<String>> deposit(@RequestBody ThirdPayBean payBean) {
         long userId= payBean.getUserId();
         if (payBean != null && String.valueOf(userId) != null) {
+            //押金充值
             if (payBean.getRechargeType() == 1) {
                 try {
                     String rechargeResult = forRecharge(payBean, userId);
+
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
                 }
             } else {
+                //余额充值
                 try {
                     String rechargeResult = recharge(payBean, userId);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
@@ -218,13 +222,21 @@ public class PayRestfulApi {
         return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(),ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
     }
 
+    //押金充值
     public String forRecharge(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = createDepositRechargeOrder(payBean, userId);
-        if (order != null && order.getId() != null) {
-            payBean.setId(order.getId());
-            return ThirdPayService.execute(payBean);
+//        long orderId = 0;
+        try {
+            long orderId = payRestfulService.depositRecharge(order);
+            if (orderId >0){
+                payBean.setId(order.getId());
+                return ThirdPayService.execute(payBean);
+            }else{
+                return "";
+            }
+        } catch (Exception e) {
+           throw new RestfulException(ReturnEnum.Recharge_Error);
         }
-        return null;
     }
 
     Long refund(bankDepositOrder order){
@@ -243,6 +255,7 @@ public class PayRestfulApi {
         }
     }
 
+
     public String recharge(ThirdPayBean payBean, long userId){
         bankDepositOrder order = createRechargeOrder(payBean, userId);
         if (order != null && order.getId() != null) {
@@ -258,9 +271,7 @@ public class PayRestfulApi {
         order.setCash(payBean.getOrderMoney());
         order.setAward(payBean.getOrderMoneyFree());
         order.setPayType(payBean.getChannelId());
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Integer creatTime = Integer.valueOf(date.format(new Date()));
-        order.setCreateAt(creatTime);
+        order.setCreateAt(UnixTimeUtils.now());
         order.setRechargeType(payBean.getRechargeType());
         try {
             payRestfulService.depositRecharge(order);
@@ -270,21 +281,15 @@ public class PayRestfulApi {
         }
     }
 
+    //组合充值信息
     public bankDepositOrder createDepositRechargeOrder(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = new bankDepositOrder();
         order.setUserId(userId);
         order.setCash(payBean.getOrderMoney());
         order.setPayType(payBean.getChannelId());
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Integer creatTime = Integer.valueOf(date.format(new Date()));
-        order.setCreateAt(creatTime);
+        order.setCreateAt(UnixTimeUtils.now());
         order.setRechargeType(payBean.getRechargeType());
-        try {
-            payRestfulService.depositRecharge(order);
-            return order;
-        } catch (Exception e) {
-            return null;
-        }
+        return order;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
+import com.joybike.server.api.Infrustructure.SystemControllerLog;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.LoginData;
 import com.joybike.server.api.dto.userInfoDto;
@@ -51,6 +52,7 @@ public class UserRestfulApi {
      * @param userInfoDto
      * @return
      */
+    @SystemControllerLog(description = "更新用户信息")
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public ResponseEntity<Message<userInfo>> update(@RequestBody userInfoDto userInfoDto) {
         try {
@@ -86,6 +88,7 @@ public class UserRestfulApi {
      * @param mobile 手机号码
      * @return
      */
+    @SystemControllerLog(description = "获取手机验证码")
     @RequestMapping(value = "getValidateCode", method = RequestMethod.GET)
     public ResponseEntity<Message<String>> getValidateCode(@RequestParam("mobile") String mobile) {
         int randNo = 0;
@@ -116,6 +119,7 @@ public class UserRestfulApi {
      * @param userid
      * @return
      */
+    @SystemControllerLog(description = "获取用户账户余额")
     @RequestMapping(value = "getAcountMoney", method = RequestMethod.GET)
     public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") long userid) {
         try {
@@ -131,6 +135,7 @@ public class UserRestfulApi {
      *
      * @return
      */
+    @SystemControllerLog(description = "获取系统推送信息")
     @RequestMapping(value = "getMessages", method = RequestMethod.GET)
     public ResponseEntity<Message<List<SysMessage>>> getMessages() {
         return ResponseEntity.ok(new Message<List<SysMessage>>(true, 0, null, new ArrayList<SysMessage>()));
@@ -144,6 +149,7 @@ public class UserRestfulApi {
      * @param validateCode
      * @return
      */
+    @SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
     public ResponseEntity<Message<userInfo>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
         try {
@@ -179,6 +185,7 @@ public class UserRestfulApi {
      * @param endDimension
      * @return
      */
+    @SystemControllerLog(description = "骑行与支付信息")
     @RequestMapping(value = "cyclingPyOrder", method = RequestMethod.POST)
     public ResponseEntity<Message<orderItem>> cyclingPyOrder(@RequestBody String bicycleCode, int endAt, double endLongitude, double endDimension) {
         try {

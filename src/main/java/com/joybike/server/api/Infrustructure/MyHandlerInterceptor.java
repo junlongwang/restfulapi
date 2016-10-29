@@ -3,10 +3,12 @@ package com.joybike.server.api.Infrustructure;
 import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
 import org.apache.log4j.Logger;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -24,11 +26,11 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
         //PermissionMeta
         HandlerMethod method = (HandlerMethod)handler;
         System.out.println(method);
-
         String token = request.getHeader("Authentication");
 
         logger.info("+++++++++++++++++++++++++++");
         logger.info("Authentication="+token);
+        logger.info(method.getMethod().getName());
         logger.info("+++++++++++++++++++++++++++");
 
 //        if(token==null || "".equals(token)) {
@@ -71,14 +73,46 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 ////            }
 //        }
 //        System.out.println(map);
+
+
         System.out.println("++++++++++++++++++++++++++++++++");
 
         logger.info(request.getRemoteAddr());//得到来访者IP
         logger.info(request.getRemoteHost());
         logger.info(request.getRequestURI());//得到请求URL地址
 
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        //response.setHeader("Access-Control-Allow-Origin", "*");
         return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request,
+                           HttpServletResponse response, Object handler,
+                           ModelAndView modelAndView) throws Exception {
+// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion");
+
+
+//        String responseContent = null;
+//        try {
+//            response.setContentType("text/plain");
+//            response.setHeader("Pragma", "No-cache");
+//            response.setHeader("Cache-Control", "no-cache");
+//            response.setDateHeader("Expires", 0);
+//            PrintWriter out = response.getWriter();
+//
+//            String jsonpCallback = request.getParameter("callbake");//客户端请求参数
+//            out.println(jsonpCallback+"("+responseContent+")");//返回jsonp格式数据
+//            out.flush();
+//            out.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 }

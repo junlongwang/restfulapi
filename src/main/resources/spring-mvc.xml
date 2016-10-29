@@ -13,9 +13,12 @@
         http://www.springframework.org/schema/context/spring-context-3.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="com.joybike.server.api">
+        <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>-->
+        <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>-->
     </context:component-scan>
     <!-- 使用Annotation(注解)自动注册Bean(自注入) ,并检查@Required,@Autowired的属性已被注入 -->
     <mvc:annotation-driven/>
+
 
 
     <context:property-placeholder location="classpath:jdbc.properties"/>
@@ -24,6 +27,9 @@
 
     <!--开启AOP，使用aspectj-->
     <aop:aspectj-autoproxy/>
+
+    <!--通知spring使用cglib而不是jdk的来生成代理方法 AOP可以拦截到Controller-->
+    <aop:aspectj-autoproxy  proxy-target-class="true"  />
 
     <!--<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">-->
     <!--<property name="viewClass"-->

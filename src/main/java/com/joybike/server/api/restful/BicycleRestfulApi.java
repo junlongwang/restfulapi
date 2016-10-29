@@ -169,39 +169,40 @@ public class BicycleRestfulApi {
 
         logger.info(param);
 
+        try {
+            String token = param.split(";")[0];
+            String content = param.split(";")[1];
+            String[] values = content.split(",");
 
-        String token = param.split(";")[0];
+            vehicleHeartbeat heartbeat = new vehicleHeartbeat();
 
-        String content = param.split(";")[1];
-        String[] values = content.split(",");
+            heartbeat.setLockId(Long.valueOf(values[0]));
+            heartbeat.setFirmwareVersion(values[1]);
+            heartbeat.setAllocation(values[2]);
+            heartbeat.setBaseStationType(values[3]);
+            if (values[3].equals("0")) {
+                heartbeat.setGpsTime(Long.valueOf(values[4]));
+                heartbeat.setDimension(BigDecimal.valueOf(Double.valueOf(values[5])));
+                heartbeat.setLongitude(BigDecimal.valueOf(Double.valueOf(values[6])));
+            }
+            if (values[3].equals("1")) {
+                heartbeat.setLockTime(Long.valueOf(values[4]));
+                heartbeat.setCellId(values[5]);
+                heartbeat.setStationId(values[6]);
+            }
 
-        vehicleHeartbeat heartbeat = new vehicleHeartbeat();
-
-        heartbeat.setLockId(Long.valueOf(values[0]));
-        heartbeat.setFirmwareVersion(values[1]);
-        heartbeat.setAllocation(values[2]);
-        heartbeat.setBaseStationType(values[3]);
-        if (values[3] == "0") {
-            heartbeat.setGpsTime(Long.valueOf(values[4]));
-            heartbeat.setDimension(BigDecimal.valueOf(Double.valueOf(values[5])));
-            heartbeat.setLongitude(BigDecimal.valueOf(Double.valueOf(values[6])));
+            heartbeat.setSpeed(values[7]);
+            heartbeat.setDirection(values[8]);
+            heartbeat.setArousalType(Integer.valueOf(values[9]));
+            heartbeat.setCustom(values[10]);
+            heartbeat.setLockStatus(Integer.valueOf(values[11]));
+            heartbeat.setBatteryStatus(Integer.valueOf(values[12]));
+            heartbeat.setBatteryPercent(values[13]);
+            heartbeat.setCreateAt(UnixTimeUtils.now());
+            vehicleHeartbeatDao.save(heartbeat);
+        }catch (Exception e){
+            logger.error("车锁GPS,每隔15秒上报数据发生异常："+e.getMessage(),e);
         }
-        if (values[3] == "1") {
-            heartbeat.setLockTime(Long.valueOf(values[4]));
-            heartbeat.setCellId(values[5]);
-            heartbeat.setStationId(values[6]);
-        }
-
-        heartbeat.setSpeed(values[7]);
-        heartbeat.setDirection(values[8]);
-        heartbeat.setArousalType(Integer.valueOf(values[9]));
-        heartbeat.setCustom(values[10]);
-        heartbeat.setLockStatus(Integer.valueOf(values[11]));
-        heartbeat.setBatteryStatus(Integer.valueOf(values[12]));
-        heartbeat.setBatteryPercent(values[13]);
-        heartbeat.setCreateAt(UnixTimeUtils.now());
-        vehicleHeartbeatDao.save(heartbeat);
-
     }
 
     /**

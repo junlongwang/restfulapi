@@ -1,5 +1,6 @@
 package com.joybike.server.api;
 
+import com.joybike.server.api.Infrustructure.SystemControllerLog;
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.User;
 import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
@@ -22,13 +23,14 @@ public class DemoRestController {
     @Autowired
     private UserInfoDao userInfoDao;
 
+    @SystemControllerLog(description = "sayHelloworld")
     @RequestMapping("say/{name}")
     public Message say(@PathVariable String name) {
 
         Message message = new Message();
         message.setName(name);
-        message.setText("hello," + name + "code:"+ RedixUtil.getString("15110184829"));
-
+        //message.setText("hello," + name + "code:" + RedixUtil.getString("15110184829"));
+        message.setText("hello," + name);
         //userDao.test();
         return message;
     }

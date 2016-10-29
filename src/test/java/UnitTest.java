@@ -1,10 +1,13 @@
-import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Message;
-import com.joybike.server.api.model.ThirdPayBean;
+import com.joybike.server.api.dao.VehicleHeartbeatDao;
+import com.joybike.server.api.dto.Token;
 import com.joybike.server.api.model.User;
-import com.joybike.server.api.model.userInfo;
+import com.joybike.server.api.model.vehicleHeartbeat;
+import com.joybike.server.api.util.UnixTimeUtils;
+import myTest.Amortize;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.alibaba.fastjson.JSON;
 
+import java.math.BigDecimal;
 import java.util.Properties;
 
 /**
@@ -126,15 +130,137 @@ public class UnitTest {
         //com.joybike.server.api.model.Message<userInfo> message=new com.joybike.server.api.model.Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(),ReturnEnum.UpdateUer_ERROR.getErrorDesc(),null);
 
 
-//        com.joybike.server.api.model.Message<String> message=null;//new com.joybike.server.api.model.Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null);
+        com.joybike.server.api.model.Message<Token> message=null;//new com.joybike.server.api.model.Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null);
 //
-//        message =new com.joybike.server.api.model.Message<String>(true,0,null,null);
+        //message =new com.joybike.server.api.model.Message<String>(true,0,null,null);
 //        //new com.joybike.server.api.model.Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(),ReturnEnum.Iphone_Error.getErrorDesc(), null);
 //                //new com.joybike.server.api.model.Message<userInfo>(true, 0,null, new userInfo());
-//        System.out.println(JSON.toJSON(message));
+
+        message =new com.joybike.server.api.model.Message<Token>(true,0,null,new Token("afdadsg23432etyuio",7200));
+        System.out.println(JSON.toJSON(message));
 //        System.out.println(message);
 
         //ThirdPayBean
 
+    }
+
+
+
+
+    @Test
+    public void httpPost()
+    {
+//        String requestBody = "post test";
+//
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        headers.add("MyRequestHeader","MyValue");
+        String url="http://amortize.web.58dns.org/consume?payId=178538428072626884&consumeTime=1472525116000&consumeAmount=4.00&totalAmount=54.00&isLastTime=1&flowId=947671856&productId=null&cateOne=2&cateTwo=null&cateThree=null&cityId=-1&userId=1050848302&sourceSys='gj'";
+        String contents = url.substring(38);
+        String[] kv=contents.split("&");
+
+        Amortize amortize = new Amortize();
+        int i=0;
+        for (String item : kv)
+        {
+            String k=item.split("=")[0];
+            String v=item.split("=")[1];
+
+            System.out.println(k+"="+v);
+
+            ++i;
+            switch (i)
+            {
+                case 1:
+                    amortize.setPayId(Long.valueOf(v));
+                    break;
+
+                case 2:
+                    amortize.setConsumeTime(Long.valueOf(v));
+                    break;
+                case 3:
+                    amortize.setConsumeAmount(BigDecimal.valueOf(Double.valueOf(v)));
+                    break;
+                case 4:
+                    amortize.setTotalAmount(BigDecimal.valueOf(Double.valueOf(v)));
+                    break;
+                case 5:
+                    amortize.setIsLastTime(Integer.valueOf(v));
+                    break;
+                case 6:
+                    amortize.setFlowId(Integer.valueOf(v));
+                    break;
+                case 7:
+                    //amortize.setProductId(Integer.valueOf(v));
+                    break;
+                case 8:
+                    amortize.setCateOne(Integer.valueOf(v));
+                    break;
+                case 9:
+                case 10:
+                    break;
+                case 11:
+                    amortize.setCityId(Integer.valueOf(v));
+                    break;
+                case 12:
+                    amortize.setUserId(Long.valueOf(v));
+                    break;
+                case 13:
+                    amortize.setSourceSys("gj");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        System.out.println(amortize);
+
+
+        HttpEntity<Amortize> formEntity = new HttpEntity<Amortize>(amortize,headers);
+        String result = restTemplate.postForObject("http://amortize.web.58dns.org/consume", formEntity, String.class);
+        System.out.println(result+"++++++++++++++++++");
+    }
+
+
+
+    @Autowired
+    private VehicleHeartbeatDao vehicleHeartbeatDao;
+    @Test
+    public void postTest()
+    {
+        String param = "a1e4a729e9cd4c9fafa35c536108703e;000000000,01,ff,1,700103113732,4530,8249,,,3,0,1,0,50,";
+        String token = param.split(";")[0];
+
+        String content = param.split(";")[1];
+        String[] values = content.split(",");
+
+        vehicleHeartbeat heartbeat = new vehicleHeartbeat();
+
+        heartbeat.setLockId(Long.valueOf(values[0]));
+        heartbeat.setFirmwareVersion(values[1]);
+        heartbeat.setAllocation(values[2]);
+        heartbeat.setBaseStationType(values[3]);
+        if (values[3].equals("0")) {
+            heartbeat.setGpsTime(Long.valueOf(values[4]));
+            heartbeat.setDimension(BigDecimal.valueOf(Double.valueOf(values[5])));
+            heartbeat.setLongitude(BigDecimal.valueOf(Double.valueOf(values[6])));
+        }
+        if (values[3].equals("1")) {
+            heartbeat.setLockTime(Long.valueOf(values[4]));
+            heartbeat.setCellId(values[5]);
+            heartbeat.setStationId(values[6]);
+        }
+
+        heartbeat.setSpeed(values[7]);
+        heartbeat.setDirection(values[8]);
+        heartbeat.setArousalType(Integer.valueOf(values[9]));
+        heartbeat.setCustom(values[10]);
+        heartbeat.setLockStatus(Integer.valueOf(values[11]));
+        heartbeat.setBatteryStatus(Integer.valueOf(values[12]));
+        heartbeat.setBatteryPercent(values[13]);
+        heartbeat.setCreateAt(UnixTimeUtils.now());
+        vehicleHeartbeatDao.save(heartbeat);
     }
 }

@@ -52,6 +52,7 @@ public enum ReturnEnum {
      * 订单 3
      */
     Product_Error(3001,"获取产品列表失败"),
+    Order_Eroor(3002,"订单信息错误"),
 
 
     /***********
@@ -65,6 +66,7 @@ public enum ReturnEnum {
     /***********
      * 车辆错误
      *******************/
+
 
     Appointment_Success(5001, "预约成功"),
 
@@ -83,7 +85,11 @@ public enum ReturnEnum {
     FaultIng(5011, "车辆不可使用"),
     Unlock_Error(5012, "开锁失败"),
     Submit_Error(5013, "故障申报失败"),
-    Appointment_Error(5014, "预约失败"),;
+    Appointment_Error(5014, "预约失败"),
+
+
+
+    ;
 
     @Override
     public String toString() {

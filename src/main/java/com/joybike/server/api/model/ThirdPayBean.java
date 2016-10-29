@@ -1,10 +1,11 @@
 package com.joybike.server.api.model;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 /**
  * Created by LongZiyuan on 2016/10/20.
  */
-public class ThirdPayBean {
+public class ThirdPayBean implements Serializable {
     private Long   id;         //支付系统订单号
 
     private Long   refundid;    //支付系统退款订单号
@@ -76,6 +77,10 @@ public class ThirdPayBean {
         this.cosumeid = cosumeid;
 
     }
+    public ThirdPayBean() {
+
+    }
+    
 
     public String getTransaction_id() {
         return transaction_id;
@@ -93,9 +98,7 @@ public class ThirdPayBean {
         this.refundid = refundid;
     }
 
-    public ThirdPayBean() {
 
-    }
 
     public Integer getRechargeType() {
         return rechargeType;

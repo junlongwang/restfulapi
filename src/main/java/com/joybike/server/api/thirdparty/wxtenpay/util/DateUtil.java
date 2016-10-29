@@ -1,8 +1,8 @@
 /* ========================================================
- * 北京五八信息�?术有限公司营运技术部�?发二�?
- * �? 期：2011-2-28
- * �? 者：李庆�?
- * �? 本：0.1
+ * 北京五八信息�??术有限公司营运技术部�??发二�??
+ * �?? 期：2011-2-28
+ * �?? 者：李庆�??
+ * �?? 本：0.1
  * =========================================================
  */
 package com.joybike.server.api.thirdparty.wxtenpay.util;
@@ -25,10 +25,10 @@ import org.apache.commons.logging.LogFactory;
  * @version 0.1
  */
 public class DateUtil {
-	/** 完整时间 yyyy-MM-dd HH:mm:ss */
+	/** yyyy-MM-dd HH:mm:ss */
 	public static final String simple = "yyyy-MM-dd HH:mm:ss";
 
-	/** 年月�? yyyy-MM-dd */
+	/** yyyy-MM-dd */
 	public static final String dtSimple = "yyyy-MM-dd";
 	
 	public final static SimpleDateFormat formatter = new SimpleDateFormat(
@@ -46,9 +46,8 @@ public class DateUtil {
 		return getFormatter(pattern).format(date);
 	}
 	/**
-	 * 返回某一时间是否在一个时间点之前
-	 * param timePot 时间�? ，格式：yyyy-MM-dd
-	 * param toBeTestDate 待测试的时间
+	 * param timePot yyyy-MM-dd
+	 * param toBeTestDate
 	 * @throws Exception 
 	 */
 	public static boolean isBefore(String timePot, Date toBeTestDate) throws Exception {
@@ -56,9 +55,8 @@ public class DateUtil {
 		return toBeTestDate.before(timePotDate);
 	}
 	/**
-	 * 返回某一时间是否在一个时间点之后
-	 * param timePot 时间�? ，格式：yyyy-MM-dd
-	 * param toBeTestDate 待测试的时间
+	 * param timePot 	yyyy-MM-dd
+	 * param toBeTestDate
 	 * @throws Exception 
 	 */
 	public static boolean isAfter(String timePot, Date toBeTestDate) throws Exception {
@@ -79,7 +77,7 @@ public class DateUtil {
 	 *            �?始时�?
 	 * @param end
 	 *            结束时间
-	 * @return 相差天数 当日期相差小�?24小时�?
+	 * @return 相差天数 当日期相差小
 	 */
 	public static long dayDiff(Date start, Date end) {
 		java.sql.Date startdate = java.sql.Date.valueOf(new java.sql.Date(start
@@ -129,13 +127,12 @@ public class DateUtil {
 	}
 
 	/**
-	 * 获取输入日期当月的第�?�?
+	 * 获取输入日期当月的第�??�??
 	 */
 
 	/**
 	 * @time:2012-01-14
 	 * @description:获取日期:推算日期
-	 * @param datetime
 	 * @return
 	 * @throws ParseException
 	 */

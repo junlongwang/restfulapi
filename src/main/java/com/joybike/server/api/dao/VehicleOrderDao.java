@@ -1,9 +1,11 @@
 package com.joybike.server.api.dao;
 
 import com.joybike.server.api.Infrustructure.IRepository;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.vehicleOrder;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by lishaoyong on 16/10/20.
@@ -42,13 +44,21 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * @param orderCode
      * @return
      */
-    int updateStatausByCode(String  orderCode);
+    int updateStatausByCode(String orderCode);
 
 
     /**
      * 根据用户ID获取未完成订单
      */
-    vehicleOrder getNoPayByOrder(long userId,String orderCode) throws Exception;
+    vehicleOrder getNoPayByOrder(long userId, String orderCode) throws Exception;
 
+
+    /**
+     * 获取用户已完成的骑行订单(支付与完成未支付的)
+     *
+     * @param userId
+     * @return
+     */
+    List<VehicleOrderDto> getOrderPaySuccess(long userId);
 
 }

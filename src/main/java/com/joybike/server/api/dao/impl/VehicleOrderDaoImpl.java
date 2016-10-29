@@ -4,6 +4,7 @@ import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.VehicleOrderDao;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.vehicleOrder;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -132,6 +134,29 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
                 return null;
             }
 
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 获取用户已完成的骑行订单(支付与完成未支付的)
+     *
+     * @param userId
+     * @return
+     */
+    final String getOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+            " where a.userId = ? and a.status in (2,15)";
+
+    @Override
+    public List<VehicleOrderDto> getOrderPaySuccess(long userId) {
+        try {
+            Object[] object = new Object[]{userId};
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getOrderPaySuccessSql, object, new BeanPropertyRowMapper(VehicleOrderDto.class));
+            } catch (Exception e) {
+                return null;
+            }
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }

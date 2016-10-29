@@ -4,6 +4,7 @@ import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Enum.UseStatus;
 import com.joybike.server.api.dao.*;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Created by lishaoyong on 16/10/23.
@@ -339,6 +341,32 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public int updateVehicleStatausByCode(String orderCode) {
         return vehicleOrderDao.updateStatausByCode(orderCode);
+    }
+
+    /**
+     * 获取用户已完成的骑行订单(支付与完成未支付的)
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception{
+
+        List<VehicleOrderDto> list = vehicleOrderDao.getOrderPaySuccess(userId);
+        if (list.size() > 0){
+            list.forEach(new Consumer<VehicleOrderDto>() {
+                @Override
+                public void accept(VehicleOrderDto dto) {
+                    try {
+                        List<vehicleHeartbeat> list = getVehicleHeartbeatList(dto.getVehicleId(), dto.getBeginAt(),dto.getEndAt());
+                        dto.setVehicleHeartbeatList(list);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        return list;
     }
 
 

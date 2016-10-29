@@ -1,10 +1,11 @@
+/*
 import com.joybike.server.api.Message;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.Token;
 import com.joybike.server.api.model.User;
 import com.joybike.server.api.model.vehicleHeartbeat;
 import com.joybike.server.api.util.UnixTimeUtils;
-import myTest.Amortize;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,11 @@ import com.alibaba.fastjson.JSON;
 import java.math.BigDecimal;
 import java.util.Properties;
 
+*/
 /**
  * Created by 58 on 2016/10/14.
- */
+ *//*
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/spring-mvc.xml")
 public class UnitTest {
@@ -264,3 +267,4 @@ public class UnitTest {
         vehicleHeartbeatDao.save(heartbeat);
     }
 }
+*/

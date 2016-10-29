@@ -242,4 +242,13 @@ public class ActionTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void dtoTest(){
+        try {
+            bicycleRestfulService.getOrderPaySuccess(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

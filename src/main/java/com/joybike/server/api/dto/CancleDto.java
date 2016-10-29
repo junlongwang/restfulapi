@@ -2,10 +2,12 @@ package com.joybike.server.api.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
+
 /**
  * Created by lishaoyong on 16/10/29.
  */
-public class CancleDto {
+public class CancleDto implements Serializable {
 
     /**
      * 用户ID

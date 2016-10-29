@@ -1,9 +1,7 @@
 package com.joybike.server.api.service;
 
-import com.joybike.server.api.model.subscribeInfo;
-import com.joybike.server.api.model.vehicle;
-import com.joybike.server.api.model.vehicleHeartbeat;
-import com.joybike.server.api.model.vehicleRepair;
+import com.joybike.server.api.dto.VehicleOrderDto;
+import com.joybike.server.api.model.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -130,4 +128,11 @@ public interface BicycleRestfulService {
      * @return
      */
     int updateVehicleStatausByCode(String orderCode);
+
+    /**
+     * 获取用户已完成的骑行订单(支付与完成未支付的)
+     * @param userId
+     * @return
+     */
+    List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception;
 }

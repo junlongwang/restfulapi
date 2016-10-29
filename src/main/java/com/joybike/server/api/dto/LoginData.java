@@ -1,12 +1,15 @@
 package com.joybike.server.api.dto;
 import com.joybike.server.api.model.*;
+
+import java.io.Serializable;
+
 /**
  * Created by LongZiyuan on 2016/10/19.
  * 用户短信登录验证实体
  * 1.短信验证码
  * 2.用户信息
  */
-public class LoginData {
+public class LoginData implements Serializable {
     /**
      * 短信验证码
      */

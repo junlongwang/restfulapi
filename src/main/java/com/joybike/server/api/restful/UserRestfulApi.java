@@ -2,6 +2,7 @@ package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.SystemControllerLog;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.dto.userInfoDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
@@ -169,6 +170,23 @@ public class UserRestfulApi {
             return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc(), null));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+    /**
+     * 获取用户已完成订单
+     *
+     * @param userId
+     * @return
+     */
+    @SystemControllerLog(description = "获取用户已完成订单")
+    @RequestMapping(value = "getSuccessOrder", method = RequestMethod.GET)
+    public ResponseEntity<Message<List<VehicleOrderDto>>> getOrderPaySuccess(@RequestParam("userId") long userId) {
+        try {
+            List<VehicleOrderDto> list = bicycleRestfulService.getOrderPaySuccess(userId);
+            return ResponseEntity.ok(new Message<List<VehicleOrderDto>>(true, 0, null, list));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<List<VehicleOrderDto>>(false, ReturnEnum.Order_Eroor.getErrorCode(), ReturnEnum.Order_Eroor.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 

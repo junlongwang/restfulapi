@@ -229,7 +229,7 @@ public class PayRestfulApi {
         try {
             long orderId = payRestfulService.depositRecharge(order);
             if (orderId >0){
-                payBean.setId(order.getId());
+                payBean.setId(orderId);
                 return ThirdPayService.execute(payBean);
             }else{
                 return "";

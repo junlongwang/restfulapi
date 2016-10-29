@@ -112,7 +112,7 @@ public class BicycleRestfulApi {
     @RequestMapping(value = "available", method = RequestMethod.GET)
     public ResponseEntity<Message<List<vehicle>>> getAvailable(double longitude, double dimension) {
         try {
-            List<vehicle> list = bicycleRestfulService.getVehicleList(longitude, dimension);
+            List<vehicle> list = bicycleRestfulService.getVehicleList(dimension , longitude);
             return ResponseEntity.ok(new Message<List<vehicle>>(true, 0,null, list));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<List<vehicle>>(false, ReturnEnum.UNKNOWN.getErrorCode(),ReturnEnum.UNKNOWN.getErrorDesc()+"-"+e.getMessage(), null));

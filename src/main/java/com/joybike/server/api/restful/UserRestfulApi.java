@@ -116,14 +116,14 @@ public class UserRestfulApi {
     /**
      * 获取用户账户余额
      *
-     * @param userid
+     * @param userId
      * @return
      */
     @SystemControllerLog(description = "获取用户账户余额")
     @RequestMapping(value = "getAcountMoney", method = RequestMethod.GET)
-    public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userid") long userid) {
+    public ResponseEntity<Message<Double>> getAcountMoney(@RequestParam("userId") long userId) {
         try {
-            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userid);
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(userId);
             return ResponseEntity.ok(new Message<Double>(true, 0, null, acountMoney));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<Double>(false, ReturnEnum.Acount_Error.getErrorCode(), ReturnEnum.Acount_Error.getErrorDesc() + "-" + e.getMessage(), null));

@@ -225,8 +225,19 @@ public class ActionTest {
 
     @Test
     public void consumeTest(){
+        double dimension = 40.049;
+        double longitude = 116.294;
+
         try {
-            int a  = payRestfulService.consume("20151010", BigDecimal.valueOf(0.3),1,100);
+            List<vehicle> list = bicycleRestfulService.getVehicleList(dimension , longitude);
+            if (list.size() > 0){
+                list.forEach(new Consumer<vehicle>() {
+                    @Override
+                    public void accept(vehicle vehicle) {
+                        System.out.println(vehicle);
+                    }
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

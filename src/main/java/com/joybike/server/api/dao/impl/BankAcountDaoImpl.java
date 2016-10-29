@@ -90,7 +90,12 @@ public class BankAcountDaoImpl extends Reository<bankAcount> implements BankAcou
         try {
             Map map = new HashMap();
             map.put("userId", userId);
-            return this.jdbcTemplate.queryForObject(userAmountSql, map, double.class);
+            try{
+                return this.jdbcTemplate.queryForObject(userAmountSql, map, double.class);
+
+            }catch (Exception e){
+                return 0;
+            }
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }

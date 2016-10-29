@@ -329,6 +329,10 @@ public class PayRestfulServiceImpl implements PayRestfulService {
                 acountDao.updateAcount(userId, AcountType.balance, price.subtract(cash));
                 acountDao.updateAcount(userId, AcountType.cash, cashAmount.getPrice().subtract(cash));
             }
+
+            //修改订单支付状态为付款完成
+            vehicleOrderDao.updateStatausByCode(orderCode);
+
             return 0;
         } else {
             return -1;

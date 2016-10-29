@@ -34,7 +34,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      */
     @Override
     public double getUserAcountMoneyByuserId(long userId) throws Exception {
-
+        
         return acountDao.getUserAmount(userId);
     }
 

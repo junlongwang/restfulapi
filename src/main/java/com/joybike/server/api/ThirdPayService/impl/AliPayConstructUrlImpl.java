@@ -2,10 +2,14 @@ package com.joybike.server.api.ThirdPayService.impl;
 
 import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 import com.joybike.server.api.model.RedirectParam;
+import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import com.joybike.server.api.thirdparty.wxtenpay.util.RSASignature;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -147,4 +151,46 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
     }
 
 
+    /**
+     *
+     * @param payBean
+     * @return
+     */
+    @Override
+    public String getRefundUrl(ThirdPayBean payBean){
+//        String service = "refund_fastpay_by_platform_nopwd";
+//        String notify_url = null;
+//        String input_charset = "utf-8";
+//        String sign_type = "MD5";
+//        String refund_date = DateUtil.parse(new Date(), "yyyy-MM-dd hh:mm:ss");
+//        String batch_no = DateUtil.parse(new Date(), "yyyyMMddhhmmss") + draw.getApplySourceId();
+//        String batch_num = "1";
+//        String detail_data = recharge.getTradeId() + "^" + draw.getDrawMoney()
+//                + "^";
+//        String paygateway = "https://mapi.alipay.com/gateway.do?";
+//        String ItemUrl = Payment.CreateUrl(paygateway, input_charset, service,
+//                partner, sign_type, batch_no, refund_date, batch_num,
+//                detail_data, notify_url, privateKey,null);
+//        log.info("refound.zfb:itemurl:" + ItemUrl);
+//        String result = "";
+//        try {
+//            result = UrlUtil.doPostForStr(ItemUrl, null, "UTF-8");
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            log.info("原路提现(支付宝)：请求失败(" + ItemUrl + "),交易号("
+//                    + recharge.getTradeId() + ")");
+//            return "false";
+//        }
+//        log.info("原路提现(支付宝)：请求信息("
+//                + ItemUrl
+//                + ")，请求结果("
+//                + result.replace("\r\n", "").replace("\n", "")
+//                .replace("\r", "") + "),交易号(" + recharge.getTradeId()
+//                + ")");
+//        if (result.contains("<is_success>T</is_success>")) {
+//            log.info("原路提现(支付宝)：请求成功,交易号(" + recharge.getTradeId() + ")");
+//            return "true";
+//        }
+        return "false";
+    }
 }

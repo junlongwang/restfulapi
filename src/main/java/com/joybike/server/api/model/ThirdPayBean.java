@@ -80,7 +80,7 @@ public class ThirdPayBean implements Serializable {
     public ThirdPayBean() {
 
     }
-    
+
 
     public String getTransaction_id() {
         return transaction_id;

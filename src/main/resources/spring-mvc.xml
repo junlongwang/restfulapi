@@ -42,8 +42,11 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+
+
     <!--采用@Transactional注解方式使用事务  -->
     <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true" />
+
 
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${jdbc.driverClassName}" />

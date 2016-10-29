@@ -97,9 +97,9 @@ public class PayRestfulApi {
                 try {
                     int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
                     String attach = request.getParameter("attach");
-                    if(attach != null){
-                        Long consumeid = Long.valueOf(attach);
-                    }
+//                    if(attach != null && attach != ""){
+//                        Long consumeid = Long.valueOf(attach);
+//                    }
                     if (result > 0) {
                         return responseHtml;
                     }

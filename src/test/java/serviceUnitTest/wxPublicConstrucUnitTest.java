@@ -38,8 +38,10 @@ private PayRestfulService payRestfulService;
         payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
         payOrder.setOperIP("192.168.0.1");
         payOrder.setOpenid("o6_bmjrPTlm6_2sgVt7hMZOPfL2M");
-        payOrder.setChannelId(0);
-        ThirdPayService.execute(payOrder);
+        payOrder.setChannelId(1);
+
+        String a = ThirdPayService.execute(payOrder);
+        System.out.println(a);
 //        bankDepositOrder order = new bankDepositOrder();
 //        long a = 11;
 //        order.setUserId(a);

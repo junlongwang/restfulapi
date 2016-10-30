@@ -24,7 +24,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
     private String mch_id = "1404387302";
     private String appid = "wxbabc4e15389aff36";
     private String key = "F1BDA99703815CE223FF494A9039ADA3";
-    private String notifyUrl = "http://api.joybike.com.cn/pay/paynotify";
+    private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
     @Override
@@ -171,7 +171,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         // 1、字符排序，&链接再 SHA1加密
         PaySignRequestHandler paySignReqHandler = new PaySignRequestHandler(null, null);
         paySignReqHandler.setParameter("appid",appid);
-        paySignReqHandler.setParameter("appkey",key);
+        //paySignReqHandler.setParameter("appkey",key);
         paySignReqHandler.setParameter("package", "Sign=WXPay");
         paySignReqHandler.setParameter("partnerid",partnerId);
         paySignReqHandler.setParameter("timestamp", WXUtil.getTimeStamp());
@@ -180,7 +180,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         sign=getMd5Sign(paySignReqHandler);
         //remove key
         paraMap.remove("partnerid");
-        paraMap.remove("prepayId");
+        //paraMap.remove("prepayId");
         paraMap.remove("sign");
         paySignReqHandler.setParameter("sign", sign);
         SortedMap map = paySignReqHandler.getAllParameters();

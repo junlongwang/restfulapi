@@ -148,7 +148,7 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      * @throws Exception
      */
     @Override
-    public int updateDepositOrderById_Yajin(long id, long transactionId, int pay_at, int status){
+    public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status){
         try {
             Map map = new HashMap();
             map.put("id", id);

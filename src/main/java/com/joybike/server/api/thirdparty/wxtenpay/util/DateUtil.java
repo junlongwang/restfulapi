@@ -67,7 +67,6 @@ public class DateUtil {
 	 * 查询给定的两个日期相差的天数
 	 * 
 	 * @param start
-	 *            开始时间
 	 * @param end
 	 *            结束时间
 	 * @return 相差天数 当日期相差小

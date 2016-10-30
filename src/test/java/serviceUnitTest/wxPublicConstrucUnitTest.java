@@ -32,33 +32,33 @@ private PayRestfulService payRestfulService;
     @Test
     public void test()
     {
-//        ThirdPayBean payOrder = new ThirdPayBean();
-//        payOrder.setPruductDesc("longziyuan");
-//        payOrder.setId(Long.valueOf("1415651245"));
-//        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
-//        payOrder.setOperIP("192.168.0.1");
-//        payOrder.setOpenid("o6_bmjrPTlm6_2sgVt7hMZOPfL2M");
-//        payOrder.setChannelId(0);
-//        ThirdPayService.execute(payOrder);
-        bankDepositOrder order = new bankDepositOrder();
-        long a = 123;
-        order.setUserId(a);
-        order.setCash(BigDecimal.valueOf(123));
-        order.setPayType(0);
-        order.setCreateAt(UnixTimeUtils.now());
-        order.setRechargeType(0);
-        order.setStatus(1);
-        try {
-            long orderId = payRestfulService.depositRecharge(order);
-            System.out.println(orderId);
+        ThirdPayBean payOrder = new ThirdPayBean();
+        payOrder.setPruductDesc("longziyuan");
+        payOrder.setId(Long.valueOf("1415651253232327"));
+        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
+        payOrder.setOperIP("192.168.0.1");
+        payOrder.setOpenid("o6_bmjrPTlm6_2sgVt7hMZOPfL2M");
+        payOrder.setChannelId(0);
+        ThirdPayService.execute(payOrder);
+//        bankDepositOrder order = new bankDepositOrder();
+//        long a = 11;
+//        order.setUserId(a);
+//        order.setCash(BigDecimal.valueOf(123));
+//        order.setPayType(0);
+//        order.setCreateAt(UnixTimeUtils.now());
+//        order.setRechargeType(0);
+//        order.setStatus(1);
+//        try {
+//            long orderId = payRestfulService.depositRecharge(order);
+//            System.out.println(orderId);
 //            if (orderId >0){
 //                payBean.setId(orderId);
 //                return ThirdPayService.execute(payBean);
 //            }else{
 //
 //            }
-        } catch (Exception e) {
-            throw new RestfulException(ReturnEnum.Recharge_Error);
-        }
+//        } catch (Exception e) {
+//            throw new RestfulException(ReturnEnum.Recharge_Error);
+//        }
     }
 }

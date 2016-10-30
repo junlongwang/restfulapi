@@ -457,7 +457,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @return
      * @throws Exception
      */
-    public int updateDepositOrderById_Yajin(long id, long transactionId, int pay_at, int status) throws Exception{
+    public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception{
         return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);
     }
 }

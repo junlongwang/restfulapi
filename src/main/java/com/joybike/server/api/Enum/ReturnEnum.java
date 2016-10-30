@@ -79,13 +79,15 @@ public enum ReturnEnum {
     No_Subscribe(5006, "没有可取消的预约"),
 
     No_Vehicle(5007, "当前范围内没有车辆使用"),
-    Use_Vehicle(5008, "车辆使用中"),
+    Use_Vehicle(5008, "车辆被他人使用中,不可以扫码开锁"),
     Unlock_Success(5009, "开锁成功"),
     Disable_Vehicle(5010, "车辆为禁用状态"),
-    FaultIng(5011, "车辆不可使用"),
+    FaultIng(5011, "车辆故障,不可使用"),
     Unlock_Error(5012, "开锁失败"),
     Submit_Error(5013, "故障申报失败"),
     Appointment_Error(5014, "预约失败"),
+    Use_Self_Vehicle(5015, "您正在使用车辆中"),
+
 
 
 

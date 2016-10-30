@@ -3,8 +3,10 @@ package com.joybike.server.api.service.impl;
 
 import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
+import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.dao.OrderItemDao;
 import com.joybike.server.api.dao.ProductDao;
+import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
 import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.product;
@@ -41,6 +43,9 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
     @Autowired
     BicycleRestfulService bicycleRestfulService;
 
+    @Autowired
+    SubscribeInfoDao subscribeInfoDao;
+
 
     /**
      * 创建订单
@@ -55,39 +60,6 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude, double beginDimension) throws Exception {
-        subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
-        subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
-
-        //如果车的预约跟人的预约不是同一个,就返回车辆已被预约
-        if (vinfo != null && uInfo != null) {
-            if (vinfo.getUserId().equals(uInfo.getUserId())){
-                bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
-            }else{
-                if (vinfo.getEndAt() - UnixTimeUtils.now() > 0){
-                    throw new RestfulException(ReturnEnum.BicycleUse_Error);
-                }else{
-                    bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                    bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
-                    bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
-                }
-
-            }
-
-        }
-
-        if (uInfo != null && vinfo == null) {
-            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
-            bicycleRestfulService.deleteSubscribeInfo(userId, uInfo.getVehicleId());
-            bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
-            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
-        }
-
-        if (uInfo == null && vinfo == null) {
-            bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
-            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
-
-        }
-
 
         //创建订单
         vehicleOrder order = new vehicleOrder();
@@ -114,7 +86,13 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         item.setBeginAt(beginAt);
         item.setBeginDimension(BigDecimal.valueOf(beginDimension));
         item.setBeginLongitude(BigDecimal.valueOf(beginLongitude));
-        long itemId = orderItemDao.save(item);
+        orderItemDao.save(item);
+
+        //修改预约单上的骑行订单
+        subscribeInfo info = subscribeInfoDao.getSubscribeInfoByUserId(userId, SubscribeStatus.use);
+        info.setSubscribeCode(orderCode);
+        subscribeInfoDao.update(info);
+
         return orderId;
     }
 
@@ -213,13 +191,19 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
     }
 
     @Override
-    public orderItem getOrderItemByOrderCode( String orderCode) throws Exception {
+    public orderItem getOrderItemByOrderCode(String orderCode) throws Exception {
         return orderItemDao.getOrderItemByOrderCode(orderCode);
     }
 
 
+    /**
+     * 根据主键获取用户ID
+     *
+     * @param id
+     * @return
+     */
     @Override
     public vehicleOrder getOrder(long id) {
-        return vehicleOrderDao.findById(id);
+        return vehicleOrderDao.getOrderByid(id);
     }
 }

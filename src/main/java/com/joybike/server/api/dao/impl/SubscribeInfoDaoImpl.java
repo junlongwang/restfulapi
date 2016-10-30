@@ -32,7 +32,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
         try {
             Map map = new HashMap();
             map.put("vehicleId", vehicleId);
-            map.put("status",status);
+            map.put("status",status.getValue());
             try {
                 return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByBicycleCode, map, new BeanPropertyRowMapper(subscribeInfo.class));
             } catch (Exception e) {
@@ -127,7 +127,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
         try {
             Map map = new HashMap();
             map.put("userId", userId);
-            map.put("status",status);
+            map.put("status",status.getValue());
             try {
                 return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByUserId, map, new BeanPropertyRowMapper(subscribeInfo.class));
             } catch (Exception e) {

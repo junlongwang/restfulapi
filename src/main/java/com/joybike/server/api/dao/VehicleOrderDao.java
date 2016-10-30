@@ -61,4 +61,9 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      */
     List<VehicleOrderDto> getOrderPaySuccess(long userId);
 
+    /**
+     * 根据主键获取订单信息
+     */
+    vehicleOrder getOrderByid(long id);
+
 }

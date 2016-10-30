@@ -45,50 +45,28 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
     }
 
     /**
-     * 根据车辆code获取车辆使用状态
+     * 获取车的状态
      *
      * @param bicycleCode
      * @return
      */
-    final String getVehicleUseStatusByBicycleCodeSql = "select useStatus from vehicle where status = 0 and vehicleId = :vehicleId";
+    final String getVehicleUseStatusByBicycleCodeSql = "select * from vehicle where vehicleId = :vehicleId";
 
     @Override
-    public int getVehicleUseStatusByBicycleCode(String bicycleCode) throws Exception {
+    public vehicle getVehicleStatusByBicycleCode(String bicycleCode) throws Exception {
         try {
             Map map = new HashMap();
             map.put("vehicleId", bicycleCode);
             try {
-                return this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, Integer.class);
+                return (vehicle)this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(vehicle.class));
             } catch (Exception e) {
-                return -1;
+                return null;
             }
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
-    /**
-     * 获取车辆状态本身
-     *
-     * @param bicycleCode
-     * @return
-     */
-    final String getVehicleStatusByBicycleCodeSql = "select status from vehicle where vehicleId = :vehicleId";
-
-    @Override
-    public int getVehicleStatusByBicycleCode(String bicycleCode) throws Exception {
-        try {
-            Map map = new HashMap();
-            map.put("vehicleId", bicycleCode);
-            try {
-                return this.jdbcTemplate.queryForObject(getVehicleStatusByBicycleCodeSql, map, Integer.class);
-            } catch (Exception e) {
-                return -1;
-            }
-        } catch (Exception e) {
-            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
-        }
-    }
 
     /**
      * 获取当前位置一公里范围的车辆

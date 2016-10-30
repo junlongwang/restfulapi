@@ -29,16 +29,7 @@ public interface VehicleDao extends IRepository<vehicle> {
      * @param bicycleCode
      * @return
      */
-    int getVehicleUseStatusByBicycleCode(String bicycleCode) throws Exception;
-
-
-    /**
-     * 根据车ID获取车的状态
-     *
-     * @param bicycleCode
-     * @return
-     */
-    int getVehicleStatusByBicycleCode(String bicycleCode) throws Exception;
+    vehicle getVehicleStatusByBicycleCode(String bicycleCode) throws Exception;
 
 
     /**

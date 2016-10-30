@@ -3,6 +3,7 @@ package com.joybike.server.api.dto;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * 用户信息更新入参
@@ -138,5 +139,19 @@ public class userInfoDto implements Serializable {
         this.photo = photo;
         this.identityCardphoto = identityCardphoto;
         this.userImg = userImg;
+    }
+
+    @Override
+    public String toString() {
+        return "userInfoDto{" +
+                "userId=" + userId +
+                ", iphone='" + iphone + '\'' +
+                ", realName='" + realName + '\'' +
+                ", idNumber='" + idNumber + '\'' +
+                ", nationality='" + nationality + '\'' +
+                ", photo=" + Arrays.toString(photo) +
+                ", identityCardphoto=" + Arrays.toString(identityCardphoto) +
+                ", userImg=" + Arrays.toString(userImg) +
+                '}';
     }
 }

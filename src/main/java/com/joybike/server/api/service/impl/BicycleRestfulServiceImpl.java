@@ -279,7 +279,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             if (useStatus == 2) throw new RestfulException(ReturnEnum.Use_Vehicle);
             if (useStatus == 0) {
                 //开锁,通知硬件接口
-                VehicleComHelper.openLock(bicycleCode);
+//                VehicleComHelper.openLock(bicycleCode);
                 //修改车的状态
                 vehicleDao.updateVehicleStatus(bicycleCode, UseStatus.use);
                 //创建订单

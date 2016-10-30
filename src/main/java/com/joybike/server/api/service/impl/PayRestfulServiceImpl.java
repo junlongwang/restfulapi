@@ -9,6 +9,7 @@ import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -72,7 +73,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public void recharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
@@ -95,7 +96,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      *
      * @param depositOrder
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long depositRecharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
@@ -134,7 +135,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userCoupon
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long addUserCoupon(userCoupon userCoupon) throws Exception {
         return userCouponDao.save(userCoupon);
@@ -146,7 +147,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long deleteUserCoupon(Map map) throws Exception {
 
@@ -159,7 +160,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param map
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long updateCoupon(Map map) throws Exception {
         return userCouponDao.updateCoupon(map);
@@ -177,6 +178,11 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         return userCouponDao.getValidList(userId, useAt);
     }
 
+    /**
+     * 获取充值ID
+     * @param userId
+     * @return
+     */
     @Override
     public bankDepositOrder getDepositOrderId(Long userId) {
         return depositOrderDao.getDepositOrder(userId);

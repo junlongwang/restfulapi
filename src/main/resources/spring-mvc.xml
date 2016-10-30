@@ -29,7 +29,7 @@
     <aop:aspectj-autoproxy/>
 
     <!--通知spring使用cglib而不是jdk的来生成代理方法 AOP可以拦截到Controller-->
-    <aop:aspectj-autoproxy  proxy-target-class="true"  />
+    <!--<aop:aspectj-autoproxy  proxy-target-class="true"  />-->
 
     <!--<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">-->
     <!--<property name="viewClass"-->
@@ -42,8 +42,11 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+
+
     <!--采用@Transactional注解方式使用事务  -->
     <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true" />
+
 
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${jdbc.driverClassName}" />
@@ -63,14 +66,22 @@
         <constructor-arg ref="dataSource"></constructor-arg>
     </bean>
 
-    <mvc:interceptors>
-        <mvc:interceptor>
-            <!-- 如果不配置或/**,将拦截所有的Controller -->
-            <mvc:mapping path="/**" />
-            <!-- 页面权限通用处理   -->
-            <bean class="com.joybike.server.api.Infrustructure.MyHandlerInterceptor"></bean>
-        </mvc:interceptor>
-    </mvc:interceptors>
+    <!--<mvc:interceptors>-->
+        <!--<mvc:interceptor>-->
+            <!--&lt;!&ndash; 如果不配置或/**,将拦截所有的Controller &ndash;&gt;-->
+            <!--<mvc:mapping path="/**" />-->
+            <!--&lt;!&ndash; 页面权限通用处理   &ndash;&gt;-->
+            <!--<bean class="com.joybike.server.api.Infrustructure.MyHandlerInterceptor"></bean>-->
+        <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
+        <!--<property name="viewClass"-->
+                  <!--value="org.springframework.web.servlet.view.JstlView" />-->
+        <!--<property name="prefix" value="/WEB-INF/view/" />-->
+    <!--</bean>-->
+
+    <!--<mvc:resources mapping="/joybikeH5/**" location="/joybikeH5/" />-->
 
     <!--使用方式，在待引入使用的地方，添加如下：
   @Value("#{thirdparty}")

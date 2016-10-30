@@ -15,6 +15,7 @@ import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -49,7 +50,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @param beginDimension 骑行开始的维度
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude, double beginDimension) throws Exception {
         subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
@@ -143,6 +144,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @return
      * @throws Exception
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateProduct(long id, String productName, BigDecimal price, BigDecimal publishedPrice) throws Exception {
         return productDao.updateProduct(id, productName, price, publishedPrice);
@@ -155,6 +157,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @return
      * @throws Exception
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int deleteById(long id) throws Exception {
         return productDao.deleteById(id);
@@ -167,6 +170,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @return
      * @throws Exception
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long insertProduct(product product) throws Exception {
         product.setProductCode("pd_recharge");

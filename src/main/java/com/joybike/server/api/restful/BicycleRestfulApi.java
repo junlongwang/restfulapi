@@ -80,7 +80,7 @@ public class BicycleRestfulApi {
      * @param cancleDto
      * @return
      */
-    @RequestMapping(value = "cancle", method = RequestMethod.POST)
+    @RequestMapping(value = "cancle", method = RequestMethod.GET)
     public ResponseEntity<Message<String>> cancle(@RequestBody CancleDto cancleDto) {
         try {
             bicycleRestfulService.deleteSubscribeInfo(cancleDto.getUserId(), cancleDto.getBicycleCode());
@@ -143,7 +143,7 @@ public class BicycleRestfulApi {
             }
 
             if (orderId > 0) {
-                return ResponseEntity.ok(new Message<String>(true, 0, null, "操作成功！"));
+                return ResponseEntity.ok(new Message<String>(true, 0, null, ReturnEnum.Unlock_Success.getErrorDesc()));
             } else {
                 return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));
             }

@@ -229,8 +229,8 @@
                 <version>1.1</version>
                 <configuration>
                     <charset>${project.build.sourceEncoding}</charset>
-                    <path>/JobBike.Restful.Api</path>
-                    <port>8080</port>
+                    <!--<path>/JobBike.Restful.Api</path>-->
+                    <!--<port>8080</port>-->
                     <warFile>${project.build.directory}/restful.war</warFile>
                     <warSourceDirectory>src\main\webapp</warSourceDirectory>
                     <uriEncoding>UTF-8</uriEncoding>

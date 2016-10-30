@@ -1,5 +1,7 @@
 package com.joybike.server.api.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 
 /**
@@ -12,30 +14,35 @@ public class vehicleRepairDto implements Serializable{
      * 车辆编码
      *  @Author lisy
      **/
+    @JSONField(ordinal = 1)
     private String bicycleCode;
 
     /**
      * 报修原因
      *  @Author lisy
      **/
+    @JSONField(ordinal = 2)
     private String cause;
 
     /**
      * 故障图片
      *  @Author lisy
      **/
+    @JSONField(ordinal = 3)
     private byte[] faultImg;
 
     /**
      * 信息提交人
      *  @Author lisy
      **/
+    @JSONField(ordinal = 4)
     private Long createId;
 
     /**
      * 创建时间
      *  @Author lisy
      **/
+    @JSONField(ordinal = 5)
     private Integer createAt;
 
     public String getBicycleCode() {

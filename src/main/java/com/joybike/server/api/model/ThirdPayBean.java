@@ -34,13 +34,13 @@ public class ThirdPayBean implements Serializable {
 
     private Long cosumeid;  //充值消费关联订单号
 
-    private long userId;//用户ID
+    private Long userId;//用户ID
 
-    public long getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

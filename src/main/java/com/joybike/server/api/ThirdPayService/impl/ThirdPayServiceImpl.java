@@ -44,7 +44,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
             map.put("spbill_create_ip",payOrder.getOperIP());
             map.put("body",payOrder.getPruductDesc());
             map.put("attach",String.valueOf(payOrder.getChannelId()));
-            if (String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
+            if (String.valueOf(payOrder.getCosumeid()) != null){
                 map.put("attach",String.valueOf(payOrder.getCosumeid()));
             }
             String channleId = String.valueOf(payOrder.getChannelId());

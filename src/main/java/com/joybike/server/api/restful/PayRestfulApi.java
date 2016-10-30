@@ -1,7 +1,9 @@
 package com.joybike.server.api.restful;
 
+import com.joybike.server.api.Enum.RechargeType;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Enum.PayType;
+import com.joybike.server.api.Enum.SecurityStatus;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
@@ -98,7 +100,25 @@ public class PayRestfulApi {
                 String merchantId = "";
                 int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
                 try {
-                    int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
+                    int result = 0;
+                    bankDepositOrder bankDepositOrder = payRestfulService.getbankDepostiOrderByid(id);
+                    if (bankDepositOrder != null){
+                        if(bankDepositOrder.getRechargeType() == RechargeType.deposit.getValue()){
+                            //通过订单Id修改微信支付凭证和支付时间以及订单支付状态
+                            result = payRestfulService.updateDepositOrderById_Yajin(id,Long.valueOf(payDocumentId),pay_at,2);
+                            //同时更新用户状态
+                            if (result > 0){
+                                userInfo userInfo = new userInfo();
+                                userInfo.setId(bankDepositOrder.getUserId());
+                                userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
+                                userRestfulService.updateUserInfo(userInfo);
+                            }
+                        }
+                        //余额充值成功更新充值订单信息
+                        else{
+                            result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
+                        }
+                    }
                     String attach = request.getParameter("attach");
 //                    if(attach != null && attach != ""){
 //                        Long consumeid = Long.valueOf(attach);
@@ -289,6 +309,8 @@ public class PayRestfulApi {
         order.setPayType(payBean.getChannelId());
         order.setCreateAt(UnixTimeUtils.now());
         order.setRechargeType(payBean.getRechargeType());
+        order.setStatus(1);
+        order.setRemark(payBean.getPruductDesc());
         return order;
     }
 

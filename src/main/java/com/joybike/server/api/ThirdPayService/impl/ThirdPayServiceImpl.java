@@ -47,8 +47,6 @@ public class ThirdPayServiceImpl implements ThirdPayService {
             if (String.valueOf(payOrder.getCosumeid()) != null){
                 map.put("attach",String.valueOf(payOrder.getCosumeid()));
             }
-            String channleId = String.valueOf(payOrder.getChannelId());
-            map.put("attach",channleId);
             RedirectParam redirectParam= wxappConstructUrlInter.getUrl(map);
             if( redirectParam != null )
                 return redirectParam.getPara();

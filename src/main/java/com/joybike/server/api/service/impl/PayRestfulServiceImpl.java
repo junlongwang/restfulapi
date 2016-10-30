@@ -108,12 +108,6 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         //        //userId,order.getPayType(),consumedId,order.getCash(),order.getAward()
 
         moneyFlowDao.save(flowInfo(depositOrder.getUserId(), depositOrder.getPayType(), depositId, depositOrder.getCash(), depositOrder.getAward(), 0, "", DealType.deposit, 0));
-
-        //修改用户押金状态
-        userInfo userInfo = new userInfo();
-        userInfo.setId(depositOrder.getUserId());
-        userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
-        userInfoService.updateUserInfo(userInfo);
         return depositId;
     }
 
@@ -442,5 +436,28 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     public int updateRefundOrderStatusById(Long Id) {
         return bankRefundOrderDao.updateRefundOrderStatusById(Id);
+    }
+
+    /**
+     * 根据订单ID获取订单信息
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    public bankDepositOrder getbankDepostiOrderByid(Long id) throws Exception{
+        return depositOrderDao.getDepositOrderById(id);
+    }
+
+    /**
+     * 押金充值回调成功更新充值订单信息
+     * @param id
+     * @param transactionId
+     * @param pay_at
+     * @param status
+     * @return
+     * @throws Exception
+     */
+    public int updateDepositOrderById_Yajin(long id, long transactionId, int pay_at, int status) throws Exception{
+        return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);
     }
 }

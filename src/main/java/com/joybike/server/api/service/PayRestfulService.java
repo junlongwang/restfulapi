@@ -83,7 +83,7 @@ public interface PayRestfulService {
 
 
     /**
-     * 充值成功回调
+     * 余额充值回调成功充值成功回调
      *
      * @param id
      * @param payType
@@ -94,6 +94,16 @@ public interface PayRestfulService {
      */
     int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception;
 
+    /**
+     * 押金充值回调成功更新充值订单信息
+     * @param id
+     * @param transactionId
+     * @param pay_at
+     * @param status
+     * @return
+     * @throws Exception
+     */
+    int updateDepositOrderById_Yajin(long id, long transactionId, int pay_at, int status) throws Exception;
     /**
      * 获取用户充值订单ID（有且只有唯一一条支付成功的充值订单ID）
      * @param userid
@@ -131,5 +141,11 @@ public interface PayRestfulService {
      */
     vehicleOrder getNoPayByOrder(long userId,String orderCode) throws Exception;
 
-
+    /**
+     * 根据订单ID获取订单信息
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    bankDepositOrder getbankDepostiOrderByid(Long id) throws Exception;
 }

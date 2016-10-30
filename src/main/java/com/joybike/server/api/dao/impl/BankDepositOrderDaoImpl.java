@@ -28,6 +28,11 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      */
     final String getBankDepositOrderListSql = "select * from bankDepositOrder where userId = ? and status = ? ";
 
+    /**
+     * 押金充值成功时根据id更新充值订单状态
+     */
+    final String UpdateDepositOrderByIdSql_Yajin = "update bankdepositorder set status =:status,payDocumentId =:payDocumentId,payAt =:payAt where id =:id";
+
     @Override
     public List<bankDepositOrder> getBankDepositOrderList(long userId, DepositStatus depositStatus) throws Exception {
         Object[] object = new Object[]{userId, depositStatus.getValue()};
@@ -128,6 +133,29 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
             } catch (Exception e) {
                 return null;
             }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 押金充值回调成功更新充值订单信息
+     * @param id
+     * @param transactionId
+     * @param pay_at
+     * @param status
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int updateDepositOrderById_Yajin(long id, long transactionId, int pay_at, int status){
+        try {
+            Map map = new HashMap();
+            map.put("id", id);
+            map.put("status", status);
+            map.put("payDocumentId", transactionId);
+            map.put("payAt", pay_at);
+            return execSQL(UpdateDepositOrderByIdSql_Yajin, map);
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }

@@ -89,7 +89,7 @@ public class PayRestfulApi {
         String responseHtml = "success";
         String mch_id = request.getParameter("mch_id");
         String returncode = "";
-        if (request.getParameter("transaction_id") != null || request.getParameter("out_trade_no") != null) {
+        if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
             returncode = ThirdPayService.callBack(request);
         }
         if (returncode.equals("success")) {

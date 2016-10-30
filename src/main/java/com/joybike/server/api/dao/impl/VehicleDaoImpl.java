@@ -139,7 +139,7 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
         try {
             Map map = new HashMap();
             map.put("vehicleId", vehicleId);
-            map.put("status", vehicleEnableType);
+            map.put("status", vehicleEnableType.getValue());
             map.put("updateAt", UnixTimeUtils.now());
             return execSQL(updateVehicleStatusSql, map);
         } catch (Exception e) {

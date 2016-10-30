@@ -257,7 +257,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param beginLongitude
      * @param beginDimension
      */
-//    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception {
 

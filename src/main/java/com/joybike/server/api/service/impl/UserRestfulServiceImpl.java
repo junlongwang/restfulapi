@@ -10,6 +10,7 @@ import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -44,7 +45,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param user
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateUserInfo(userInfo user) throws Exception {
         long userId = user.getId();

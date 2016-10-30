@@ -47,7 +47,7 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             map.put("appid",appid);//公众账号ID
             map.put("mch_id",mch_id);//商户号
             map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
-            if(String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
+            if(payOrder.getCosumeid() != null){
                 map.put("attach",String.valueOf(payOrder.getCosumeid()));//附加数据
             }
             map.put("out_trade_no", payOrder.getId().toString());//商户订单号

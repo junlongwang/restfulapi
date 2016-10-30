@@ -1,5 +1,6 @@
 package com.joybike.server.api.service;
 
+import com.joybike.server.api.Enum.VehicleEnableType;
 import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 
@@ -120,10 +121,11 @@ public interface BicycleRestfulService {
      * @param beginDimension
      * @return
      */
-    long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension,long userId) throws Exception;
+    long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension, long userId) throws Exception;
 
     /**
      * 修改订单支付状态
+     *
      * @param orderCode
      * @return
      */
@@ -131,8 +133,19 @@ public interface BicycleRestfulService {
 
     /**
      * 获取用户已完成的骑行订单(支付与完成未支付的)
+     *
      * @param userId
      * @return
      */
     List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception;
+
+
+    /**
+     * 修改车的使用状态
+     *
+     * @param vehicleId
+     * @param vehicleEnableType
+     * @return
+     */
+    int updateVehicleStatus(String vehicleId, VehicleEnableType vehicleEnableType) throws Exception;
 }

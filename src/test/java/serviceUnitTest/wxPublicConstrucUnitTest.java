@@ -34,14 +34,14 @@ private PayRestfulService payRestfulService;
     {
         ThirdPayBean payOrder = new ThirdPayBean();
         payOrder.setPruductDesc("longziyuan");
-        payOrder.setId(Long.valueOf("14156512567"));
+        payOrder.setId(Long.valueOf("1415651253232327"));
         payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
         payOrder.setOperIP("192.168.0.1");
         payOrder.setOpenid("o6_bmjrPTlm6_2sgVt7hMZOPfL2M");
         payOrder.setChannelId(0);
         ThirdPayService.execute(payOrder);
 //        bankDepositOrder order = new bankDepositOrder();
-//        long a = 123;
+//        long a = 11;
 //        order.setUserId(a);
 //        order.setCash(BigDecimal.valueOf(123));
 //        order.setPayType(0);

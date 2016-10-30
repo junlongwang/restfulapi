@@ -298,6 +298,7 @@ public class PayRestfulApi {
         order.setPayType(payBean.getChannelId());
         order.setCreateAt(UnixTimeUtils.now());
         order.setRechargeType(payBean.getRechargeType());
+        order.setStatus(1);
         return order;
     }
 

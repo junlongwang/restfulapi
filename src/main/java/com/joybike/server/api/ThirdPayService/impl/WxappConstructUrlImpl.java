@@ -171,7 +171,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         // 1、字符排序，&链接再 SHA1加密
         PaySignRequestHandler paySignReqHandler = new PaySignRequestHandler(null, null);
         paySignReqHandler.setParameter("appid",appid);
-        paySignReqHandler.setParameter("appkey",key);
+        //paySignReqHandler.setParameter("appkey",key);
         paySignReqHandler.setParameter("package", "Sign=WXPay");
         paySignReqHandler.setParameter("partnerid",partnerId);
         paySignReqHandler.setParameter("timestamp", WXUtil.getTimeStamp());

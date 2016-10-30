@@ -179,4 +179,25 @@ public class ThirdPayBean implements Serializable {
     public void setChannelId(int channelId) {
         this.channelId = channelId;
     }
+
+    @Override
+    public String toString() {
+        return "ThirdPayBean{" +
+                "id=" + id +
+                ", refundid=" + refundid +
+                ", orderMoney=" + orderMoney +
+                ", orderMoneyFree=" + orderMoneyFree +
+                ", orderDesc='" + orderDesc + '\'' +
+                ", pruductDesc='" + pruductDesc + '\'' +
+                ", operIP='" + operIP + '\'' +
+                ", openid='" + openid + '\'' +
+                ", createTime=" + createTime +
+                ", recordTime=" + recordTime +
+                ", channelId=" + channelId +
+                ", rechargeType=" + rechargeType +
+                ", transaction_id='" + transaction_id + '\'' +
+                ", cosumeid=" + cosumeid +
+                ", userId=" + userId +
+                '}';
+    }
 }

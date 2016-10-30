@@ -85,6 +85,7 @@ public class PayRestfulApi {
      */
     @RequestMapping(value = "paynotify")
     public String payOfNotify(@RequestBody HttpServletRequest request) {
+        logger.info(request.getParameterMap());
         String responseHtml = "success";
         String mch_id = request.getParameter("mch_id");
         String returncode = "";

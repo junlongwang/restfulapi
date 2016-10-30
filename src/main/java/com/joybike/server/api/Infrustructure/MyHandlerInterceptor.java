@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 拦截HTTP请求
@@ -23,15 +24,16 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        //PermissionMeta
-        HandlerMethod method = (HandlerMethod)handler;
-        System.out.println(method);
-        String token = request.getHeader("Authentication");
+        try {
+            //PermissionMeta
+            HandlerMethod method = (HandlerMethod) handler;
+            System.out.println(method);
+            String token = request.getHeader("Authentication");
 
-        logger.info("+++++++++++++++++++++++++++");
-        logger.info("Authentication="+token);
-        logger.info(method.getMethod().getName());
-        logger.info("+++++++++++++++++++++++++++");
+            logger.info("+++++++++++++++++++++++++++");
+            logger.info("Authentication=" + token);
+            logger.info(method.getMethod().getName());
+            logger.info("+++++++++++++++++++++++++++");
 
 //        if(token==null || "".equals(token)) {
 //            response.setContentType("text/html; charset=utf-8");
@@ -75,12 +77,16 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
 //        System.out.println(map);
 
 
-        System.out.println("++++++++++++++++++++++++++++++++");
+            System.out.println("++++++++++++++++++++++++++++++++");
 
-        logger.info(request.getRemoteAddr());//得到来访者IP
-        logger.info(request.getRemoteHost());
-        logger.info(request.getRequestURI());//得到请求URL地址
-
+            logger.info(request.getRemoteAddr());//得到来访者IP
+            logger.info(request.getRemoteHost());
+            logger.info(request.getRequestURI());//得到请求URL地址
+        }
+        catch (Exception e)
+        {
+            logger.error("发生异常",e);//
+        }
         //response.setHeader("Access-Control-Allow-Origin", "*");
         return true;
     }

@@ -1,10 +1,4 @@
-/* ========================================================
- * 北京五八信息�?术有限公司营运技术部�?发二�?
- * �? 期：2011-2-28
- * �? 者：李庆�?
- * �? 本：0.1
- * =========================================================
- */
+
 package com.joybike.server.api.thirdparty.wxtenpay.util;
 
 import java.io.BufferedReader;
@@ -74,12 +68,12 @@ public class UrlUtil {
 	}
 
 	/**
-	 * 发�?�带参数的POST的HTTP请求
+	 * 发带参数的POST的HTTP请求
 	 * 
 	 * @param reqUrl
 	 *            HTTP请求URL
 	 * @param parameters
-	 *            参数映射�?
+	 *            参数映射
 	 * @return HTTP响应的字符串
 	 */
 	private static InputStream doPost(String reqUrl, Map parameters,

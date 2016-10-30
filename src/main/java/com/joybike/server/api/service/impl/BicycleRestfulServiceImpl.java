@@ -64,8 +64,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
         String subcribeCode = String.valueOf(userId) + String.valueOf(bicycleCode);
 
-        subscribeInfo uInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
-        subscribeInfo vInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode);
+        subscribeInfo uInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId,SubscribeStatus.subscribe);
+        subscribeInfo vInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode,SubscribeStatus.subscribe);
 
         if (vInfo != null && uInfo != null) {
             if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
@@ -179,7 +179,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     public subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception {
-        return subscribeInfoDao.getSubscribeInfoByUserId(userId);
+        return subscribeInfoDao.getSubscribeInfoByUserId(userId,SubscribeStatus.subscribe);
     }
 
     /**
@@ -189,7 +189,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @return
      */
     public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception {
-        return subscribeInfoDao.getSubscribeInfoByBicycleCode(vehicleId);
+        return subscribeInfoDao.getSubscribeInfoByBicycleCode(vehicleId,SubscribeStatus.subscribe);
     }
 
     /**
@@ -267,7 +267,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param beginLongitude
      * @param beginDimension
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+//    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public long unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception {
 
@@ -289,8 +289,12 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //创建订单
                 orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
+
                 //修改预约信息
-                subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
+
+                subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId,SubscribeStatus.use);
+                System.out.println(subscribeInfo.toString() + ":预约信息");
+                System.out.println(orderRestfulService.getOrder(orderId).getOrderCode() + "orderCode ********");
                 subscribeInfo.setSubscribeCode(orderRestfulService.getOrder(orderId).getOrderCode());
                 subscribeInfoDao.update(subscribeInfo);
 
@@ -319,7 +323,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public long lock(String bicycleCode, int endAt, double endLongitude, double endDimension, long userId) throws Exception {
         //修改车状态
 
-        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId);
+        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId,SubscribeStatus.subscribe);
 
         orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
 

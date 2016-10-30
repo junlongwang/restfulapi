@@ -2,6 +2,7 @@ package com.joybike.server.api.service.impl;
 
 
 import com.joybike.server.api.Enum.OrderStatus;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.OrderItemDao;
 import com.joybike.server.api.dao.ProductDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
@@ -11,6 +12,7 @@ import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.model.vehicleOrder;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +58,21 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(vehicleId);
         subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId);
 
+        //如果车的预约跟人的预约不是同一个,就返回车辆已被预约
         if (vinfo != null && uInfo != null) {
-            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+            if (vinfo.getUserId().equals(uInfo.getUserId())){
+                bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+            }else{
+                if (vinfo.getEndAt() - UnixTimeUtils.now() > 0){
+                    throw new RestfulException(ReturnEnum.BicycleUse_Error);
+                }else{
+                    bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                    bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
+                    bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+                }
+
+            }
+
         }
 
         if (uInfo != null && vinfo == null) {
@@ -65,6 +80,12 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
             bicycleRestfulService.deleteSubscribeInfo(userId, uInfo.getVehicleId());
             bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
             bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+        }
+
+        if (uInfo == null && vinfo == null) {
+            bicycleRestfulService.vehicleSubscribe(userId, vehicleId, beginAt);
+            bicycleRestfulService.updateSubscribeInfo(userId, vehicleId);
+
         }
 
 
@@ -93,7 +114,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         item.setBeginAt(beginAt);
         item.setBeginDimension(BigDecimal.valueOf(beginDimension));
         item.setBeginLongitude(BigDecimal.valueOf(beginLongitude));
-        orderItemDao.save(item);
+        long itemId = orderItemDao.save(item);
         return orderId;
     }
 

@@ -162,5 +162,29 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
         }
     }
 
+    /**
+     * 根据主键获取订单信息
+     *
+     * @param id
+     * @return
+     */
+    final String getOrderByidSql = "SELECT * FROM vehicleOrder WHERE id = :id";
+    @Override
+    public vehicleOrder getOrderByid(long id) {
+        try {
+            Map map = new HashMap();
+            map.put("id", id);
+
+            try {
+                return (vehicleOrder) this.jdbcTemplate.queryForObject(getOrderByidSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
+
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
 
 }

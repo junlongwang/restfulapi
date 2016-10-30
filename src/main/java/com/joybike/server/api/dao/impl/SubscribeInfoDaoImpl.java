@@ -25,13 +25,14 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
      * @param vehicleId
      * @return
      */
-    final String getSubscribeInfoByBicycleCode = "select * from subscribeInfo where vehicleId = :vehicleId and status = 0";
+    final String getSubscribeInfoByBicycleCode = "select * from subscribeInfo where vehicleId = :vehicleId and status = :status";
 
     @Override
-    public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception {
+    public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId,SubscribeStatus status) throws Exception {
         try {
             Map map = new HashMap();
             map.put("vehicleId", vehicleId);
+            map.put("status",status.getValue());
             try {
                 return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByBicycleCode, map, new BeanPropertyRowMapper(subscribeInfo.class));
             } catch (Exception e) {
@@ -88,7 +89,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
 
 
     /**
-     * 根据车辆ID获取当前使用信息
+     * 根据预约ID获取预约信息
      *
      * @param userId
      * @param vehicleId
@@ -119,13 +120,14 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
      * @param vehicleId
      * @return
      */
-    final String getSubscribeInfoByUserId = "select * from subscribeInfo where userId = :userId and status = 0";
+    final String getSubscribeInfoByUserId = "select * from subscribeInfo where userId = :userId and status = :status";
 
     @Override
-    public subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception {
+    public subscribeInfo getSubscribeInfoByUserId(long userId,SubscribeStatus status) throws Exception {
         try {
             Map map = new HashMap();
             map.put("userId", userId);
+            map.put("status",status.getValue());
             try {
                 return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByUserId, map, new BeanPropertyRowMapper(subscribeInfo.class));
             } catch (Exception e) {

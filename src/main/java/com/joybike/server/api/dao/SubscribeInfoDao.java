@@ -41,9 +41,10 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * 根据用户ID查找
      *
      * @param userId
+     * @param status
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception;
+    subscribeInfo getSubscribeInfoByUserId(long userId,SubscribeStatus status) throws Exception;
 
 
     /**
@@ -52,7 +53,7 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
      * @param vehicleId
      * @return
      */
-    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception;
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId,SubscribeStatus status) throws Exception;
 
 
 }

@@ -1,6 +1,7 @@
 package com.joybike.server.api.dao.impl;
 
 import com.joybike.server.api.Enum.ReturnEnum;
+import com.joybike.server.api.Enum.VehicleEnableType;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixGps;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -31,7 +32,7 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
     final String vehicleStatusSql = "update vehicle set useStatus = :useStatus , updateAt = :updateAt where vehicleId = :vehicleId";
 
     @Override
-    public int updateVehicleStatus(String vehicleId, UseStatus useStatus)  throws Exception{
+    public int updateVehicleUseStatus(String vehicleId, UseStatus useStatus) throws Exception {
         try {
             Map map = new HashMap();
             map.put("vehicleId", vehicleId);
@@ -41,54 +42,31 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
-
     }
 
     /**
-     * 根据车辆code获取车辆使用状态
+     * 获取车的状态
      *
      * @param bicycleCode
      * @return
      */
-    final String getVehicleUseStatusByBicycleCodeSql = "select useStatus from vehicle where status = 0 and vehicleId = :vehicleId";
+    final String getVehicleUseStatusByBicycleCodeSql = "select * from vehicle where vehicleId = :vehicleId";
 
     @Override
-    public int getVehicleUseStatusByBicycleCode(String bicycleCode)  throws Exception{
+    public vehicle getVehicleStatusByBicycleCode(String bicycleCode) throws Exception {
         try {
             Map map = new HashMap();
             map.put("vehicleId", bicycleCode);
             try {
-                return this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, Integer.class);
+                return (vehicle)this.jdbcTemplate.queryForObject(getVehicleUseStatusByBicycleCodeSql, map, new BeanPropertyRowMapper(vehicle.class));
             } catch (Exception e) {
-                return -1;
+                return null;
             }
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
 
-    /**
-     * 获取车辆状态本身
-     *
-     * @param bicycleCode
-     * @return
-     */
-    final String getVehicleStatusByBicycleCodeSql = "select status from vehicle where vehicleId = :vehicleId";
-
-    @Override
-    public int getVehicleStatusByBicycleCode(String bicycleCode)  throws Exception{
-        try {
-            Map map = new HashMap();
-            map.put("vehicleId", bicycleCode);
-            try {
-                return this.jdbcTemplate.queryForObject(getVehicleStatusByBicycleCodeSql, map, Integer.class);
-            } catch (Exception e) {
-                return -1;
-            }
-        } catch (Exception e) {
-            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
-        }
-    }
 
     /**
      * 获取当前位置一公里范围的车辆
@@ -101,7 +79,7 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
             "and (lastLongitude between ? and ?)";
 
     @Override
-    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude)  throws Exception{
+    public List<vehicle> getVehicleList(double beginDimension, double beginLongitude) throws Exception {
         try {
             //最大小维度
             Double maxLat = beginDimension + UnixGps.doDimension(beginDimension);
@@ -130,7 +108,7 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
     final String getLockByBicycleCodeSql = "select lockId from vehicle where vehicleId = :vehicleId";
 
     @Override
-    public long getLockByBicycleCode(String bicycleCode)  throws Exception{
+    public long getLockByBicycleCode(String bicycleCode) throws Exception {
         try {
             Map map = new HashMap();
             map.put("vehicleId", bicycleCode);
@@ -140,6 +118,30 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
             } catch (Exception e) {
                 return -1;
             }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+
+    /**
+     * 修改车的状态
+     *
+     * @param vehicleId         车身印刷ID
+     * @param vehicleEnableType 车辆状态
+     * @return
+     * @throws Exception
+     */
+    final String updateVehicleStatusSql = "update vehicle set status = :status , updateAt = :updateAt where vehicleId = :vehicleId";
+
+    @Override
+    public int updateVehicleStatus(String vehicleId, VehicleEnableType vehicleEnableType) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("vehicleId", vehicleId);
+            map.put("status", vehicleEnableType.getValue());
+            map.put("updateAt", UnixTimeUtils.now());
+            return execSQL(updateVehicleStatusSql, map);
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }

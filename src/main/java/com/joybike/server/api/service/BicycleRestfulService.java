@@ -1,5 +1,7 @@
 package com.joybike.server.api.service;
 
+import com.joybike.server.api.Enum.SubscribeStatus;
+import com.joybike.server.api.Enum.VehicleEnableType;
 import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 
@@ -45,7 +47,7 @@ public interface BicycleRestfulService {
      * @param userId
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId) throws Exception;
+    subscribeInfo getSubscribeInfoByUserId(long userId,SubscribeStatus subscribeStatus) throws Exception;
 
     /**
      * 根据车辆ID获取预约信息
@@ -53,7 +55,7 @@ public interface BicycleRestfulService {
      * @param vehicleId
      * @return
      */
-    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId) throws Exception;
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId,SubscribeStatus subscribeStatus) throws Exception;
 
     /**
      * 获取骑行记录
@@ -75,20 +77,12 @@ public interface BicycleRestfulService {
     long addVehicleRepair(vehicleRepair vehicleRepair) throws Exception;
 
     /**
-     * 获取车辆使用状态
-     *
-     * @param bicycleCode
-     * @return
-     */
-    int getVehicleUseStatusByBicycleCode(String bicycleCode) throws Exception;
-
-    /**
      * 获取车辆状态
      *
      * @param bicycleCode
      * @return
      */
-    int getVehicleStatusByBicycleCode(String bicycleCode) throws Exception;
+    vehicle getVehicleStatusByBicycleCode(String bicycleCode) throws Exception;
 
     /**
      * 获取当前位置一公里内的车辆
@@ -120,10 +114,11 @@ public interface BicycleRestfulService {
      * @param beginDimension
      * @return
      */
-    long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension,long userId) throws Exception;
+    long lock(String bicycleCode, int endAt, double beginLongitude, double beginDimension, long userId) throws Exception;
 
     /**
      * 修改订单支付状态
+     *
      * @param orderCode
      * @return
      */
@@ -131,8 +126,20 @@ public interface BicycleRestfulService {
 
     /**
      * 获取用户已完成的骑行订单(支付与完成未支付的)
+     *
      * @param userId
      * @return
      */
     List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception;
+
+
+    /**
+     * 修改车的使用状态
+     *
+     * @param vehicleId
+     * @param vehicleEnableType
+     * @return
+     */
+    int updateVehicleStatus(String vehicleId, VehicleEnableType vehicleEnableType) throws Exception;
+
 }

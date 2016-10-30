@@ -3,6 +3,7 @@ package com.joybike.server.api.dto;
 import com.alibaba.fastjson.annotation.JSONField;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * 车辆报修接口入参
@@ -44,6 +45,8 @@ public class vehicleRepairDto implements Serializable{
      **/
     @JSONField(ordinal = 5)
     private Integer createAt;
+
+
 
     public String getBicycleCode() {
         return bicycleCode;
@@ -91,5 +94,20 @@ public class vehicleRepairDto implements Serializable{
         this.faultImg = faultImg;
         this.createId = createId;
         this.createAt = createAt;
+    }
+
+    public vehicleRepairDto(){
+
+    }
+
+    @Override
+    public String toString() {
+        return "vehicleRepairDto{" +
+                "bicycleCode='" + bicycleCode + '\'' +
+                ", cause='" + cause + '\'' +
+                ", faultImg=" + Arrays.toString(faultImg) +
+                ", createId=" + createId +
+                ", createAt=" + createAt +
+                '}';
     }
 }

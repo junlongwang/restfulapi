@@ -1,6 +1,7 @@
 package joyTest;
 
 import com.joybike.server.api.Enum.ReturnEnum;
+import com.joybike.server.api.dto.UnlockDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -249,6 +250,48 @@ public class ActionTest {
             bicycleRestfulService.getOrderPaySuccess(1);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void acTest(){
+
+        try {
+
+            UnlockDto dto = new UnlockDto();
+            dto.setUserId(Long.valueOf(2));
+            dto.setBeginDimension(40.049);
+            dto.setBeginLongitude(116.295);
+            dto.setBeginAt(1477752996);
+            dto.setBicycleCode("JOY003");
+
+            long orderId = 0;
+
+            if (dto != null){
+                //获取是否有未支付订单
+                vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(dto.getUserId());
+
+                if (order != null) {
+
+                    System.out.println("有未支付的订单");
+                } else {
+                    System.out.println("这里有异常1");
+                    orderId = bicycleRestfulService.unlock(dto.getUserId(), dto.getBicycleCode(), dto.getBeginAt(), dto.getBeginLongitude(), dto.getBeginDimension());
+                    System.out.println("这里有异常2");
+                }
+
+                if (orderId > 0) {
+                    System.out.println("解锁成功");
+                } else {
+                    System.out.println("解锁失败");
+                }
+            }else{
+                System.out.println("现在有些信息是null ********************************");
+            }
+
+        } catch (Exception e) {
+            System.out.println("解锁失败");
         }
     }
 }

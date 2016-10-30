@@ -20,7 +20,7 @@ public class vehicle implements Serializable {
      * 车锁ID
      *  @Author lisy
     **/
-    private String lockId;
+    private Long lockId;
 
     /** 
      * 绑定电话
@@ -86,7 +86,8 @@ public class vehicle implements Serializable {
 
     }
 
-    public vehicle(String vehicleId, String lockId, String bundlingPhone, Integer agentId, Integer status, Integer useStatus, BigDecimal lastDimension, BigDecimal lastLongitude, String vehicleImg, String remark, Integer createAt, Integer updateAt) {
+    public vehicle(Long id, String vehicleId, Long lockId, String bundlingPhone, Integer agentId, Integer status, Integer useStatus, BigDecimal lastDimension, BigDecimal lastLongitude, String vehicleImg, String remark, Integer createAt, Integer updateAt) {
+        this.id = id;
         this.vehicleId = vehicleId;
         this.lockId = lockId;
         this.bundlingPhone = bundlingPhone;
@@ -101,21 +102,18 @@ public class vehicle implements Serializable {
         this.updateAt = updateAt;
     }
 
-
-
-
     @Override
     public String toString() {
         return "vehicle{" +
                 "id=" + id +
                 ", vehicleId='" + vehicleId + '\'' +
-                ", lockId='" + lockId + '\'' +
+                ", lockId=" + lockId +
                 ", bundlingPhone='" + bundlingPhone + '\'' +
                 ", agentId=" + agentId +
                 ", status=" + status +
                 ", useStatus=" + useStatus +
-                ", lastDimension='" + lastDimension +
-                ", lastLongitude='" + lastLongitude +
+                ", lastDimension=" + lastDimension +
+                ", lastLongitude=" + lastLongitude +
                 ", vehicleImg='" + vehicleImg + '\'' +
                 ", remark='" + remark + '\'' +
                 ", createAt=" + createAt +
@@ -139,12 +137,12 @@ public class vehicle implements Serializable {
         this.vehicleId = vehicleId == null ? null : vehicleId.trim();
     }
 
-    public String getLockId() {
-        return lockId;
+    public void setLockId(Long lockId) {
+        this.lockId = lockId;
     }
 
-    public void setLockId(String lockId) {
-        this.lockId = lockId == null ? null : lockId.trim();
+    public Long getLockId() {
+        return lockId;
     }
 
     public String getBundlingPhone() {

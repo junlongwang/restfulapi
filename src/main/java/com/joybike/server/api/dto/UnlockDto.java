@@ -40,7 +40,7 @@ public class UnlockDto implements Serializable {
     @JSONField(ordinal = 5)
     private Double beginDimension;
 
-    private UnlockDto(){
+    public UnlockDto(){
 
     }
 

@@ -180,7 +180,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         sign=getMd5Sign(paySignReqHandler);
         //remove key
         paraMap.remove("partnerid");
-        paraMap.remove("prepayId");
+        //paraMap.remove("prepayId");
         paraMap.remove("sign");
         paySignReqHandler.setParameter("sign", sign);
         SortedMap map = paySignReqHandler.getAllParameters();

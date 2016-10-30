@@ -105,7 +105,7 @@ public class PayRestfulApi {
                     if (bankDepositOrder != null){
                         if(bankDepositOrder.getRechargeType() == RechargeType.deposit.getValue()){
                             //通过订单Id修改微信支付凭证和支付时间以及订单支付状态
-                            result = payRestfulService.updateDepositOrderById_Yajin(id,Long.valueOf(payDocumentId),pay_at,2);
+                            result = payRestfulService.updateDepositOrderById_Yajin(id,payDocumentId,pay_at,2);
                             //同时更新用户状态
                             if (result > 0){
                                 userInfo userInfo = new userInfo();

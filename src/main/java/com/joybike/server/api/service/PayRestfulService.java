@@ -103,7 +103,7 @@ public interface PayRestfulService {
      * @return
      * @throws Exception
      */
-    int updateDepositOrderById_Yajin(long id, long transactionId, int pay_at, int status) throws Exception;
+    int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception;
     /**
      * 获取用户充值订单ID（有且只有唯一一条支付成功的充值订单ID）
      * @param userid

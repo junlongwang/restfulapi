@@ -574,7 +574,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     }
 
     /**
-     * 获取用户已完成的骑行订单(支付与完成未支付的)
+     * 获取用户已完成的骑行订单(支付与完成未支付的)与形成记录
      *
      * @param userId
      * @return

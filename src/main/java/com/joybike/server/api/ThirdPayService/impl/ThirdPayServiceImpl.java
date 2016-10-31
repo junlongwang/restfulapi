@@ -7,6 +7,7 @@ import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
 import com.joybike.server.api.ThirdPayService.WxappConstructUrlInter;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.ThirdPayBean;
+import com.joybike.server.api.model.WxNotifyOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -96,15 +97,15 @@ public class ThirdPayServiceImpl implements ThirdPayService {
     }
 
     @Override
-    public String callBack(HttpServletRequest request){
-        String mch_id = request.getParameter("mch_id");
+    public String callBack(WxNotifyOrder wxNotifyOrder){
+        String mch_id = wxNotifyOrder.getMch_id();
         if (mch_id.equals(wxAppmch_id)){
-            return new WxappConstructUrlImpl().callBack(request);
+            return new WxappConstructUrlImpl().callBack(wxNotifyOrder);
         }
         else if(mch_id.equals(wxPubmch_id)){
-            return new WxPublicConstructUrlImpl().callBack(request);
-        }else{
-            return new AliPayConstructUrlImpl().callBack(request);
+            return new WxPublicConstructUrlImpl().callBack(wxNotifyOrder);
+        } else{
+            return "";
         }
     }
 

@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by lishaoyong on 16/10/23.
  */
@@ -595,7 +597,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 }
             });
         }
-
+        list.stream().sorted((p, p2) -> (p2.getEndAt().compareTo(p.getEndAt()))).collect(toList());
         return list;
     }
 

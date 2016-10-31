@@ -84,7 +84,7 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "paynotify")
-    public String payOfNotify(@RequestBody HttpServletRequest request) {
+    public String payOfNotify(HttpServletRequest request) {
         logger.info("微信回调函数信息：" + request.getParameterMap());
         String responseHtml = "success";
         String mch_id = request.getParameter("mch_id");

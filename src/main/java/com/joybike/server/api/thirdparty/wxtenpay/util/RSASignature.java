@@ -30,7 +30,7 @@ public class RSASignature{
 	* 
 	* @param key 商户私钥
 
-	* @return 解密后的字符�?
+	* @return 解密后的
 
 	*/
 	public static String decrypt(String content, String key) throws Exception {
@@ -41,7 +41,7 @@ public class RSASignature{
 
         InputStream ins = new ByteArrayInputStream(Base64.decode(content));
         ByteArrayOutputStream writer = new ByteArrayOutputStream();
-        //rsa解密的字节大小最多是128，将�?要解密的内容，按128位拆�?解密
+        //rsa解密的字节大小最多是128
         byte[] buf = new byte[128];
         int bufl;
 
@@ -69,7 +69,7 @@ public class RSASignature{
 
 	* 得到私钥
 
-	* @param key 密钥字符串（经过base64编码�?
+	* @param key 密钥字符串
 
 	* @throws Exception
 
@@ -94,10 +94,10 @@ public class RSASignature{
 	public static final String  SIGN_ALGORITHMS = "SHA1WithRSA";
 	/**
 	* RSA签名
-	* @param content 待签名数�?
-	* @param privateKey 商户私钥
-	* @param encode 字符集编�?
-	* @return 签名�?
+	* @param content
+	* @param privateKey
+	* @param encode
+	* @return
 	*/
 	public static String sign(String content, String privateKey,String encode)
 	{
@@ -131,12 +131,12 @@ public class RSASignature{
     }
 	
 	/**
-	* RSA验签名检�?
-	* @param content 待签名数�?
-	* @param sign 签名�?
-	* @param publicKey 支付宝公�?
-	* @param encode 字符集编�?
-	* @return 布尔�?
+	* RSA
+	* @param content
+	* @param sign
+	* @param publicKey
+	* @param encode
+	* @return
 	*/
 	public static boolean doCheck(String content, String sign, String publicKey,String encode)
 	{

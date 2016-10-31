@@ -2,6 +2,7 @@ package com.joybike.server.api.ThirdPayService.impl;
 import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
 import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.model.RedirectParam;
+import com.joybike.server.api.model.WxNotifyOrder;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -105,25 +106,42 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     }
 
     @Override
-    public String callBack(HttpServletRequest request) {
-        Map paraMap = ReadRequestUtil.getRequestMap(request);
+    public String callBack(WxNotifyOrder wxNotifyOrder) {
         String resultMsg="";
-        if (paraMap == null || paraMap.size() == 0) {
+        if (wxNotifyOrder == null) {
             return resultMsg;
         }
-        String reqSign = String.valueOf(paraMap.get("sign"));
-        String sign = SignUtil.sign(paraMap,key).toUpperCase();
+        String reqSign = wxNotifyOrder.getSign();
+        String signRequest = wxNotifyOrder.getSign();
+        HashMap<String,String> hashmap = new HashMap<String,String>();
+        hashmap.put("appid",wxNotifyOrder.getAppid());
+        hashmap.put("attach",wxNotifyOrder.getAttach());
+        hashmap.put("bank_type",wxNotifyOrder.getBank_type());
+        hashmap.put("cash_fee",wxNotifyOrder.getCash_fee());
+        hashmap.put("fee_type",wxNotifyOrder.getFee_type());
+        hashmap.put("is_subscribe",wxNotifyOrder.getIs_subscribe());
+        hashmap.put("mch_id",wxNotifyOrder.getMch_id());
+        hashmap.put("nonce_str",wxNotifyOrder.getNonce_str());
+        hashmap.put("openid",wxNotifyOrder.getOpenid());
+        hashmap.put("out_trade_no",wxNotifyOrder.getOut_trade_no());
+        hashmap.put("result_code",wxNotifyOrder.getResult_code());
+        hashmap.put("return_code",wxNotifyOrder.getReturn_code());
+        hashmap.put("time_end",wxNotifyOrder.getTime_end());
+        hashmap.put("total_fee",wxNotifyOrder.getTotal_fee());
+        hashmap.put("trade_type",wxNotifyOrder.getTrade_type());
+        hashmap.put("transaction_id",wxNotifyOrder.getTransaction_id());
+        String sign = SignUtil.sign(hashmap,key).toUpperCase();
         if (!sign.equals(reqSign)) {
             return resultMsg;
         }
-        String result = String.valueOf(paraMap.get("result_code"));
+        String result = String.valueOf(hashmap.get("result_code"));
         if ("SUCCESS".equals(result)) {// 如果支付成功返回支付系统唯一订单号及支付金额
-            String noOrder = String.valueOf(paraMap.get("out_trade_no"));
-            String totalFee = String.valueOf(paraMap.get("total_fee"));
+            String noOrder = String.valueOf(hashmap.get("out_trade_no"));
+            String totalFee = String.valueOf(hashmap.get("total_fee"));
             Double realTotalFee = (Double) (Double.parseDouble(totalFee) / 100);
-            String appId=String.valueOf(paraMap.get("appid"));
-            String openId=String.valueOf(paraMap.get("openid"));
-            String bank_type=String.valueOf(paraMap.get("bank_type"));
+            String appId=String.valueOf(hashmap.get("appid"));
+            String openId=String.valueOf(hashmap.get("openid"));
+            String bank_type=String.valueOf(hashmap.get("bank_type"));
             resultMsg = "success";
             return resultMsg;
         }

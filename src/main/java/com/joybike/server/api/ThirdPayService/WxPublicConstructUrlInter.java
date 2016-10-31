@@ -2,6 +2,7 @@ package com.joybike.server.api.ThirdPayService;
 
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.ThirdPayBean;
+import com.joybike.server.api.model.WxNotifyOrder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -19,10 +20,10 @@ public interface WxPublicConstructUrlInter {
 
     /**
      * 支付回调请求
-     * @param request
+     * @param wxNotifyOrder
      * @return
      */
-    public String callBack(HttpServletRequest request);
+    public String callBack(WxNotifyOrder wxNotifyOrder);
 
 
     /**

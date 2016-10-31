@@ -14,6 +14,7 @@ import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
+import com.joybike.server.api.util.XStreamUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -82,13 +83,12 @@ public class PayRestfulApi {
     }
 
     /**
-     * 充值回调入口
+     * 微信充值回调入口
      * @param request
      * @return
      */
     @RequestMapping(value = "paynotify")
     public String payOfNotify(HttpServletRequest request) {
-        logger.info("微信回调函数信息：" + request.getParameterMap());
         DataInputStream in;
         String wxNotifyXml = "";
         try {
@@ -102,20 +102,21 @@ public class PayRestfulApi {
             e.printStackTrace();
         }
         logger.info("支付回调通知：" + wxNotifyXml.toString());
+        WxNotifyOrder wxNotifyOrder = XStreamUtils.toBean(wxNotifyXml, WxNotifyOrder.class);
         String responseHtml = "success";
-        String mch_id = request.getParameter("mch_id");
+        String mch_id = wxNotifyOrder.getMch_id();
         String returncode = "";
-        if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
-            returncode = ThirdPayService.callBack(request);
+        if (wxNotifyOrder.getTransaction_id() != null) {
+            returncode = ThirdPayService.callBack(wxNotifyOrder);
         }
         if (returncode.equals("success")) {
             if (mch_id.equals(wxAppmch_id)) {
                 responseHtml = WxDealUtil.notifyResponseXml();
-                String out_trade_no = request.getParameter("out_trade_no");
+                String out_trade_no = wxNotifyOrder.getOut_trade_no();
                 long id = Long.valueOf(out_trade_no);
-                String payDocumentId = request.getParameter("transaction_id");
+                String payDocumentId = wxNotifyOrder.getTransaction_id();
                 String merchantId = "";
-                int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
+                int pay_at = UnixTimeUtils.StringDateToInt(wxNotifyOrder.getTime_end());
                 try {
                     int result = 0;
                     bankDepositOrder bankDepositOrder = payRestfulService.getbankDepostiOrderByid(id);
@@ -136,7 +137,7 @@ public class PayRestfulApi {
                             result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
                         }
                     }
-                    String attach = request.getParameter("attach");
+                    String attach = wxNotifyOrder.getAttach();
 //                    if(attach != null && attach != ""){
 //                        Long consumeid = Long.valueOf(attach);
 //                    }
@@ -146,29 +147,15 @@ public class PayRestfulApi {
                 } catch (Exception e) {
                     return "";
                 }
-            } else if (mch_id.equals(wxPubmch_id)) {
+            } else{
                 responseHtml = WxDealUtil.notifyResponseXml();
-                String out_trade_no = request.getParameter("out_trade_no");
+                String out_trade_no = wxNotifyOrder.getOut_trade_no();
                 long id = Long.valueOf(out_trade_no);
-                String payDocumentId = request.getParameter("transaction_id");
+                String payDocumentId = wxNotifyOrder.getTransaction_id();
                 String merchantId = "";
-                int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
+                int pay_at = UnixTimeUtils.StringDateToInt(wxNotifyOrder.getTime_end());
                 try {
                     int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
-                    if (result > 0) {
-                        return responseHtml;
-                    }
-                } catch (Exception e) {
-                    return "";
-                }
-            } else {
-                String out_trade_no = request.getParameter("out_trade_no");
-                long id = Long.valueOf(out_trade_no);
-                String payDocumentId = request.getParameter("trade_no");
-                String merchantId = "";
-                int pay_at = UnixTimeUtils.StringDateToInt(request.getParameter("time_end"));
-                try {
-                    int result = payRestfulService.updateDepositOrderById(id, PayType.Alipay, payDocumentId, merchantId, pay_at);
                     if (result > 0) {
                         return responseHtml;
                     }

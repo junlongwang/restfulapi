@@ -20,6 +20,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -84,8 +87,21 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "paynotify")
-    public String payOfNotify(@RequestBody HttpServletRequest request) {
+    public String payOfNotify(HttpServletRequest request) {
         logger.info("微信回调函数信息：" + request.getParameterMap());
+        DataInputStream in;
+        String wxNotifyXml = "";
+        try {
+            in = new DataInputStream(request.getInputStream());
+            byte[] dataOrigin = new byte[request.getContentLength()];
+            in.readFully(dataOrigin); // 根据长度，将消息实体的内容读入字节数组dataOrigin中
+
+            if(null != in) in.close(); // 关闭数据流
+            wxNotifyXml = new String(dataOrigin); // 从字节数组中得到表示实体的字符串
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        logger.info("支付回调通知：" + wxNotifyXml.toString());
         String responseHtml = "success";
         String mch_id = request.getParameter("mch_id");
         String returncode = "";

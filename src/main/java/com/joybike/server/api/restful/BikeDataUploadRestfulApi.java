@@ -89,7 +89,7 @@ public class BikeDataUploadRestfulApi {
     }
 
     /**
-     * 用户手机卡，每隔15秒上报数据
+     * 用户app上报GPS数据，每隔15秒上报数据
      *
      * @param data
      */

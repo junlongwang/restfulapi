@@ -3,6 +3,7 @@ package com.joybike.server.api.ThirdPayService.impl;
 import com.joybike.server.api.ThirdPayService.WxappConstructUrlInter;
 import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.model.WxNotifyOrder;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
@@ -27,7 +28,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
     private String key = "F1BDA99703815CE223FF494A9039ADA3";
     private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-
+    private final Logger logger = Logger.getLogger(WxappConstructUrlImpl.class);
     @Override
     public RedirectParam getUrl(HashMap<String, String> paraMap) {
         RedirectParam para = new RedirectParam();
@@ -265,7 +266,9 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
             String xml=ParseXml.parseXML(map);//转化为xml格式
             String httpType = "SSL";
             String timeOut = "60000";
+            logger.info("退款订单号为：" + payOrder.getRefundid() + "发送微信退款信息为" + xml);
             String res = HttpRequestSimple.sendHttpMsg(wxRefundUrl, xml, httpType, timeOut);
+            logger.info("退款订单号为：" + payOrder.getRefundid() + "微信返回退款信息为" + res);
             HashMap resMap=ParseXml.parseXml(res);
             if(resMap.get("return_code").equals("SUCCESS")){
                 String reqSign=String.valueOf(resMap.get("sign"));

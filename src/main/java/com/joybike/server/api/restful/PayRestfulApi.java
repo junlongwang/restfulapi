@@ -215,6 +215,7 @@ public class PayRestfulApi {
                 String payDocumentid = order.getPayDocumentid();
                 int channelid = order.getPayType();
                 Long refundId = refund(order);
+                logger.info("退款订单为：" + refundId + "退款开始");
                 if(refundId > 0){
                     ThirdPayBean payBean = new ThirdPayBean();
                     payBean.setOrderMoney(order.getCash());
@@ -223,15 +224,19 @@ public class PayRestfulApi {
                     payBean.setCosumeid(order.getId());
                     payBean.setRefundid(refundId);
                     //调用第三方支付退款操作
+                    logger.info("退款订单信息为:" + payBean.toString());
                     String result = ThirdPayService.executeRefund(payBean);
+                    logger.info("退款订单id为：" + payBean.getRefundid() + "的退款状态：" + result);
                     if("SUCCSE".equals(result)){
                         int res_uprefund = payRestfulService.updateRefundOrderStatusById(payBean.getRefundid());
+                        logger.info("退款订单信息为:" + payBean.getRefundid() + "的退款状态:" + res_uprefund);
                         userInfo user = new userInfo();
                         user.setId(order.getUserId());
                         user.setSecurityStatus(0);
                         int res_upUser = 0;
                         try {
                             res_upUser = userRestfulService.updateUserInfo(user);
+                            logger.info("用户ID为:" + order.getUserId() + "的用户状态更新结果为" + res_upUser);
                         }catch (Exception e){
                             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(),ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
                         }

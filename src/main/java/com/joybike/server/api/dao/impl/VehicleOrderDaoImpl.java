@@ -140,13 +140,13 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
     }
 
     /**
-     * 获取用户已完成的骑行订单(支付与完成未支付的)
+     * 获取用户已完成的骑行订单 已支付完成的
      *
      * @param userId
      * @return
      */
     final String getOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
-            " where a.userId = ? and a.status in (2,15)";
+            " where a.userId = ? and a.status = 15";
 
     @Override
     public List<VehicleOrderDto> getOrderPaySuccess(long userId) {

@@ -7,6 +7,7 @@ import com.joybike.server.api.Enum.SecurityStatus;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
+import com.joybike.server.api.dto.RefundDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
@@ -203,15 +204,15 @@ public class PayRestfulApi {
     /**
      * 押金退款
      *
-     * @param userId
+     * @param refundDto
      * @return
      */
     @RequestMapping(value = "refund", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> refund(@RequestBody long userId) {
-        if(userId > 0){
-            bankDepositOrder order = payRestfulService.getDepositOrderId(userId);
-            logger.info("充值订单ID为：" + order.getId() + "的退款开始");
+    public ResponseEntity<Message<String>> refund(@RequestBody RefundDto refundDto) {
+        if(refundDto.getUserId() > 0){
+            bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
             if(order != null){
+                logger.info("充值信息为：" + order.toString() + "的退款开始");
                 Long rechargeid = order.getId();
                 String payDocumentid = order.getPayDocumentid();
                 int channelid = order.getPayType();

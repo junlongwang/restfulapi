@@ -64,6 +64,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
                 map.put("consumeid", String.valueOf(payOrder.getCosumeid()));
             //map.put("body",String.valueOf(payOrder.getCosumeid()));
             map.put("subject",payOrder.getPruductDesc());
+            map.put("body",payOrder.getPruductDesc());
             map.put("it_b_pay", "3d"); //超时时间
             RedirectParam redirectParam= aliPayConstructUrlInter.getUrl(map);
             if( redirectParam != null )

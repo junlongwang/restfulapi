@@ -85,11 +85,11 @@ public class PayRestfulApi {
      */
     @RequestMapping(value = "paynotify")
     public String payOfNotify(@RequestBody HttpServletRequest request) {
-        logger.info(request.getParameterMap());
+        logger.info("微信回调函数信息：" + request.getParameterMap());
         String responseHtml = "success";
         String mch_id = request.getParameter("mch_id");
         String returncode = "";
-        if (request.getParameter("transaction_id") != null || request.getParameter("out_trade_no") != null) {
+        if (request.getParameter("transaction_id") != null || request.getParameter("trade_no") != null) {
             returncode = ThirdPayService.callBack(request);
         }
         if (returncode.equals("success")) {

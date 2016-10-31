@@ -207,9 +207,10 @@ public class PayRestfulApi {
      * @return
      */
     @RequestMapping(value = "refund", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> refund(@RequestParam("userId") long userId) {
+    public ResponseEntity<Message<String>> refund(@RequestBody long userId) {
         if(userId > 0){
             bankDepositOrder order = payRestfulService.getDepositOrderId(userId);
+            logger.info("充值订单ID为：" + order.getId() + "的退款开始");
             if(order != null){
                 Long rechargeid = order.getId();
                 String payDocumentid = order.getPayDocumentid();

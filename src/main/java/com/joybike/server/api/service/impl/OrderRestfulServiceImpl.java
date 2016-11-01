@@ -203,7 +203,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @return
      */
     @Override
-    public vehicleOrder getOrder(long id) {
+    public vehicleOrder getOrder(long id) throws Exception{
         return vehicleOrderDao.getOrderByid(id);
     }
 }

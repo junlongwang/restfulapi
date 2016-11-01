@@ -118,7 +118,7 @@ public class ActionTest {
                 System.out.println(0);
 
             } else {
-                orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+//                orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
             }
 
             if (orderId > 0) {
@@ -277,7 +277,7 @@ public class ActionTest {
                     System.out.println("有未支付的订单");
                 } else {
                     System.out.println("这里有异常1");
-                    orderId = bicycleRestfulService.unlock(dto.getUserId(), dto.getBicycleCode(), dto.getBeginAt(), dto.getBeginLongitude(), dto.getBeginDimension());
+//                    orderId = bicycleRestfulService.unlock(dto.getUserId(), dto.getBicycleCode(), dto.getBeginAt(), dto.getBeginLongitude(), dto.getBeginDimension());
                     System.out.println("这里有异常2");
                 }
 

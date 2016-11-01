@@ -93,5 +93,5 @@ public interface OrderRestfulService {
      * @param id
      * @return
      */
-    vehicleOrder getOrder(long id);
+    vehicleOrder getOrder(long id) throws Exception;
 }

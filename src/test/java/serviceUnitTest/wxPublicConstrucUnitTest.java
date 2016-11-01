@@ -93,9 +93,18 @@ private PayRestfulService payRestfulService;
 //            String returncode = ThirdPayService.callBack(wxNotifyOrder);
 //            System.out.print(returncode);
 //        }
-        RefundDto refundDto = new RefundDto();
-        refundDto.setUserId(Long.valueOf(11));
-        bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
-        System.out.print(order);
+//        RefundDto refundDto = new RefundDto();
+//        refundDto.setUserId(Long.valueOf(11));
+//        bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
+//        System.out.print(order);
+        ThirdPayBean payBean = new ThirdPayBean();
+        payBean.setOrderMoney(BigDecimal.valueOf(0.01));
+        payBean.setChannelId(0);
+        payBean.setTransaction_id("4001552001201610318311062836");
+        payBean.setCosumeid(Long.valueOf(152));
+        payBean.setRefundid(1L);
+        //调用第三方支付退款操作
+        String result = ThirdPayService.executeRefund(payBean);
+        System.out.print(result);
     }
 }

@@ -275,9 +275,7 @@ public class PayRestfulApi {
         bankRefundOrder.setRefundAmount(order.getCash());
         bankRefundOrder.setRefundType(0);
         bankRefundOrder.setOrderId(order.getId());
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Integer creatTime = Integer.valueOf(date.format(new Date()));
-        bankRefundOrder.setCreateAt(creatTime);
+        bankRefundOrder.setCreateAt(UnixTimeUtils.now());
         try {
             return payRestfulService.creatRefundOrder(bankRefundOrder);
         } catch (Exception e) {

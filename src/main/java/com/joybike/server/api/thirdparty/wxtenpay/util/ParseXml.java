@@ -50,7 +50,7 @@ public class ParseXml {
         Element rootElement = document.addElement("xml");
         if (paraMap != null && paraMap.size() > 0) {
             for (Object entry : paraMap.keySet()) {
-                rootElement.addElement(entry.toString()).addCDATA(paraMap.get(entry).toString());
+                rootElement.addElement(entry.toString()).addText(paraMap.get(entry).toString());
             }
         }
         return document.asXML();

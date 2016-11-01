@@ -59,7 +59,7 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      */
     final String updateDepositOrderByIdSql = "update bankDepositOrder set status = 2 ,payType = :payType , payDocumentId = :payDocumentId ,merchantId = :merchantId, payAt = :payAt where id = :id";
 
-    final String getDepositOrder = "select * from bankDepositOrder where userId = :userId and status = 1 and rechargeType = 1";
+    final String getDepositOrder = "select * from bankDepositOrder where userId = :userId and status = 2 and rechargeType = 1";
 
     @Override
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) {

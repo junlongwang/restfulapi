@@ -2,6 +2,7 @@ package com.joybike.server.api.service;
 
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.dto.AlipayDto;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 
 import java.math.BigDecimal;
@@ -98,6 +99,7 @@ public interface PayRestfulService {
 
     /**
      * 押金充值回调成功更新充值订单信息
+     *
      * @param id
      * @param transactionId
      * @param pay_at
@@ -106,8 +108,10 @@ public interface PayRestfulService {
      * @throws Exception
      */
     int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception;
+
     /**
      * 获取用户充值订单ID（有且只有唯一一条支付成功的充值订单ID）
+     *
      * @param userid
      * @return
      */
@@ -116,6 +120,7 @@ public interface PayRestfulService {
 
     /**
      * 创建退款订单并获取订单id
+     *
      * @param bankRefundOrder
      * @return
      */
@@ -123,28 +128,30 @@ public interface PayRestfulService {
 
     /**
      * 退款完毕并更新退款订单为退款成功状态
+     *
      * @param id
      * @return
      */
     int updateRefundOrderStatusById(Long id);
 
-     /* 支付消费
-     *
-     * @param orderCode
-     * @param payPrice
-     * @param userId
-     * @return
-     */
-    int consume(String orderCode, BigDecimal payPrice, long userId,long consumedDepositId) throws Exception;
+    /* 支付消费
+    *
+    * @param orderCode
+    * @param payPrice
+    * @param userId
+    * @return
+    */
+    int consume(String orderCode, BigDecimal payPrice, long userId, long consumedDepositId) throws Exception;
 
 
     /**
      * 根据用户ID获取未完成订单
      */
-    vehicleOrder getNoPayByOrder(long userId,String orderCode) throws Exception;
+    vehicleOrder getNoPayByOrder(long userId, String orderCode) throws Exception;
 
     /**
      * 根据订单ID获取订单信息
+     *
      * @param id
      * @return
      * @throws Exception
@@ -152,7 +159,7 @@ public interface PayRestfulService {
     bankDepositOrder getbankDepostiOrderByid(long id) throws Exception;
 
 
+    String payBeanToAliPay(ThirdPayBean bean, long orderId) throws Exception;
 
-    String payBeanToAliPay(ThirdPayBean bean,long orderId) throws Exception;
 
 }

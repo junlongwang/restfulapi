@@ -598,22 +598,28 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
-    public long lock(String bicycleCode, int endAt, double endLongitude, double endDimension, long userId) throws Exception {
+    public VehicleOrderDto lock(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception {
         //修改车状态
-
-        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
 
         orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
 
         int cyclingTime = endAt - item.getBeginAt();
+        //计算金额
         BigDecimal payPrice = payPrice(cyclingTime);
 
-        int v1 = vehicleOrderDao.updateOrderByLock(userId, bicycleCode, payPrice);
-        int o1 = orderItemDao.updateOrderByLock(userId, bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
-        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
+        int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+        int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
+
+//        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
         int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
 
-        return v1 * o1 * o2 * v3;
+        if (v1 * o1 * v3 > 0){
+            return vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
+        }else{
+            return null;
+        }
+
     }
 
     /**

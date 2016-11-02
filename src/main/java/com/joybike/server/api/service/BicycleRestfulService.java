@@ -3,6 +3,7 @@ package com.joybike.server.api.service;
 import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Enum.VehicleEnableType;
 import com.joybike.server.api.dto.VehicleOrderDto;
+import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.model.*;
 
 import java.math.BigDecimal;
@@ -47,7 +48,7 @@ public interface BicycleRestfulService {
      * @param userId
      * @return
      */
-    subscribeInfo getSubscribeInfoByUserId(long userId,SubscribeStatus subscribeStatus) throws Exception;
+    subscribeInfo getSubscribeInfoByUserId(long userId, SubscribeStatus subscribeStatus) throws Exception;
 
     /**
      * 根据车辆ID获取预约信息
@@ -55,7 +56,7 @@ public interface BicycleRestfulService {
      * @param vehicleId
      * @return
      */
-    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId,SubscribeStatus subscribeStatus) throws Exception;
+    subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId, SubscribeStatus subscribeStatus) throws Exception;
 
     /**
      * 获取骑行记录
@@ -102,7 +103,7 @@ public interface BicycleRestfulService {
      * @param beginLongitude
      * @param beginDimension
      */
-    long unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception;
+    VehicleOrderDto unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception;
 
 
     /**
@@ -122,7 +123,7 @@ public interface BicycleRestfulService {
      * @param orderCode
      * @return
      */
-    int updateVehicleStatausByCode(String orderCode);
+    int updateVehicleStatausByCode(String orderCode) throws Exception;
 
     /**
      * 获取用户已完成的骑行订单(支付与完成未支付的)
@@ -142,4 +143,22 @@ public interface BicycleRestfulService {
      */
     int updateVehicleStatus(String vehicleId, VehicleEnableType vehicleEnableType) throws Exception;
 
+
+    /**
+     * 获取用户订单信息,包含骑行坐标
+     *
+     * @param id
+     * @return
+     */
+    VehicleOrderDto getOrderInfo(long id) throws Exception;
+
+
+    /**
+     * 获取使用信息
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    VehicleOrderSubscribeDto getUseInfo(long userId) throws Exception;
 }

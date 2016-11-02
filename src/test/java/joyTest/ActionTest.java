@@ -2,6 +2,7 @@ package joyTest;
 
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dto.UnlockDto;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -118,7 +119,7 @@ public class ActionTest {
                 System.out.println(0);
 
             } else {
-                orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+//                orderId = bicycleRestfulService.unlock(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
             }
 
             if (orderId > 0) {
@@ -267,7 +268,7 @@ public class ActionTest {
             dto.setBicycleCode("JOY003");
 
             long orderId = 0;
-
+            VehicleOrderDto dto1 = new VehicleOrderDto();
             if (dto != null){
                 //获取是否有未支付订单
                 vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(dto.getUserId());
@@ -277,11 +278,11 @@ public class ActionTest {
                     System.out.println("有未支付的订单");
                 } else {
                     System.out.println("这里有异常1");
-                    orderId = bicycleRestfulService.unlock(dto.getUserId(), dto.getBicycleCode(), dto.getBeginAt(), dto.getBeginLongitude(), dto.getBeginDimension());
+                     dto1 = bicycleRestfulService.unlock(dto.getUserId(), dto.getBicycleCode(), dto.getBeginAt(), dto.getBeginLongitude(), dto.getBeginDimension());
                     System.out.println("这里有异常2");
                 }
 
-                if (orderId > 0) {
+                if (dto1 != null) {
                     System.out.println("解锁成功");
                 } else {
                     System.out.println("解锁失败");

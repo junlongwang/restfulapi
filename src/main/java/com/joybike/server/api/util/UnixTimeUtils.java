@@ -5,37 +5,53 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public final class UnixTimeUtils {
-	private UnixTimeUtils() {}
-	public static int getUnixTimestamp(Date date){
-		return (int)(date.getTime() / 1000L);
-	}
-	
-	public static Date fromUnixTimestamp(long unixTimestamp){
-		return new Date(unixTimestamp * 1000L);
-	}
-	
-	/**
-	 * get now system time  of Unix timestamp format
-	 * @return
-	 */
-	public static int now(){
+    private UnixTimeUtils() {
+    }
+
+    public static int getUnixTimestamp(Date date) {
+        return (int) (date.getTime() / 1000L);
+    }
+
+    public static Date fromUnixTimestamp(long unixTimestamp) {
+        return new Date(unixTimestamp * 1000L);
+    }
+
+    /**
+     * get now system time  of Unix timestamp format
+     *
+     * @return
+     */
+    public static int now() {
 //		return (int) (System.currentTimeMillis() / 1000L);
-		return getUnixTimestamp(new Date());
-	}
+        return getUnixTimestamp(new Date());
+    }
 
-	public static int StringDateToInt(String StringDate){
-		SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-		Date date = null;
-		int iDate = 0;
-		try {
+    public static int StringDateToInt(String StringDate) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date = null;
+        int iDate = 0;
+        try {
 
-			date = df.parse(StringDate);
-			iDate = (int) (date.getTime()/1000L);
-			System.out.println(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return iDate;
-	}
+            date = df.parse(StringDate);
+            iDate = (int) (date.getTime() / 1000L);
+            System.out.println(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return iDate;
+    }
+
+    public static long getUnixTime(String useDate) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        long re_time = 0;
+        try {
+            Date date = sdf.parse(useDate);
+            re_time = date.getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return re_time / 1000;
+    }
 
 }

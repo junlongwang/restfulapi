@@ -3,6 +3,7 @@ package com.joybike.server.api.restful;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.SystemControllerLog;
 import com.joybike.server.api.dto.VehicleOrderDto;
+import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.dto.userInfoDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
@@ -190,4 +191,40 @@ public class UserRestfulApi {
         }
     }
 
+    /**
+     * 使用信息
+     *
+     * @param userId
+     */
+    @RequestMapping(value = "useInfo", method = RequestMethod.GET)
+    public ResponseEntity<Message<VehicleOrderSubscribeDto>> useInfo(long userId) {
+
+        logger.info(userId);
+        try {
+
+            VehicleOrderSubscribeDto dto = bicycleRestfulService.getUseInfo(userId);
+
+            if (dto.getVehicleOrderDto() != null && dto.getInfo() != null){
+                if (dto.getVehicleOrderDto().getStatus() == 1){
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0,null, dto));
+                }else{
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4,null, dto));
+                }
+
+            }else if (dto.getVehicleOrderDto() != null && dto.getInfo() == null){
+                if (dto.getVehicleOrderDto().getStatus() == 1){
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0,null, dto));
+                }else{
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4,null, dto));
+                }
+            }else if (dto.getVehicleOrderDto() == null && dto.getInfo() != null){
+                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 1,null, dto));
+            }else{
+                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 2,null, null));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(false,3, e.getMessage(), null));
+        }
+    }
 }

@@ -3,10 +3,7 @@ package com.joybike.server.api.restful;
 import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
-import com.joybike.server.api.dto.CancleDto;
-import com.joybike.server.api.dto.SubscribeDto;
-import com.joybike.server.api.dto.UnlockDto;
-import com.joybike.server.api.dto.vehicleRepairDto;
+import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -124,7 +121,7 @@ public class BicycleRestfulApi {
      * @param unlockDto
      */
     @RequestMapping(value = "unlock", method = RequestMethod.POST)
-    public ResponseEntity<Message<String>> unlock(@RequestBody UnlockDto unlockDto) {
+    public ResponseEntity<Message<VehicleOrderDto>> unlock(@RequestBody UnlockDto unlockDto) {
 
         logger.info(unlockDto.toString());
         try {
@@ -132,20 +129,20 @@ public class BicycleRestfulApi {
 
             //获取是否有未支付订单
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(unlockDto.getUserId());
-
+            VehicleOrderDto dto = new VehicleOrderDto();
             if (order != null) {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
+                return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
-                orderId = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
+                 dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
             }
 
-            if (orderId > 0) {
-                return ResponseEntity.ok(new Message<String>(true, 0, null, ReturnEnum.Unlock_Success.getErrorDesc()));
+            if (dto != null) {
+                return ResponseEntity.ok(new Message<VehicleOrderDto>(true, 0, ReturnEnum.Unlock_Success.getErrorDesc(), dto));
             } else {
-                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));
+                return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));
             }
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 

@@ -12,7 +12,13 @@ public enum  DepositStatus {
     /**
      * 成功
      */
-    susuccess(2);
+    susuccess(2),
+
+    /**
+     * 退款
+     */
+    refund(3),
+    ;
 
 
     private int value;

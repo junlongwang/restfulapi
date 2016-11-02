@@ -1,9 +1,11 @@
 package com.joybike.server.api.service;
 
 import com.joybike.server.api.Enum.PayType;
+import com.joybike.server.api.dto.AlipayDto;
 import com.joybike.server.api.model.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -147,5 +149,10 @@ public interface PayRestfulService {
      * @return
      * @throws Exception
      */
-    bankDepositOrder getbankDepostiOrderByid(Long id) throws Exception;
+    bankDepositOrder getbankDepostiOrderByid(long id) throws Exception;
+
+
+
+    String payBeanToAliPay(ThirdPayBean bean,long orderId) throws Exception;
+
 }

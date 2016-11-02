@@ -74,7 +74,7 @@ public class BicycleRestfulApi {
      * @param cancleDto
      * @return
      */
-    @RequestMapping(value = "cancle", method = RequestMethod.GET)
+    @RequestMapping(value = "cancle", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> cancle(@RequestBody CancleDto cancleDto) {
         try {
             bicycleRestfulService.deleteSubscribeInfo(cancleDto.getUserId(), cancleDto.getBicycleCode());

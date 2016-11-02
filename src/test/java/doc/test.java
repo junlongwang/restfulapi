@@ -77,5 +77,11 @@ public class test {
 
 //        System.out.println(new Message<List<product>>(false, ReturnEnum.Product_Error.getErrorCode(), ReturnEnum.Product_Error.getErrorDesc() + "-" + "error", null));
     }
+
+    @Test
+    public void  ty(){
+        long a = UnixTimeUtils.getUnixTime("2015-4-27 15:45:58");
+        System.out.println(a);
+    }
 }
 

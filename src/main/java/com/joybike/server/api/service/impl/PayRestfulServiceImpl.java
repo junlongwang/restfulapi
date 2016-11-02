@@ -1,11 +1,14 @@
 package com.joybike.server.api.service.impl;
 
 import com.joybike.server.api.Enum.*;
+import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 import com.joybike.server.api.dao.*;
+import com.joybike.server.api.dto.AlipayDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.RestfulException;
+import com.joybike.server.api.util.ToHashMap;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -49,6 +53,9 @@ public class PayRestfulServiceImpl implements PayRestfulService {
 
     @Autowired
     private VehicleOrderDao vehicleOrderDao;
+
+    @Autowired
+    AliPayConstructUrlInter aliPayConstructUrlInter;
 
 
     /**
@@ -195,6 +202,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Transactional
     @Override
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception {
+
         int updateCount = depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
         //充值回调成功的时候修改用户的余额信息
         if (updateCount > 0) {
@@ -353,8 +361,10 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         return vehicleOrderDao.getNoPayByOrder(userId, orderCode);
     }
 
-
-
+    @Override
+    public bankDepositOrder getbankDepostiOrderByid(long id) throws Exception {
+        return depositOrderDao.getDepositOrderById(id);
+    }
 
 
     /*==================================================*/
@@ -424,6 +434,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param bankRefundOrder
      * @return
      */
+    @Override
     public Long creatRefundOrder(bankRefundOrder bankRefundOrder) {
         return bankRefundOrderDao.save(bankRefundOrder);
     }
@@ -434,18 +445,33 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param Id
      * @return
      */
+    @Override
     public int updateRefundOrderStatusById(Long Id) {
         return bankRefundOrderDao.updateRefundOrderStatusById(Id);
     }
 
+
     /**
-     * 根据订单ID获取订单信息
-     * @param id
+     * 组合
+     * @param bean
      * @return
-     * @throws Exception
      */
-    public bankDepositOrder getbankDepostiOrderByid(Long id) throws Exception{
-        return depositOrderDao.getDepositOrderById(id);
+    @Override
+    public String payBeanToAliPay(ThirdPayBean bean,long orderId) throws Exception{
+        AlipayDto dto = new AlipayDto();
+
+        long b_Pay_time = (bean.getRecordTime().getTime() - bean.getCreateTime().getTime())/(1000 * 60);
+
+        dto.setOut_trade_no(String.valueOf(orderId));
+        dto.setAppenv(bean.getOperIP());
+        dto.setBody(bean.getPruductDesc());
+        dto.setIt_b_pay(String.valueOf(b_Pay_time));
+        dto.setTotal_fee(String.valueOf(bean.getOrderMoney()));
+        dto.setSubject(bean.getOrderDesc());
+
+        HashMap<String,String> map = ToHashMap.beanToMap(dto);
+        RedirectParam para = aliPayConstructUrlInter.getUrl(map);
+        return para.getPara();
     }
 
     /**
@@ -457,6 +483,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @return
      * @throws Exception
      */
+    @Override
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception{
         return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);
     }

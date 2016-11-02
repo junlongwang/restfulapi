@@ -1,6 +1,7 @@
 package com.joybike.server.api.service;
 
 
+import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.product;
 import com.joybike.server.api.model.vehicleOrder;
@@ -94,4 +95,6 @@ public interface OrderRestfulService {
      * @return
      */
     vehicleOrder getOrder(long id) throws Exception;
+
+
 }

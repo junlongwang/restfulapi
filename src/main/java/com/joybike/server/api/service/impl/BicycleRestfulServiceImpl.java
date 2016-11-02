@@ -264,8 +264,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public VehicleOrderDto unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception {
 
-        long orderId = 0;
-
         //获取车的状态
         vehicle vehicle = vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
         VehicleOrderDto dto = new VehicleOrderDto();
@@ -289,7 +287,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                             bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
-                            orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -305,7 +303,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             //时间没有过期,直接修改
                             bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
-                            orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -325,7 +323,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                             bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
-                            orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -348,7 +346,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                         bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
-                        orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                         //修改车的使用状态
                         vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -363,7 +361,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         //时间没有过期,直接修改
                         bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
-                        orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
 
                         //修改车的使用状态
@@ -385,7 +383,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                         bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
-                        orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                         //修改车的使用状态
                         vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -406,7 +404,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                     bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                     //创建订单
-                    orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                    long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
 
                     //修改车的使用状态
@@ -437,7 +435,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                             bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
-                            orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -452,7 +450,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             //时间没有过期,直接修改
                             bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
-                            orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -473,7 +471,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                             bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
-                            orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -496,7 +494,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                         bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
-                        orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
                         //修改车的使用状态
                         vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
@@ -510,7 +508,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         //时间没有过期,直接修改
                         bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
-                        orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
 
                         //修改车的使用状态
@@ -532,7 +530,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                         bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
-                        orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
                         //修改车的使用状态
                         vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
 
@@ -553,7 +551,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
                     bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
                     //创建订单
-                    orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                    long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
 
                     //修改车的使用状态
@@ -680,9 +678,16 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public VehicleOrderDto getOrderInfo(long id) throws Exception {
         VehicleOrderDto dto = vehicleOrderDao.getOrderById(id);
+
         if (dto != null) {
-            List<vehicleHeartbeat> list = getVehicleHeartbeatList(dto.getVehicleId(), dto.getBeginAt(), dto.getEndAt());
-            dto.setVehicleHeartbeatList(list);
+            if (dto.getStatus() == 1){
+                dto.setEndAt(UnixTimeUtils.now());
+                List<vehicleHeartbeat> list = getVehicleHeartbeatList(dto.getVehicleId(), dto.getBeginAt(), dto.getEndAt());
+                if (list.size() > 0){
+                    dto.setVehicleHeartbeatList(list);
+                }
+            }
+
         }
         int runTime = UnixTimeUtils.now() - dto.getBeginAt();
         if (runTime < 120) {
@@ -707,7 +712,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public VehicleOrderSubscribeDto getUseInfo(long userId) throws Exception {
         VehicleOrderDto vehicleOrderDto = vehicleOrderDao.getOrderByUserId(userId);
-        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId, SubscribeStatus.use);
+        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
 
         VehicleOrderSubscribeDto dto = new VehicleOrderSubscribeDto();
 

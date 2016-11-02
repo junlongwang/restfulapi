@@ -7,11 +7,13 @@ import com.joybike.server.api.Enum.SecurityStatus;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
+import com.joybike.server.api.dto.AliPayOfNotify;
 import com.joybike.server.api.dto.RefundDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
+import com.joybike.server.api.thirdparty.wxtenpay.util.AlipayNotify;
 import com.joybike.server.api.thirdparty.wxtenpay.util.WxDealUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -74,6 +77,37 @@ public class PayRestfulApi {
                 //余额充值
                 try {
                     String rechargeResult = recharge(payBean, userId);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
+                } catch (Exception e) {
+                    return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
+                }
+            }
+        }
+        return ResponseEntity.ok(new Message<String>(false,ReturnEnum.Recharge_Error.getErrorCode(),ReturnEnum.BankDepositOrderList_Error.getErrorDesc(),"payBean或userid为空"));
+    }
+
+    /**
+     * 充值：可充值押金、预存现金ali
+     *
+     * @param payBean
+     * @return
+     */
+    @RequestMapping(value = "depositAli",method = RequestMethod.POST)
+    public ResponseEntity<Message<String>> depositAli(@RequestBody ThirdPayBean payBean) {
+        long userId= payBean.getUserId();
+        if (payBean != null && String.valueOf(userId) != null) {
+            //押金充值
+            if (payBean.getRechargeType() == 1) {
+                try {
+                    String rechargeResult = AliforRecharge(payBean, userId);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
+                } catch (Exception e) {
+                    return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
+                }
+            } else {
+                //余额充值
+                try {
+                    String rechargeResult = Alirecharge(payBean, userId);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -168,6 +202,86 @@ public class PayRestfulApi {
         return "";
     }
 
+
+    /**
+     * 支付宝回调
+     * @param re
+     * @return
+     */
+    @RequestMapping(value = "paynotifyAli")
+    public String payOfNotifyAli(HttpServletRequest re) {
+
+
+        //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以下仅供参考)//
+
+        AliPayOfNotify notify = new AliPayOfNotify();
+
+        if (re.getParameter("notify_time") != null)
+            notify.setNotify_time(Integer.parseInt(re.getParameter("notify_time")));
+        if (re.getParameter("notify_type") != null)
+            notify.setNotify_type(re.getParameter("notify_type"));
+        if (re.getParameter("notify_id") != null)
+            notify.setNotify_id(re.getParameter("notify_id"));
+        if (re.getParameter("app_id") != null)
+            notify.setApp_id(re.getParameter("app_id"));
+        if (re.getParameter("sign_type") != null)
+            notify.setSign_type(re.getParameter("sign_type"));
+        if (re.getParameter("sign") != null)
+            notify.setSign(re.getParameter("sign"));
+        if (re.getParameter("trade_no") != null)
+            notify.setTrade_no(re.getParameter("trade_no"));
+        if (re.getParameter("out_trade_no") != null)
+            notify.setOut_trade_no(re.getParameter("out_trade_no"));
+        if (re.getParameter("trade_status") != null)
+            notify.setTrade_status(re.getParameter("trade_status"));
+        if (re.getParameter("total_amount") != null)
+            notify.setTotal_amount(BigDecimal.valueOf(Long.parseLong(re.getParameter("total_amount"))));
+        if (re.getParameter("gmt_payment") != null)
+            notify.setGmt_payment(Integer.parseInt(re.getParameter("gmt_payment")));
+        if (notify.getTrade_status() != null){
+            if (notify.getTrade_status().equals("TRADE_FINISHED") || notify.getTrade_status().equals("TRADE_SUCCESS")) {
+                long pay_at = 0;
+                if (notify.getGmt_payment() > 0)  pay_at = notify.getGmt_payment();
+                else pay_at = notify.getNotify_time();
+                try {
+                    int result = 0;
+                    bankDepositOrder bankDepositOrder = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
+                    if (bankDepositOrder != null){
+                        if(bankDepositOrder.getRechargeType() == RechargeType.deposit.getValue()){
+                            //
+
+
+                            result = payRestfulService.updateDepositOrderById_Yajin(Long.valueOf(notify.getOut_trade_no()),notify.getTrade_no(),(int)pay_at,2);
+                            //同时更新用户状态
+                            if (result > 0){
+                                userInfo userInfo = new userInfo();
+                                userInfo.setId(bankDepositOrder.getUserId());
+                                userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
+                                userRestfulService.updateUserInfo(userInfo);
+                            }
+                        }
+                        //余额充值成功更新充值订单信息
+                        else{
+                            bankDepositOrder order = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
+                            if (order.getStatus() == 2){
+                                return "success";
+                            }else {
+                                payRestfulService.updateDepositOrderById(Long.valueOf(notify.getOut_trade_no()), PayType.Alipay, notify.getTrade_no(), "", (int)pay_at);
+                            }
+                        }
+                    }
+                    return "success";
+                } catch (Exception e) {
+                    return "fail";
+                }
+            }else {
+                return "fail";
+            }
+        }else {
+            return "fail";
+        }
+    }
+
     /**
      * 获取消费明细
      *
@@ -251,6 +365,43 @@ public class PayRestfulApi {
         }
         return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(),ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
     }
+
+
+    /******************************************************************/
+
+    //押金充值
+    public String AliforRecharge(ThirdPayBean payBean, long userId) {
+        bankDepositOrder order = createDepositRechargeOrder(payBean, userId);
+//        long orderId = 0;
+        try {
+            long orderId = payRestfulService.depositRecharge(order);
+            if (orderId >0){
+                payBean.setId(orderId);
+                return payRestfulService.payBeanToAliPay(payBean, orderId);
+            }else{
+                return "";
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.Recharge_Error);
+        }
+    }
+
+    public String Alirecharge(ThirdPayBean payBean, long userId){
+        bankDepositOrder order = createRechargeOrder(payBean, userId);
+        try {
+            long orderId = payRestfulService.depositRecharge(order);
+            if (orderId > 0){
+                payBean.setId(orderId);
+                return payRestfulService.payBeanToAliPay(payBean, orderId);
+            }else{
+                return "";
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.Recharge_Error);
+        }
+    }
+
+
 
     //押金充值
     public String forRecharge(ThirdPayBean payBean, long userId) {

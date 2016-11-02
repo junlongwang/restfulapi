@@ -91,7 +91,8 @@ public class ThirdPayServiceImpl implements ThirdPayService {
     public String queryPayResult(ThirdPayBean payOrder) {
         String queryResult = "";
         if (payOrder != null) {
-            WxappConstructUrlInter cui = new WxappConstructUrlImpl();
+            //wxappConstructUrlInter
+            //WxappConstructUrlInter cui = new WxappConstructUrlImpl();
         }
         return queryResult;
     }
@@ -100,7 +101,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
     public String callBack(WxNotifyOrder wxNotifyOrder){
         String mch_id = wxNotifyOrder.getMch_id();
         if (mch_id.equals(wxAppmch_id)){
-            return new WxappConstructUrlImpl().callBack(wxNotifyOrder);
+            return wxappConstructUrlInter.callBack(wxNotifyOrder);
         }
         else if(mch_id.equals(wxPubmch_id)){
             return new WxPublicConstructUrlImpl().callBack(wxNotifyOrder);

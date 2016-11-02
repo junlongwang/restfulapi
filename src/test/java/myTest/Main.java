@@ -1,6 +1,7 @@
 package myTest; /**
  * Created by 58 on 2016/10/27.
  */
+import com.alibaba.fastjson.JSON;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,11 +28,12 @@ public class Main {
             // 从文件系统中的某个文件中获取字节
             isr = new InputStreamReader(fis);// InputStreamReader 是字节流通向字符流的桥梁,
             br = new BufferedReader(isr);// 从字符输入流中读取文件中的内容,封装了一个new InputStreamReader的对象
+            int i=0;
             while ((str = br.readLine()) != null) {
-                str1 += str +" "+httpPost(str)+"\n";
+                str1 += " "+str +" "+httpPost(str)+"\n";
             }
             // 当读取的一行不为空时,把读到的str的值赋给str1
-            System.out.println(str1);// 打印出str1
+            //System.out.println(str1);// 打印出str1
         } catch (FileNotFoundException e) {
             System.out.println("找不到指定文件");
         } catch (IOException e) {
@@ -60,30 +62,33 @@ public class Main {
         String[] kv=contents.split(",");
 
 
-        Amortize amortize = null;
-
+        Amortize amortize = new Amortize();
         for (String value : kv)
         {
+            if(value.equals("payId=") ||value.equals("payId=0") )
+            {
+                break;
+            }
             String[] filed=value.split("=");
 
 
             try {
-                System.out.println(filed[0] + " "+ filed[1]);
+                String aa=filed[1];
             }
             catch (Exception e)
             {
                 System.out.println(line+" ++++++++++++++++++");
-                break;
+                //break;
             }
 
-            amortize = new Amortize();
+
             if(filed[0].equals("payId"))
             {
                 amortize.setPayId(Long.valueOf(filed[1]));
             }
             if(filed[0].equals("consumeTime"))
             {
-                amortize.setConsumeTime(Long.valueOf(filed[1]));
+                amortize.setConsumeTime(Long.valueOf(filed[1])*1000);
             }
             if(filed[0].equals("flowId"))
             {
@@ -103,24 +108,40 @@ public class Main {
             }
             if(filed[0].equals("consumeAmount"))
             {
-                Double n = Math.abs(Double.valueOf(filed[1]));
-
-                amortize.setConsumeAmount(BigDecimal.valueOf(n));
+                if(filed[1]=="-1.00" || filed[1].equals("-1.00"))
+                {
+                    amortize.setConsumeAmount(BigDecimal.ONE);
+                }
+                else {
+                    Double n = Math.abs(Double.valueOf(filed[1]));
+                    if(n<0)
+                    {
+                        n=0-n;
+                    }
+                    amortize.setConsumeAmount(BigDecimal.valueOf(n));
+                }
             }
             if(filed[0].equals("totalAmount"))
             {
                 amortize.setTotalAmount(BigDecimal.valueOf(Double.valueOf(filed[1])));
             }
-            amortize.setIsLastTime(0);
-            amortize.setSourceSys("pmc");
 
-            System.out.println(amortize);
 
         }
+        amortize.setIsLastTime(0);
+        amortize.setSourceSys("pmc");
+        if(amortize!=null && amortize.getPayId()!=null && amortize.getPayId()>0) {
+//            HttpEntity<Amortize> formEntity = new HttpEntity<Amortize>(amortize,headers);
+//            String result = restTemplate.postForObject("http://amortize.web.58dns.org/consume", formEntity, String.class);
+//            return result;
 
-        return amortize.toString();
-        //HttpEntity<Amortize> formEntity = new HttpEntity<Amortize>(amortize,headers);
-        //String result = restTemplate.postForObject("http://amortize.web.58dns.org/consume", formEntity, String.class);
-        //return result;
+            String json= JSON.toJSONString(amortize);
+            //HttpEntity<String> formEntity = new HttpEntity<String>(json,headers);
+            //String result = restTemplate.postForObject("http://amortize.web.58dns.org/consume", formEntity, String.class);
+
+            String result = HttpRequest.sendPost("http://amortize.web.58dns.org/consume",json);
+            System.out.println(json + " "+result);
+        }
+        return "手工补偿库存，无需摊销";
     }
 }

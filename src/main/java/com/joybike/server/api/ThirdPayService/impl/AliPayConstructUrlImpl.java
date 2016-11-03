@@ -5,6 +5,9 @@ import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import com.joybike.server.api.thirdparty.wxtenpay.util.RSASignature;
+import com.joybike.server.api.util.AlipayCore;
+import com.joybike.server.api.util.RSA;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,98 +24,114 @@ import java.util.Map;
  * Created by LongZiyuan on 2016/10/24.
  */
 @Service
-public class AliPayConstructUrlImpl implements AliPayConstructUrlInter {
+public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
 
-    private String partner = "2088521096580226";
-    private String account = "1314159";
-    private String seller_id = "2088521096580226";
-    private String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBANkzPpaA1tYpcRXEq3l4ykaCeK5AZYj07n8EfdKkQxr6uo2Lzw8g5jwgFdkO330VtoVvClRnrsjF/d6WRiao/6slBIgDrvqEbWEXtudyqLzkl2DZGnmtQpC5q7q56P5bBAMfeli0ZmYW3rjdveGf1TRDGMYYR4x87V998XNA4UgNAgMBAAECgYAEAOXOcGGFYQ4skIt4mblgw1bmH1m/xIQA41xOXai+/pAhu8n9RWX5Bb5hWdzUuWm72+gc1ixqlvuu9qYkYEkWHcjZS4TqOANCqtSCWp4hlRGVCRfHtm1wDL72Z2AF7BZIRwPnRhS9apGm1kCSCH3iSYHJCijZS3T1ooPzWJ1dAQJBAP5A1PfmGvS2WbsCHy44Ib5Gd4JP82SuKLz/IqFu9tD23x7ZLc1zvQVkKfyBr5pFw6+lJ0t2IlSiPW68sdckyXUCQQDasT7V6ZCHxbgVrOb4C7CC4/ZVxUSLTYYKckjECrVKbov+DFaPojy2IGfoJGZaWJlk0FNeOBmQFKZouXJ1dBk5AkBYUlEo5GhMxeOZ0Pzf42PlYzk0rW1RdiZ0sPRou9FFedy8LJl6m0/4RXlIXAySPNXjeC2USy9V0x4gD7B/minZAkEAwQZS1NIrvHr6iT8sOeFvcYguI/RTFLVfSxcmPMrKyyCZtalEOdDTz1j4/YArSzEKa14pR28yuOZRHvwYF61amQJAA2GH8JB4p4rGx/yw0dY3ZDGJMpjOed3MZDnJ1blrDG3akdJM8qU8H/niH5uLm5zYjAk0VyUmg/9jXJyHFfjpsw==";
-    private String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZMz6WgNbWKXEVxKt5eMpGgniuQGWI9O5/BH3SpEMa+rqNi88PIOY8IBXZDt99FbaFbwpUZ67Ixf3elkYmqP+rJQSIA676hG1hF7bncqi85Jdg2Rp5rUKQuau6uej+WwQDH3pYtGZmFt643b3hn9U0QxjGGEeMfO1fffFzQOFIDQIDAQAB";
+    private final Logger logger = Logger.getLogger(AliPayConstructUrlImpl.class);
+
+//    private String partner = "2088521096580226";
+//    private String account = "1314159";
+//    private String seller_id = "2088521096580226";
+//    private String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBANkzPpaA1tYpcRXEq3l4ykaCeK5AZYj07n8EfdKkQxr6uo2Lzw8g5jwgFdkO330VtoVvClRnrsjF/d6WRiao/6slBIgDrvqEbWEXtudyqLzkl2DZGnmtQpC5q7q56P5bBAMfeli0ZmYW3rjdveGf1TRDGMYYR4x87V998XNA4UgNAgMBAAECgYAEAOXOcGGFYQ4skIt4mblgw1bmH1m/xIQA41xOXai+/pAhu8n9RWX5Bb5hWdzUuWm72+gc1ixqlvuu9qYkYEkWHcjZS4TqOANCqtSCWp4hlRGVCRfHtm1wDL72Z2AF7BZIRwPnRhS9apGm1kCSCH3iSYHJCijZS3T1ooPzWJ1dAQJBAP5A1PfmGvS2WbsCHy44Ib5Gd4JP82SuKLz/IqFu9tD23x7ZLc1zvQVkKfyBr5pFw6+lJ0t2IlSiPW68sdckyXUCQQDasT7V6ZCHxbgVrOb4C7CC4/ZVxUSLTYYKckjECrVKbov+DFaPojy2IGfoJGZaWJlk0FNeOBmQFKZouXJ1dBk5AkBYUlEo5GhMxeOZ0Pzf42PlYzk0rW1RdiZ0sPRou9FFedy8LJl6m0/4RXlIXAySPNXjeC2USy9V0x4gD7B/minZAkEAwQZS1NIrvHr6iT8sOeFvcYguI/RTFLVfSxcmPMrKyyCZtalEOdDTz1j4/YArSzEKa14pR28yuOZRHvwYF61amQJAA2GH8JB4p4rGx/yw0dY3ZDGJMpjOed3MZDnJ1blrDG3akdJM8qU8H/niH5uLm5zYjAk0VyUmg/9jXJyHFfjpsw==";
+//    private String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZMz6WgNbWKXEVxKt5eMpGgniuQGWI9O5/BH3SpEMa+rqNi88PIOY8IBXZDt99FbaFbwpUZ67Ixf3elkYmqP+rJQSIA676hG1hF7bncqi85Jdg2Rp5rUKQuau6uej+WwQDH3pYtGZmFt643b3hn9U0QxjGGEeMfO1fffFzQOFIDQIDAQAB";
+//    private String ALIPAY_PAY_SERVICE = "mobile.securitypay.pay";
+//    private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
+//    private String app_id = "2016102202289143";
+
+
+    private String partner = "2088521096580226";//"2088521096580226";
+    //private String account = "1314159";
+    private String seller_id ="2088521096580226"; //"wangliang@sktbj.com";//"2088521096580226";
+    private String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAN3WBUX/m6chKm+NPW2zL4poDBY59fViKZGJQZlXmc1Ja0SjLOpJccYD3AzfHnm5At8pSTAMLw2KAU5DFsWvaeHaX0nU6MJw4jykBNk7PvUpNysRVuQENhZzeDFlg6no21dGODJ8Yqyi0V8I48fspE+Qc2j4zFXrg9dz4zsMN4J/AgMBAAECgYAGHdORZYXWKtzvrHZIIwuphkrnBfwZIvbAc4digf7UoTSa9ODVKOdBLXQQysodUxOYMZw5/ewCNI7qqIDlPHvv2CBVi1kzrY5EEh8srqOdb/qz77W2j30mhGbwGhhgAezj+LC0J+Q7xTG5jRp6qFtS6VWhVvW7s8XLuKHoYlmtmQJBAO6rL+z8qHO+OFNXadXHYVpzFTNU2qfwlyvWk9Sy3ObXbjldauel8583WT7zGeVQmjByiGWt5b7wffZ/PWaOi7UCQQDt8eqh+P1n0739w9jTgOq1q5aWg3xeb/9p/jJ1H0WrU6+XUD81epwxt2J3V2ziEe9d8XsyNJY2R8TQ4zWSGb3jAkEAnvkNyjgc6EOK9xBhoZDVqs6/D1r07ioWN5ANFf8xnt1eQP2ViMkENkhCvOhmllUS7zRK4Bdt0boU3Qyx1E8chQJBAJUlOPQT9Qq6j3Fb7DIOsY/0IOzxN+id/RP8ELaXRn0wdHS9CRHFa9hB4Yd6ljZSFZ7l+Vmr2qflbnmcoXyVhA8CQGItwOKY9akZhUVLEdZcIrjMmtoGz2D+Z6CLCN02MsbJWsDz96BseQ1PuUSotCzPyngylkFo/5JYj5X7ba90MOQ=";
+   // private String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAN3WBUX/m6chKm+NPW2zL4poDBY59fViKZGJQZlXmc1Ja0SjLOpJccYD3AzfHnm5At8pSTAMLw2KAU5DFsWvaeHaX0nU6MJw4jykBNk7PvUpNysRVuQENhZzeDFlg6no21dGODJ8Yqyi0V8I48fspE+Qc2j4zFXrg9dz4zsMN4J/AgMBAAECgYAGHdORZYXWKtzvrHZIIwuphkrnBfwZIvbAc4digf7UoTSa9ODVKOdBLXQQysodUxOYMZw5/ewCNI7qqIDlPHvv2CBVi1kzrY5EEh8srqOdb/qz77W2j30mhGbwGhhgAezj+LC0J+Q7xTG5jRp6qFtS6VWhVvW7s8XLuKHoYlmtmQJBAO6rL+z8qHO+OFNXadXHYVpzFTNU2qfwlyvWk9Sy3ObXbjldauel8583WT7zGeVQmjByiGWt5b7wffZ/PWaOi7UCQQDt8eqh+P1n0739w9jTgOq1q5aWg3xeb/9p/jJ1H0WrU6+XUD81epwxt2J3V2ziEe9d8XsyNJY2R8TQ4zWSGb3jAkEAnvkNyjgc6EOK9xBhoZDVqs6/D1r07ioWN5ANFf8xnt1eQP2ViMkENkhCvOhmllUS7zRK4Bdt0boU3Qyx1E8chQJBAJUlOPQT9Qq6j3Fb7DIOsY/0IOzxN+id/RP8ELaXRn0wdHS9CRHFa9hB4Yd6ljZSFZ7l+Vmr2qflbnmcoXyVhA8CQGItwOKY9akZhUVLEdZcIrjMmtoGz2D+Z6CLCN02MsbJWsDz96BseQ1PuUSotCzPyngylkFo/5JYj5X7ba90MOQ=";
+    //private String fdsfsdfsdf = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAN3WBUX/m6chKm+NPW2zL4poDBY59fViKZGJQZlXmc1Ja0SjLOpJccYD3AzfHnm5At8pSTAMLw2KAU5DFsWvaeHaX0nU6MJw4jykBNk7PvUpNysRVuQENhZzeDFlg6no21dGODJ8Yqyi0V8I48fspE+Qc2j4zFXrg9dz4zsMN4J/AgMBAAECgYAGHdORZYXWKtzvrHZIIwuphkrnBfwZIvbAc4digf7UoTSa9ODVKOdBLXQQysodUxOYMZw5/ewCNI7qqIDlPHvv2CBVi1kzrY5EEh8srqOdb/qz77W2j30mhGbwGhhgAezj+LC0J+Q7xTG5jRp6qFtS6VWhVvW7s8XLuKHoYlmtmQJBAO6rL+z8qHO+OFNXadXHYVpzFTNU2qfwlyvWk9Sy3ObXbjldauel8583WT7zGeVQmjByiGWt5b7wffZ/PWaOi7UCQQDt8eqh+P1n0739w9jTgOq1q5aWg3xeb/9p/jJ1H0WrU6+XUD81epwxt2J3V2ziEe9d8XsyNJY2R8TQ4zWSGb3jAkEAnvkNyjgc6EOK9xBhoZDVqs6/D1r07ioWN5ANFf8xnt1eQP2ViMkENkhCvOhmllUS7zRK4Bdt0boU3Qyx1E8chQJBAJUlOPQT9Qq6j3Fb7DIOsY/0IOzxN+id/RP8ELaXRn0wdHS9CRHFa9hB4Yd6ljZSFZ7l+Vmr2qflbnmcoXyVhA8CQGItwOKY9akZhUVLEdZcIrjMmtoGz2D+Z6CLCN02MsbJWsDz96BseQ1PuUSotCzPyngylkFo/5JYj5X7ba90MOQ=";
+    //private String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB";
     private String ALIPAY_PAY_SERVICE = "mobile.securitypay.pay";
-    private String notifyUrl = "http://api.joybike.com.cn/restful/pay/aliPaynotify";
+    private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotifyAli";
     private String app_id = "2016102202289143";
 
-    public RedirectParam getUrl(HashMap<String, String> paraMap) {
+    @Override
+    public RedirectParam getUrl(HashMap<String,String> paraMap) {
         RedirectParam para = new RedirectParam();
         HashMap<String, String> requestParams = new HashMap<String, String>();
         //封装提交的参数
-        String signature = "\"";
-        String outTradeNo = "";
-        String body = "";
-        String subject = "";
-        String totalFee = "";
-
-        try {
-            if (paraMap == null || paraMap.size() == 0) {
+        String signature="\"";
+        String outTradeNo="";
+        String body="";
+        String subject="";
+        String totalFee="";
+        try{
+            if (paraMap == null||paraMap.size()==0) {
                 return null;
-            } else {
+            }else{
                 outTradeNo = paraMap.get("out_trade_no");
-                if (StringUtil.isNullOrEmpty(outTradeNo)) {
+                if(StringUtil.isNullOrEmpty(outTradeNo)){
                     return null;
                 }
-                body = paraMap.containsKey("body") ? String.valueOf(paraMap.get("body")) : "";
-                subject = paraMap.containsKey("subject") ? String.valueOf(paraMap.get("subject")) : "Joybike账户充值";
-                totalFee = String.valueOf(paraMap.get("total_fee"));
+                body=paraMap.containsKey("body")?String.valueOf(paraMap.get("body")):"测试数据";
+                subject=paraMap.containsKey("subject")?String.valueOf(paraMap.get("subject")):"Joybike账户充值";
+                totalFee=String.valueOf(paraMap.get("total_fee"));
                 //客户端号，用于快登
 //                if(paraMap.containsKey("app_id")&&(!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("app_id"))))){
 //                    requestParams.put("app_id",signature+String.valueOf(paraMap.get("app_id"))+signature);
 //                }
-                requestParams.put("app_id", signature + app_id + signature);
+                requestParams.put("app_id",signature+app_id+signature);
                 //客户端来源
-                if (paraMap.containsKey("appenv") && (!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("appenv"))))) {
-                    requestParams.put("appenv", signature + String.valueOf(paraMap.get("appenv")) + signature);
+                if(paraMap.containsKey("appenv")&&(!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("appenv"))))){
+                    requestParams.put("appenv",signature+String.valueOf(paraMap.get("appenv"))+signature);
                 }
                 //超时时间
                 if (paraMap.containsKey("it_b_pay") && (!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("it_b_pay"))))) {
-                    requestParams.put("it_b_pay", signature + String.valueOf(paraMap.get("it_b_pay")) + signature);
-                } else {
-                    requestParams.put("it_b_pay", signature + "15d" + signature);
+                    requestParams.put("it_b_pay",signature+String.valueOf(paraMap.get("it_b_pay"))+signature);
+                }else {
+                    requestParams.put("it_b_pay", signature+"15d"+signature);
                 }
                 //商品展示地址
 //                if (paraMap.containsKey("show_url") && (!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("show_url"))))) {
 //                    requestParams.put("show_url",signature+String.valueOf(paraMap.get("show_url"))+signature);
 //                }
-                requestParams.put("service", signature + ALIPAY_PAY_SERVICE + signature);
-                requestParams.put("partner", signature + partner + signature);
-                requestParams.put("_input_charset", signature + "utf-8" + signature);
+                requestParams.put("service",signature+ALIPAY_PAY_SERVICE+signature);
+                requestParams.put("partner",signature+ partner +signature);
+                requestParams.put("_input_charset",signature+"utf-8"+signature);
                 //AlipayPropertiesConfigEnum.ALIPAY_NOTIFY_URL.getEnumValues()
-                if (paraMap.get("consumeid") != null) {
-                    requestParams.put("notify_url", signature + notifyUrl + "?"
+                if (paraMap.get("consumeid") != null){
+                    requestParams.put("notify_url",signature + notifyUrl + "?"
                             + "attach" + "=" + paraMap.get("consumeid") + signature);
-                } else {
-                    requestParams.put("notify_url", signature + notifyUrl + signature);
                 }
-                requestParams.put("out_trade_no", signature + outTradeNo + signature);
-                requestParams.put("subject", signature + subject + signature);
+                else{
+                    requestParams.put("notify_url",signature + notifyUrl +signature);
+                }
+                requestParams.put("out_trade_no",signature+outTradeNo+signature);
+                requestParams.put("subject",signature+subject+signature);
                 requestParams.put("body",signature+body+signature);
-                requestParams.put("payment_type", signature + "1" + signature);
+                requestParams.put("payment_type",signature+ "1" +signature);
                 //requestParams.put("seller_id",signature+account+signature);//AlipayPropertiesConfigEnum.ALIPAY_SELLER_ID.getEnumValues()
-                requestParams.put("seller_id", signature + seller_id + signature);
-                requestParams.put("total_fee", signature + totalFee + signature);
+                //requestParams.put("seller_id",signature+seller_id+signature);
+                requestParams.put("seller_id",signature+seller_id+signature);
+                requestParams.put("total_fee",signature+totalFee+signature);
                 String preSignStr = AlipayAppUtil.createLinkString(requestParams);
                 String sign = RSASignature.sign(preSignStr, privateKey, "utf-8");
-
                 try {
-                    sign = URLEncoder.encode(sign, "utf-8");
+                    sign= URLEncoder.encode(sign, "utf-8");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                requestParams.put("sign", signature + sign + signature);
-                requestParams.put("sign_type", signature + "RSA" + signature);
-                String returnJson = JsonUtil.mapToJsonNoSinganaure(requestParams);
+                requestParams.put("sign", signature+sign+signature);
+                requestParams.put("sign_type", signature+"RSA"+signature);
+                String returnJson=JsonUtil.mapToJsonNoSinganaure(requestParams);
                 para.setPara(returnJson);
             }
-        } catch (Exception e) {
-            return null;
+        }catch (Exception e){
+            logger.error("支付宝支付发生错误。",e);
+            para.setPara(e.getMessage());
+            return para;
         }
         return para;
     }
 
-
     @Override
-    public String callBack(HttpServletRequest request) {
+    public String callBack(HttpServletRequest request){
         boolean result = getPayfinishHandler(request);
-        String pay_order_id = "", realPayMoney = "", tradeNo = "", dataValue = "";
+        String pay_order_id = "", realPayMoney = "",tradeNo="",dataValue = "";
         if (result) {
             if (request.getParameter("out_trade_no") != null) {
                 pay_order_id = request.getParameter("out_trade_no");
@@ -120,54 +139,55 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter {
             if (request.getParameter("total_fee") != null) {
                 realPayMoney = request.getParameter("total_fee");
             }
-            if (request.getParameter("trade_no") != null) {
-                tradeNo = request.getParameter("trade_no");
+            if(request.getParameter("trade_no") != null){
+                tradeNo =  request.getParameter("trade_no");
             }
-            if (request.getParameter("buyer_id") != null) {
+            if(request.getParameter("buyer_id") != null) {
                 dataValue = request.getParameter("buyer_id");
             }
             String tradeStatus = request.getParameter("trade_status");
-            if ("TRADE_FINISHED".equals(tradeStatus)) {
+            if("TRADE_FINISHED".equals(tradeStatus)){
                 return "SUCCSE";
             }
         }
         return "fail";
     }
 
-    private boolean getPayfinishHandler(HttpServletRequest request) {
+    private boolean getPayfinishHandler(HttpServletRequest request){
         boolean flag = false;
         String merId = "";
         Map params = new HashMap();
-        String sign = request.getParameter("sign");
+        String sign=request.getParameter("sign");
         Map requestParams = request.getParameterMap();
-        for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
+        for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
             String[] values = (String[]) requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {
                 valueStr = (i == values.length - 1) ? valueStr + values[i] : valueStr + values[i] + ",";
-                if ("seller_id".equals(name)) {
+                if( "seller_id".equals(name) ){
                     merId = values[i];
                 }
             }
-            if (name.equals("sign") && valueStr.contains(" ")) {//此处用于get方式测试提交
-                valueStr = valueStr.replaceAll(" ", "+");
+            if(name.equals("sign")&&valueStr.contains(" ")){//此处用于get方式测试提交
+                valueStr=valueStr.replaceAll(" ", "+");
             }
             params.put(name, valueStr);
         }
         if (AlipayNotify.verify(params)) {
-            flag = AlipayAppUtil.checkTradeSucAndFin(request.getParameter("trade_status"));
+            flag=AlipayAppUtil.checkTradeSucAndFin(request.getParameter("trade_status"));
         }
         return flag;
     }
 
 
     /**
+     *
      * @param payBean
      * @return
      */
     @Override
-    public String getRefundUrl(ThirdPayBean payBean) {
+    public String getRefundUrl(ThirdPayBean payBean){
 //        String service = "refund_fastpay_by_platform_nopwd";
 //        String notify_url = null;
 //        String input_charset = "utf-8";
@@ -202,5 +222,48 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter {
 //            return "true";
 //        }
         return "false";
+    }
+
+
+    public RedirectParam getUrl1(HashMap<String,String> paraMap) {
+
+        RedirectParam para = new RedirectParam();
+        try {
+//            String content = "\";
+//            Map<String, String> paramMap = new HashMap<String, String>();
+//            paramMap.put("service", content+"mobile.securitypay.pay"+content);
+//            paramMap.put("partner", content+partner+content);
+//            paramMap.put("_input_charset",content+ "utf-8"+content);
+//            paramMap.put("sign_type", content+"RSA"+content);
+//            paramMap.put("notify_url",content+ notifyUrl+content);
+//            paramMap.put("app_id",content+ app_id+content);
+//            //paramMap.put("appenv",content+ ""+content);
+//            paramMap.put("out_trade_no", content+paraMap.get("out_trade_no")+content);
+//            paramMap.put("subject", content+paraMap.get("subject")+content);
+//            paramMap.put("payment_type", content+"1"+content);
+//            paramMap.put("seller_id",content+ partner+content);
+//            paramMap.put("total_fee", content+paraMap.get("total_fee")+content);
+//            paramMap.put("body", content+paraMap.get("body")+content);
+//            paramMap.put("it_b_pay", content+"30m"+content);
+//            //paramMap.put("extern_token", content+""+content);
+//            Map<String, String> signMap = AlipayCore.paraFilter(paramMap);
+//            String srcData = AlipayCore.createLinkStringApp(signMap);
+//            logger.info("Alipay sign srcData>>" + srcData);
+//            String signData = RSA.sign(srcData, privateKey, "utf-8");
+//            logger.info("Alipay sign signData>>" + signData);
+//
+//            signData= URLEncoder.encode(signData, "utf-8");
+//            paramMap.put("sign", content+signData+content);
+//
+//            logger.info("给APP返回的DATA数据：" + paramMap.toString());
+//
+//            String returnJson=JsonUtil.mapToJsonNoSinganaure(paramMap);
+//            para.setPara(returnJson);
+        }catch (Exception e){
+            logger.error("支付宝支付发生错误。",e);
+            para.setPara(e.getMessage());
+            return para;
+        }
+        return para;
     }
 }

@@ -48,7 +48,7 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
         RedirectParam para = new RedirectParam();
         HashMap<String, String> requestParams = new HashMap<String, String>();
         //封装提交的参数
-        String signature="\"";
+        String signature="";//\"";
         String outTradeNo="";
         String body="";
         String subject="";
@@ -64,15 +64,11 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
                 body=paraMap.containsKey("body")?String.valueOf(paraMap.get("body")):"测试数据";
                 subject=paraMap.containsKey("subject")?String.valueOf(paraMap.get("subject")):"Joybike账户充值";
                 totalFee=String.valueOf(paraMap.get("total_fee"));
-                //客户端号，用于快登
-//                if(paraMap.containsKey("app_id")&&(!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("app_id"))))){
-//                    requestParams.put("app_id",signature+String.valueOf(paraMap.get("app_id"))+signature);
-//                }
                 requestParams.put("app_id",signature+app_id+signature);
                 //客户端来源
-                if(paraMap.containsKey("appenv")&&(!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("appenv"))))){
-                    requestParams.put("appenv",signature+String.valueOf(paraMap.get("appenv"))+signature);
-                }
+//                if(paraMap.containsKey("appenv")&&(!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("appenv"))))){
+//                    requestParams.put("appenv",signature+String.valueOf(paraMap.get("appenv"))+signature);
+//                }
                 //超时时间
                 if (paraMap.containsKey("it_b_pay") && (!StringUtil.isNullOrEmpty(String.valueOf(paraMap.get("it_b_pay"))))) {
                     requestParams.put("it_b_pay",signature+String.valueOf(paraMap.get("it_b_pay"))+signature);
@@ -109,9 +105,10 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                requestParams.put("sign", signature+sign+signature);
-                requestParams.put("sign_type", signature+"RSA"+signature);
-                String returnJson=JsonUtil.mapToJsonNoSinganaure(requestParams);
+                requestParams.put("sign", signature + sign + signature);
+                requestParams.put("sign_type", signature + "RSA" + signature);
+                String returnJson=requestParams.toString();
+                //JsonUtil.mapToJsonNoSinganaure(requestParams);
                 para.setPara(returnJson);
             }
         }catch (Exception e){

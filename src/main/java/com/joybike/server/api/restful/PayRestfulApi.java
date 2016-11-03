@@ -137,13 +137,22 @@ public class PayRestfulApi {
         logger.info("支付回调通知：" + wxNotifyXml.toString());
         WxNotifyOrder wxNotifyOrder = XStreamUtils.toBean(wxNotifyXml, WxNotifyOrder.class);
         String responseHtml = "success";
-        String mch_id = wxNotifyOrder.getMch_id();
         String returncode = "";
-        if (wxNotifyOrder.getTransaction_id() != null) {
-            returncode = ThirdPayService.callBack(wxNotifyOrder);
+        boolean updateTag = false;
+        try {
+            bankDepositOrder bankDepositOrder = payRestfulService.getbankDepostiOrderByid(Long.valueOf(wxNotifyOrder.getOut_trade_no()));
+            logger.info("微信充值回调根据id为：" + wxNotifyOrder.getOut_trade_no() + "的订单信息为" + bankDepositOrder.toString());
+            if (bankDepositOrder.getStatus() != 1){
+                updateTag = true;
+            }
+        } catch (Exception e) {
+            logger.error("微信充值回调根据订单id获取订单信息失败");
         }
-        if (returncode.equals("success")) {
-            if (mch_id.equals(wxAppmch_id)) {
+        if(!updateTag){
+            if (wxNotifyOrder.getTransaction_id() != null) {
+                returncode = ThirdPayService.callBack(wxNotifyOrder);
+            }
+            if (returncode.equals("success")) {
                 responseHtml = WxDealUtil.notifyResponseXml();
                 String out_trade_no = wxNotifyOrder.getOut_trade_no();
                 long id = Long.valueOf(out_trade_no);
@@ -174,21 +183,6 @@ public class PayRestfulApi {
 //                    if(attach != null && attach != ""){
 //                        Long consumeid = Long.valueOf(attach);
 //                    }
-                    if (result > 0) {
-                        return responseHtml;
-                    }
-                } catch (Exception e) {
-                    return "";
-                }
-            } else{
-                responseHtml = WxDealUtil.notifyResponseXml();
-                String out_trade_no = wxNotifyOrder.getOut_trade_no();
-                long id = Long.valueOf(out_trade_no);
-                String payDocumentId = wxNotifyOrder.getTransaction_id();
-                String merchantId = "";
-                int pay_at = UnixTimeUtils.StringDateToInt(wxNotifyOrder.getTime_end());
-                try {
-                    int result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
                     if (result > 0) {
                         return responseHtml;
                     }

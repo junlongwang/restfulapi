@@ -40,7 +40,9 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
     private String key = "F1BDA99703815CE223FF494A9039ADA3";
     private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+
     private String keypath = WxappConstructUrlImpl.class.getResource("/apiclient_cert_1404387302.p12").getFile();
+
     private final Logger logger = Logger.getLogger(WxappConstructUrlImpl.class);
     @Override
     public RedirectParam getUrl(HashMap<String, String> paraMap) {
@@ -282,6 +284,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
                 logger.error("关闭instream失败");
             }
         }
+
         SSLContext sslcontext = null;
         try {
             sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, mch_id.toCharArray()).build();
@@ -294,6 +297,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         } catch (UnrecoverableKeyException e) {
             e.printStackTrace();
         }
+
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null, SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
         CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
         Map<String, String> paramsMap = new HashMap<>();
@@ -303,6 +307,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         paramsMap.put("transaction_id", payOrder.getTransaction_id());
         paramsMap.put("out_trade_no", String.valueOf(payOrder.getCosumeid()));
         paramsMap.put("out_refund_no", String.valueOf(payOrder.getRefundid()));
+
         Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
         BigDecimal total_fee = new BigDecimal(fMoney);
         paramsMap.put("total_fee", String.valueOf(total_fee));
@@ -311,6 +316,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         String sign=SignUtil.sign(paramsMap,key).toUpperCase();
         paramsMap.put("sign", sign);
         String requestURL = wxRefundUrl;
+
         try {
 
             HttpPost httpPost = new HttpPost(requestURL);
@@ -337,6 +343,7 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
                     Pattern p = Pattern.compile(pattern,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
                     while ((text = bufferedReader.readLine()) != null) {
                         if (text.contains("<result_code><![CDATA[SUCCESS]]>")) {
+
                             result = "success";
                             logger.info("原路提现(微信退款（通用版）)：成功,成功,成功");
                             break;

@@ -82,4 +82,13 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * @throws Exception
      */
     VehicleOrderDto getOrderByUserId(long userId) throws Exception;
+
+    /**
+     * 根据code获取订单信息
+     *
+     * @param orderCode
+     * @return
+     * @throws Exception
+     */
+    VehicleOrderDto getOrderByOrderCode(String orderCode) throws Exception;
 }

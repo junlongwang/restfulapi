@@ -16,19 +16,19 @@ public interface WxappConstructUrlInter {
      * @param paraMap
      * @return
      */
-    public RedirectParam getUrl(HashMap<String, String> paraMap);
+    RedirectParam getUrl(HashMap<String, String> paraMap);
 
     /**
      * 支付回调请求
      * @param wxNotifyOrder
      * @return
      */
-    public String callBack(WxNotifyOrder wxNotifyOrder);
+    String callBack(WxNotifyOrder wxNotifyOrder);
 
     /**
      *
      * @param payBean
      * @return
      */
-    public String getRefundUrl(ThirdPayBean payBean);
+    String getRefundUrl(ThirdPayBean payBean);
 }

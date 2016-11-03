@@ -8,10 +8,7 @@ import com.joybike.server.api.dao.OrderItemDao;
 import com.joybike.server.api.dao.ProductDao;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
-import com.joybike.server.api.model.orderItem;
-import com.joybike.server.api.model.product;
-import com.joybike.server.api.model.subscribeInfo;
-import com.joybike.server.api.model.vehicleOrder;
+import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.util.RestfulException;
@@ -203,7 +200,10 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @return
      */
     @Override
-    public vehicleOrder getOrder(long id) {
+    public vehicleOrder getOrder(long id) throws Exception{
         return vehicleOrderDao.getOrderByid(id);
     }
+
+
+
 }

@@ -41,7 +41,10 @@ public class JsonUtil {
 				}
 				jsonString += "\"" + key + "\":" + value + ",";
 			}
-			jsonString = jsonString.substring(0, jsonString.length() - 1);
+
+
+			jsonString = jsonString.substring(0, jsonString.length()-1);
+
 		}
 		jsonString += "}";
 		return jsonString;

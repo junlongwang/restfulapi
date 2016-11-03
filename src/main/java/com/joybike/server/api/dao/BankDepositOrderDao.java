@@ -40,7 +40,7 @@ public interface BankDepositOrderDao extends IRepository<bankDepositOrder> {
      * @param id
      * @return
      */
-    bankDepositOrder getDepositOrderById(long id);
+    bankDepositOrder getDepositOrderById(long id) throws Exception;
 
     /**
      * 获取可消费的充值

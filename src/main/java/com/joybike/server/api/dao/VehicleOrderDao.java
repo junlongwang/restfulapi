@@ -44,7 +44,7 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * @param orderCode
      * @return
      */
-    int updateStatausByCode(String orderCode);
+    int updateStatausByCode(String orderCode) throws Exception;
 
 
     /**
@@ -59,11 +59,27 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * @param userId
      * @return
      */
-    List<VehicleOrderDto> getOrderPaySuccess(long userId);
+    List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception;
 
     /**
      * 根据主键获取订单信息
      */
-    vehicleOrder getOrderByid(long id);
+    vehicleOrder getOrderByid(long id) throws Exception;
 
+    /**
+     * 根据订单Id获取订单信息
+     *
+     * @param id
+     * @return
+     */
+    VehicleOrderDto getOrderById(long id) throws Exception;
+
+    /**
+     * 根据用户获取
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    VehicleOrderDto getOrderByUserId(long userId) throws Exception;
 }

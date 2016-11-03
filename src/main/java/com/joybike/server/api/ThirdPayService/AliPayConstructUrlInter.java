@@ -10,14 +10,19 @@ import java.util.HashMap;
  * Created by 58 on 2016/10/24.
  */
 public interface AliPayConstructUrlInter {
-    public RedirectParam getUrl(HashMap<String,String> paraMap);
-
-    public String callBack(HttpServletRequest request);
 
     /**
-     *
+     * 生成请求URL
+     * @param paraMap
+     * @return
+     */
+    RedirectParam getUrl(HashMap<String, String> paraMap);
+
+    String callBack(HttpServletRequest request);
+
+    /**
      * @param payBean
      * @return
      */
-    public String getRefundUrl(ThirdPayBean payBean);
+    String getRefundUrl(ThirdPayBean payBean);
 }

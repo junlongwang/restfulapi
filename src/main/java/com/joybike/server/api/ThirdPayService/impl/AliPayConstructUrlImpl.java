@@ -28,27 +28,21 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
 
     private final Logger logger = Logger.getLogger(AliPayConstructUrlImpl.class);
 
-//    private String partner = "2088521096580226";
-//    private String account = "1314159";
-//    private String seller_id = "2088521096580226";
-//    private String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBANkzPpaA1tYpcRXEq3l4ykaCeK5AZYj07n8EfdKkQxr6uo2Lzw8g5jwgFdkO330VtoVvClRnrsjF/d6WRiao/6slBIgDrvqEbWEXtudyqLzkl2DZGnmtQpC5q7q56P5bBAMfeli0ZmYW3rjdveGf1TRDGMYYR4x87V998XNA4UgNAgMBAAECgYAEAOXOcGGFYQ4skIt4mblgw1bmH1m/xIQA41xOXai+/pAhu8n9RWX5Bb5hWdzUuWm72+gc1ixqlvuu9qYkYEkWHcjZS4TqOANCqtSCWp4hlRGVCRfHtm1wDL72Z2AF7BZIRwPnRhS9apGm1kCSCH3iSYHJCijZS3T1ooPzWJ1dAQJBAP5A1PfmGvS2WbsCHy44Ib5Gd4JP82SuKLz/IqFu9tD23x7ZLc1zvQVkKfyBr5pFw6+lJ0t2IlSiPW68sdckyXUCQQDasT7V6ZCHxbgVrOb4C7CC4/ZVxUSLTYYKckjECrVKbov+DFaPojy2IGfoJGZaWJlk0FNeOBmQFKZouXJ1dBk5AkBYUlEo5GhMxeOZ0Pzf42PlYzk0rW1RdiZ0sPRou9FFedy8LJl6m0/4RXlIXAySPNXjeC2USy9V0x4gD7B/minZAkEAwQZS1NIrvHr6iT8sOeFvcYguI/RTFLVfSxcmPMrKyyCZtalEOdDTz1j4/YArSzEKa14pR28yuOZRHvwYF61amQJAA2GH8JB4p4rGx/yw0dY3ZDGJMpjOed3MZDnJ1blrDG3akdJM8qU8H/niH5uLm5zYjAk0VyUmg/9jXJyHFfjpsw==";
-//    private String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDZMz6WgNbWKXEVxKt5eMpGgniuQGWI9O5/BH3SpEMa+rqNi88PIOY8IBXZDt99FbaFbwpUZ67Ixf3elkYmqP+rJQSIA676hG1hF7bncqi85Jdg2Rp5rUKQuau6uej+WwQDH3pYtGZmFt643b3hn9U0QxjGGEeMfO1fffFzQOFIDQIDAQAB";
-//    private String ALIPAY_PAY_SERVICE = "mobile.securitypay.pay";
-//    private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
-//    private String app_id = "2016102202289143";
-
-
-    private String partner = "2088521096580226";//"2088521096580226";
-    //private String account = "1314159";
-    private String seller_id ="2088521096580226"; //"wangliang@sktbj.com";//"2088521096580226";
-    private String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAN3WBUX/m6chKm+NPW2zL4poDBY59fViKZGJQZlXmc1Ja0SjLOpJccYD3AzfHnm5At8pSTAMLw2KAU5DFsWvaeHaX0nU6MJw4jykBNk7PvUpNysRVuQENhZzeDFlg6no21dGODJ8Yqyi0V8I48fspE+Qc2j4zFXrg9dz4zsMN4J/AgMBAAECgYAGHdORZYXWKtzvrHZIIwuphkrnBfwZIvbAc4digf7UoTSa9ODVKOdBLXQQysodUxOYMZw5/ewCNI7qqIDlPHvv2CBVi1kzrY5EEh8srqOdb/qz77W2j30mhGbwGhhgAezj+LC0J+Q7xTG5jRp6qFtS6VWhVvW7s8XLuKHoYlmtmQJBAO6rL+z8qHO+OFNXadXHYVpzFTNU2qfwlyvWk9Sy3ObXbjldauel8583WT7zGeVQmjByiGWt5b7wffZ/PWaOi7UCQQDt8eqh+P1n0739w9jTgOq1q5aWg3xeb/9p/jJ1H0WrU6+XUD81epwxt2J3V2ziEe9d8XsyNJY2R8TQ4zWSGb3jAkEAnvkNyjgc6EOK9xBhoZDVqs6/D1r07ioWN5ANFf8xnt1eQP2ViMkENkhCvOhmllUS7zRK4Bdt0boU3Qyx1E8chQJBAJUlOPQT9Qq6j3Fb7DIOsY/0IOzxN+id/RP8ELaXRn0wdHS9CRHFa9hB4Yd6ljZSFZ7l+Vmr2qflbnmcoXyVhA8CQGItwOKY9akZhUVLEdZcIrjMmtoGz2D+Z6CLCN02MsbJWsDz96BseQ1PuUSotCzPyngylkFo/5JYj5X7ba90MOQ=";
-   // private String privateKey = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAN3WBUX/m6chKm+NPW2zL4poDBY59fViKZGJQZlXmc1Ja0SjLOpJccYD3AzfHnm5At8pSTAMLw2KAU5DFsWvaeHaX0nU6MJw4jykBNk7PvUpNysRVuQENhZzeDFlg6no21dGODJ8Yqyi0V8I48fspE+Qc2j4zFXrg9dz4zsMN4J/AgMBAAECgYAGHdORZYXWKtzvrHZIIwuphkrnBfwZIvbAc4digf7UoTSa9ODVKOdBLXQQysodUxOYMZw5/ewCNI7qqIDlPHvv2CBVi1kzrY5EEh8srqOdb/qz77W2j30mhGbwGhhgAezj+LC0J+Q7xTG5jRp6qFtS6VWhVvW7s8XLuKHoYlmtmQJBAO6rL+z8qHO+OFNXadXHYVpzFTNU2qfwlyvWk9Sy3ObXbjldauel8583WT7zGeVQmjByiGWt5b7wffZ/PWaOi7UCQQDt8eqh+P1n0739w9jTgOq1q5aWg3xeb/9p/jJ1H0WrU6+XUD81epwxt2J3V2ziEe9d8XsyNJY2R8TQ4zWSGb3jAkEAnvkNyjgc6EOK9xBhoZDVqs6/D1r07ioWN5ANFf8xnt1eQP2ViMkENkhCvOhmllUS7zRK4Bdt0boU3Qyx1E8chQJBAJUlOPQT9Qq6j3Fb7DIOsY/0IOzxN+id/RP8ELaXRn0wdHS9CRHFa9hB4Yd6ljZSFZ7l+Vmr2qflbnmcoXyVhA8CQGItwOKY9akZhUVLEdZcIrjMmtoGz2D+Z6CLCN02MsbJWsDz96BseQ1PuUSotCzPyngylkFo/5JYj5X7ba90MOQ=";
-    //private String fdsfsdfsdf = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAN3WBUX/m6chKm+NPW2zL4poDBY59fViKZGJQZlXmc1Ja0SjLOpJccYD3AzfHnm5At8pSTAMLw2KAU5DFsWvaeHaX0nU6MJw4jykBNk7PvUpNysRVuQENhZzeDFlg6no21dGODJ8Yqyi0V8I48fspE+Qc2j4zFXrg9dz4zsMN4J/AgMBAAECgYAGHdORZYXWKtzvrHZIIwuphkrnBfwZIvbAc4digf7UoTSa9ODVKOdBLXQQysodUxOYMZw5/ewCNI7qqIDlPHvv2CBVi1kzrY5EEh8srqOdb/qz77W2j30mhGbwGhhgAezj+LC0J+Q7xTG5jRp6qFtS6VWhVvW7s8XLuKHoYlmtmQJBAO6rL+z8qHO+OFNXadXHYVpzFTNU2qfwlyvWk9Sy3ObXbjldauel8583WT7zGeVQmjByiGWt5b7wffZ/PWaOi7UCQQDt8eqh+P1n0739w9jTgOq1q5aWg3xeb/9p/jJ1H0WrU6+XUD81epwxt2J3V2ziEe9d8XsyNJY2R8TQ4zWSGb3jAkEAnvkNyjgc6EOK9xBhoZDVqs6/D1r07ioWN5ANFf8xnt1eQP2ViMkENkhCvOhmllUS7zRK4Bdt0boU3Qyx1E8chQJBAJUlOPQT9Qq6j3Fb7DIOsY/0IOzxN+id/RP8ELaXRn0wdHS9CRHFa9hB4Yd6ljZSFZ7l+Vmr2qflbnmcoXyVhA8CQGItwOKY9akZhUVLEdZcIrjMmtoGz2D+Z6CLCN02MsbJWsDz96BseQ1PuUSotCzPyngylkFo/5JYj5X7ba90MOQ=";
-    //private String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB";
+    // 合作身份者ID，以2088开头由16位纯数字组成的字符串
+    public static String partner = "2088521096580226";
+    // 收款支付宝账号，以2088开头由16位纯数字组成的字符串
+    public static String seller_id = partner;
+    //支付宝帐号
+    public static String ali_account = "wangliang@sktbj.com";
+    // 收款支付宝账号，以2088开头由16位纯数字组成的字符串
+    public static String app_id = "2016102202289143";//joybike
+    // 商户的私钥
+    public static String private_key = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALCjQgopUmAVdg8Ekie+7k/qu1PixS6OLJzoiYg2ZU/G90/pgHyNgCpPUNSRNOq3s2w2zOLtJMN1JN4x4aaGoTHYSgpghQr+QwOsuuogRKb0pLZkTnoh05NAfi1DX6dDnZ9/ooFXbWNhKeksE8eCiMKLoVasOwL6AN1RJ1fM748lAgMBAAECgYAItVPJKnZcNFKotOH7wacAG6N2pERyYiIC7lfxdjUSdM22i92Axn0eGOD0SeBg/gODf0Qkn+pjFIBnz++/BP4nYPY0CYoNOSO2S5f7v+xbtS4amC5nBWv5kxtcFvREhvsoPE9i7drUmKYkFRR/mmBklJIlFiBVHykPCO/bXcdBlQJBANx9EsigJK5r9PEQTq2z5GWA/66IEhicp1ldUq2k6uuowRJxzXQFLX3jzNg7lTA/eX0oxYjjL6sHCzZaqsygPmMCQQDNFi2SLq8SXF8M79RDuwUmpZfx/e6qc+5F+Yn7ChamGs3UdcZASVp0hxo//YpHgs/BKXDedPaba73ST3bqE07XAkBQifNJi426lL6lK6LBuntMRIGgvB14FgjfEMK5oQsax8q2tREqNxX17TcPKTyGojj7aeA1716jJ3CGCzpmgoYnAkEAspjNtq/Q5jxqyelRAGqtYapzV9m7LdUneuiEsIloj95nwM2PiAxZKYE96tvwv7W7FovwLsnMuCxrceqhs9Z8oQJAIcaccDaEhyZfJfTxOU4pIT0ctqDZ0rTZEWX4WwRdl83r60FoEbokqtrEoIGoa6Q//ClPkReDV7SljqvxYOgY9g==";
+    // 支付宝的公钥，无需修改该
+    public static String ali_public_key  = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCnxj/9qwVfgoUh/y2W89L6BkRAFljhNhgPdyPuBV64bfQNN1PjbCzkIM6qRdKBoLPXmKKMiFYnkd6rAoprih3/PrQEB/VsW8OoM8fxn67UDYuyBTqA23MML9q1+ilIZwBC2AQ2UBVOrFXfFl75p6/B5KsiNG9zpgmLCUYuLkxpLQIDAQAB";
+    public static String Md5_key = "phetx8fnkr8obzc9gqfuxhbe4xj6no40";
     private String ALIPAY_PAY_SERVICE = "mobile.securitypay.pay";
     private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotifyAli";
-    private String app_id = "2016102202289143";
-
     @Override
     public RedirectParam getUrl(HashMap<String,String> paraMap) {
         RedirectParam para = new RedirectParam();
@@ -109,7 +103,7 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
                 requestParams.put("seller_id",signature+seller_id+signature);
                 requestParams.put("total_fee",signature+totalFee+signature);
                 String preSignStr = AlipayAppUtil.createLinkString(requestParams);
-                String sign = RSASignature.sign(preSignStr, privateKey, "utf-8");
+                String sign = RSASignature.sign(preSignStr, private_key, "utf-8");
                 try {
                     sign= URLEncoder.encode(sign, "utf-8");
                 } catch (UnsupportedEncodingException e) {

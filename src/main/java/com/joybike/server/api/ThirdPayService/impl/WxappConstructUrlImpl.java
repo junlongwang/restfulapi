@@ -15,15 +15,13 @@ import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import com.joybike.server.api.thirdparty.wxtenpay.*;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.ssl;
 import org.apache.http.conn.ssl.SSLContexts;
 import java.io.*;
 import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
+import java.security.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +40,9 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
     private String key = "F1BDA99703815CE223FF494A9039ADA3";
     private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-    private static String keypath = "./config/tencent/apiclient_cert_1404387302.p12";
+
+    private String keypath = WxappConstructUrlImpl.class.getResource("/apiclient_cert_1404387302.p12").getFile();
+
     private final Logger logger = Logger.getLogger(WxappConstructUrlImpl.class);
     @Override
     public RedirectParam getUrl(HashMap<String, String> paraMap) {
@@ -284,7 +284,20 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
                 logger.error("关闭instream失败");
             }
         }
-        SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, info.getMchId().toCharArray()).build();
+
+        SSLContext sslcontext = null;
+        try {
+            sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, mch_id.toCharArray()).build();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        }
+
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null, SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
         CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
         Map<String, String> paramsMap = new HashMap<>();
@@ -294,12 +307,16 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
         paramsMap.put("transaction_id", payOrder.getTransaction_id());
         paramsMap.put("out_trade_no", String.valueOf(payOrder.getCosumeid()));
         paramsMap.put("out_refund_no", String.valueOf(payOrder.getRefundid()));
-        paramsMap.put("total_fee", String.valueOf(payOrder.getOrderMoney()));
-        paramsMap.put("refund_fee", String.valueOf(payOrder.getOrderMoney()));
+
+        Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
+        BigDecimal total_fee = new BigDecimal(fMoney);
+        paramsMap.put("total_fee", String.valueOf(total_fee));
+        paramsMap.put("refund_fee", String.valueOf(total_fee));
         paramsMap.put("op_user_id", mch_id);
         String sign=SignUtil.sign(paramsMap,key).toUpperCase();
         paramsMap.put("sign", sign);
-        String requestURL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+        String requestURL = wxRefundUrl;
+
         try {
 
             HttpPost httpPost = new HttpPost(requestURL);
@@ -326,8 +343,10 @@ public class WxappConstructUrlImpl implements WxappConstructUrlInter {
                     Pattern p = Pattern.compile(pattern,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
                     while ((text = bufferedReader.readLine()) != null) {
                         if (text.contains("<result_code><![CDATA[SUCCESS]]>")) {
-                            result = "succse";
+
+                            result = "success";
                             logger.info("原路提现(微信退款（通用版）)：成功,成功,成功");
+                            break;
                             //TODO
                         }
                     }

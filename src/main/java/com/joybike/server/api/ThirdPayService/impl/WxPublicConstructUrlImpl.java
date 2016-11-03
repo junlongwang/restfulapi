@@ -4,13 +4,26 @@ import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.WxNotifyOrder;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.math.BigDecimal;
+import java.security.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Created by LongZiyuan on 2016/10/23.
@@ -25,19 +38,10 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
     private String mch_id = "1401808502";
     private String appid = "wxa8d72207b41a315e";
     private String key = "BBFE4D6275760AB175F9385AD7710A70";
+    private String keypath = WxPublicConstructUrlImpl.class.getResource("/apiclient_cert_1401808502.p12").getFile();
     private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
-
-//    public WxPublicConstructUrlImpl()
-//    {
-//        wxPreUrl = thirdpartyProperty.getProperty("wxPreUrl");
-//        mch_id = thirdpartyProperty.getProperty("wxPreUrl");
-//        appid = thirdpartyProperty.getProperty("wxPublicAppid");
-//        key = thirdpartyProperty.getProperty("wxPublicKey");
-//        notifyUrl = thirdpartyProperty.getProperty("wxNotifyUrl");
-//
-//    }
-
+    private final Logger logger = Logger.getLogger(WxPublicConstructUrlImpl.class);
     @Override
     public RedirectParam getUrl(ThirdPayBean payOrder){
         if(payOrder == null)
@@ -154,43 +158,128 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
         if (payOrder == null){
             return result;
         }
+        logger.info("微信退款（通用版）outRefundNo" + payOrder.getRefundid() +"------------ begin ----------------");
+        KeyStore keyStore = null;
         try {
-            Map<String,String> map = new HashMap();
-            map.put("appid",appid);//公众账号ID
-            map.put("mch_id",mch_id);//商户号
-            map.put("nonce_str", WXUtil.getNonceStr());//随机字符串
-//            if(String.valueOf(payOrder.getCosumeid()) != null && String.valueOf(payOrder.getCosumeid()) != ""){
-//                map.put("attach",String.valueOf(payOrder.getCosumeid()));//附加数据
-//            }
-            map.put("out_trade_no", payOrder.getId().toString());//商户订单号
-            map.put("transaction_id",payOrder.getTransaction_id());//微信支付订单号
-            map.put("out_refund_no",payOrder.getRefundid().toString());//商户退款订单号
-            map.put("body",payOrder.getPruductDesc());
-            Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
-            BigDecimal total_fee = new BigDecimal(fMoney);
-            map.put("total_fee",String.valueOf(total_fee));//总金额
-            map.put("refund_fee",String.valueOf(total_fee));//总金额
-            map.put("op_user_id",mch_id);//总金额
-            String sign=SignUtil.sign(map,key).toUpperCase();
-            map.put("sign", sign);//签名
-            String xml=ParseXml.parseXML(map);//转化为xml格式
-            String httpType = "SSL";
-            String timeOut = "60000";
-            String res = HttpRequestSimple.sendHttpMsg(wxRefundUrl, xml, httpType, timeOut);
-            HashMap resMap=ParseXml.parseXml(res);
-            if(resMap.get("return_code").equals("SUCCESS")){
-                String reqSign=String.valueOf(resMap.get("sign"));
-                String resSign=SignUtil.sign(resMap, key).toUpperCase();
-                if(reqSign.equals(resSign)){
-                    if (resMap.get("out_trade_no") == map.get("out_trade_no") && resMap.get("out_refund_no") == map.get("out_refund_no") &&resMap.get("transaction_id") == map.get("transaction_id")){
-                        result = "SUCCSE";
-                    }
-                }
-            }
-        }catch (Exception e){
-            return result;
+            keyStore = KeyStore.getInstance("PKCS12");
+        } catch (KeyStoreException e) {
+            logger.error("获取微信app退款证书失败");
         }
+        FileInputStream instream = null;
+        try {
+            instream = new FileInputStream(new File(keypath));
+        } catch (FileNotFoundException e) {
+            logger.error("获取证书文件失败");
+        }
+        try {
+            keyStore.load(instream, mch_id.toCharArray());
+        } catch (Exception e) {
+            logger.error("注入证书密钥失败");
+        } finally {
+            try {
+                instream.close();
+            } catch (IOException e) {
+                logger.error("关闭instream失败");
+            }
+        }
+        SSLContext sslcontext = null;
+        try {
+            sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, mch_id.toCharArray()).build();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        }
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[] { "TLSv1" }, null, SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+        CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
+        Map<String, String> paramsMap = new HashMap<>();
+        paramsMap.put("appid", appid);
+        paramsMap.put("mch_id", mch_id);
+        paramsMap.put("nonce_str", WXUtil.getNonceStr());
+        paramsMap.put("transaction_id", payOrder.getTransaction_id());
+        paramsMap.put("out_trade_no", String.valueOf(payOrder.getCosumeid()));
+        paramsMap.put("out_refund_no", String.valueOf(payOrder.getRefundid()));
+        Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
+        BigDecimal total_fee = new BigDecimal(fMoney);
+        paramsMap.put("total_fee", String.valueOf(total_fee));
+        paramsMap.put("refund_fee", String.valueOf(total_fee));
+        paramsMap.put("op_user_id", mch_id);
+        String sign=SignUtil.sign(paramsMap,key).toUpperCase();
+        paramsMap.put("sign", sign);
+        String requestURL = wxRefundUrl;
+        try {
+
+            HttpPost httpPost = new HttpPost(requestURL);
+            //添加参数
+            StringEntity myEntity = new StringEntity(ParseXml.parseXML(paramsMap), "UTF-8");
+            httpPost.addHeader("Content-Type", "text/xml");
+            httpPost.setEntity(myEntity);
+
+            logger.info("executing request" +  httpPost.getRequestLine() + paramsMap.toString());
+
+            CloseableHttpResponse response = httpclient.execute(httpPost);
+
+            try {
+                HttpEntity rspEntity = response.getEntity();
+                logger.info("response status: " + response.getStatusLine());
+                if (rspEntity != null) {
+                    logger.info("Response content length: "
+                            + rspEntity.getContentLength());
+                    BufferedReader bufferedReader = new BufferedReader(
+                            new InputStreamReader(rspEntity.getContent()));
+                    String text;
+                    String refund_id = null;
+                    String pattern = "<refund_id>.*?(\\d+)";
+                    Pattern p = Pattern.compile(pattern,Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                    while ((text = bufferedReader.readLine()) != null) {
+                        if (text.contains("<result_code><![CDATA[SUCCESS]]>")) {
+                            result = "success";
+                            logger.info("原路提现(微信退款（通用版）)：成功,成功,成功");
+                            break;
+                            //TODO
+                        }
+                    }
+
+                }
+                consumeEntity(rspEntity);
+            } catch (Exception e) {
+                logger.error("微信退款（通用版）2",e);
+            } finally {
+                response.close();
+            }
+        } catch (Exception e) {
+            logger.error("微信退款（通用版）3",e);
+        } finally {
+            try {
+                httpclient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        logger.info("微信退款（通用版）退款------------ end ----------------");
         return result;
+    }
+
+    private void consumeEntity(HttpEntity entity) {
+        if (entity == null) {
+            return;
+        }
+        if (entity.isStreaming()) {
+            InputStream instream;
+            try {
+                instream = entity.getContent();
+                if (instream != null) {
+                    instream.close();
+                }
+            } catch (Exception e) {
+                logger.error("consumeHttpEntity error", e);
+            }
+
+        }
     }
 
     public static void main(String[] args) {

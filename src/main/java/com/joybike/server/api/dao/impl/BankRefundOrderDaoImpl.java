@@ -16,7 +16,7 @@ import java.util.Map;
 @Repository("BankRefundOrderDao")
 public class BankRefundOrderDaoImpl extends Reository<bankRefundOrder> implements BankRefundOrderDao {
 
-    final String updateRefundOrderStatusById = "update bankRefundOrder set status = 1  where id = :id";
+    final String updateRefundOrderStatusById = "update bankRefundOrder set status = 3  where id = :id";
 
 
     /**

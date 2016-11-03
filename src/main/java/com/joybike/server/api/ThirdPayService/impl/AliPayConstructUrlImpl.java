@@ -178,82 +178,39 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
      */
     @Override
     public String getRefundUrl(ThirdPayBean payBean){
-//        String service = "refund_fastpay_by_platform_nopwd";
-//        String notify_url = null;
-//        String input_charset = "utf-8";
-//        String sign_type = "MD5";
-//        String refund_date = DateUtil.parse(new Date(), "yyyy-MM-dd hh:mm:ss");
-//        String batch_no = DateUtil.parse(new Date(), "yyyyMMddhhmmss") + draw.getApplySourceId();
-//        String batch_num = "1";
-//        String detail_data = recharge.getTradeId() + "^" + draw.getDrawMoney()
-//                + "^";
-//        String paygateway = "https://mapi.alipay.com/gateway.do?";
-//        String ItemUrl = Payment.CreateUrl(paygateway, input_charset, service,
-//                partner, sign_type, batch_no, refund_date, batch_num,
-//                detail_data, notify_url, privateKey,null);
-//        log.info("refound.zfb:itemurl:" + ItemUrl);
-//        String result = "";
-//        try {
-//            result = UrlUtil.doPostForStr(ItemUrl, null, "UTF-8");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            log.info("原路提现(支付宝)：请求失败(" + ItemUrl + "),交易号("
-//                    + recharge.getTradeId() + ")");
-//            return "false";
-//        }
-//        log.info("原路提现(支付宝)：请求信息("
-//                + ItemUrl
-//                + ")，请求结果("
-//                + result.replace("\r\n", "").replace("\n", "")
-//                .replace("\r", "") + "),交易号(" + recharge.getTradeId()
-//                + ")");
-//        if (result.contains("<is_success>T</is_success>")) {
-//            log.info("原路提现(支付宝)：请求成功,交易号(" + recharge.getTradeId() + ")");
-//            return "true";
-//        }
-        return "false";
-    }
-
-
-    public RedirectParam getUrl1(HashMap<String,String> paraMap) {
-
-        RedirectParam para = new RedirectParam();
+        String service = "refund_fastpay_by_platform_nopwd";
+        String notify_url = null;
+        String input_charset = "utf-8";
+        String sign_type = "MD5";
+        String refund_date = DateUtil.parse(new Date(), "yyyy-MM-dd hh:mm:ss");
+        String batch_no =DateUtil.parse(new Date(), "yyyyMMddhhmmss")+payBean.getCosumeid();//DateUtil.parse(new Date(), "yyyyMMddhhmmss")  + draw.getApplySourceId();
+        String batch_num = "1";
+        String detail_data = payBean.getTransaction_id() + "^" + payBean.getOrderMoney()
+                + "^";
+        String paygateway = "https://mapi.alipay.com/gateway.do?";
+        String ItemUrl = Payment.CreateUrl(paygateway, input_charset, service,
+                partner, sign_type, batch_no, refund_date, batch_num,
+                detail_data, notify_url, private_key,null);
+        logger.info("refound.zfb:itemurl:" + ItemUrl);
+        String result = "";
         try {
-//            String content = "\";
-//            Map<String, String> paramMap = new HashMap<String, String>();
-//            paramMap.put("service", content+"mobile.securitypay.pay"+content);
-//            paramMap.put("partner", content+partner+content);
-//            paramMap.put("_input_charset",content+ "utf-8"+content);
-//            paramMap.put("sign_type", content+"RSA"+content);
-//            paramMap.put("notify_url",content+ notifyUrl+content);
-//            paramMap.put("app_id",content+ app_id+content);
-//            //paramMap.put("appenv",content+ ""+content);
-//            paramMap.put("out_trade_no", content+paraMap.get("out_trade_no")+content);
-//            paramMap.put("subject", content+paraMap.get("subject")+content);
-//            paramMap.put("payment_type", content+"1"+content);
-//            paramMap.put("seller_id",content+ partner+content);
-//            paramMap.put("total_fee", content+paraMap.get("total_fee")+content);
-//            paramMap.put("body", content+paraMap.get("body")+content);
-//            paramMap.put("it_b_pay", content+"30m"+content);
-//            //paramMap.put("extern_token", content+""+content);
-//            Map<String, String> signMap = AlipayCore.paraFilter(paramMap);
-//            String srcData = AlipayCore.createLinkStringApp(signMap);
-//            logger.info("Alipay sign srcData>>" + srcData);
-//            String signData = RSA.sign(srcData, privateKey, "utf-8");
-//            logger.info("Alipay sign signData>>" + signData);
-//
-//            signData= URLEncoder.encode(signData, "utf-8");
-//            paramMap.put("sign", content+signData+content);
-//
-//            logger.info("给APP返回的DATA数据：" + paramMap.toString());
-//
-//            String returnJson=JsonUtil.mapToJsonNoSinganaure(paramMap);
-//            para.setPara(returnJson);
-        }catch (Exception e){
-            logger.error("支付宝支付发生错误。",e);
-            para.setPara(e.getMessage());
-            return para;
+            result = UrlUtil.doPostForStr(ItemUrl, null, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.info("原路提现(支付宝)：请求失败(" + ItemUrl + "),交易号("
+                    + payBean.getTransaction_id() + ")");
+            return "false";
         }
-        return para;
+        logger.info("原路提现(支付宝)：请求信息("
+                + ItemUrl
+                + ")，请求结果("
+                + result.replace("\r\n", "").replace("\n", "")
+                .replace("\r", "") + "),交易号(" + payBean.getTransaction_id()
+                + ")");
+        if (result.contains("<is_success>T</is_success>")) {
+            logger.info("原路提现(支付宝)：请求成功,交易号(" + payBean.getTransaction_id() + ")");
+            return "true";
+        }
+        return "false";
     }
 }

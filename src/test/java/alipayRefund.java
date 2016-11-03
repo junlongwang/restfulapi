@@ -34,6 +34,8 @@
 //        ////创建API对应的request类
 //        AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
 //
+
+
 //        request.setBizContent("\"{\n" +
 //                "    \"out_trade_no\":\"20150320010101001\",\n" +
 //                "    \"trade_no\":\"2014112611001004680073956707\"\n" +

@@ -48,7 +48,7 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
         RedirectParam para = new RedirectParam();
         HashMap<String, String> requestParams = new HashMap<String, String>();
         //封装提交的参数
-        String signature="";//\"";
+        String signature="\"";//\"";
         String outTradeNo="";
         String body="";
         String subject="";
@@ -107,8 +107,7 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
                 }
                 requestParams.put("sign", signature + sign + signature);
                 requestParams.put("sign_type", signature + "RSA" + signature);
-                String returnJson=requestParams.toString();
-                //JsonUtil.mapToJsonNoSinganaure(requestParams);
+                String returnJson=JsonUtil.mapToJsonNoSinganaure(requestParams);
                 para.setPara(returnJson);
             }
         }catch (Exception e){

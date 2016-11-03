@@ -29,9 +29,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by LongZiyuan on 2016/10/16.
@@ -211,75 +209,108 @@ public class PayRestfulApi {
     @RequestMapping(value = "paynotifyAli")
     public String payOfNotifyAli(HttpServletRequest re) {
 
+        try {
+            logger.info("++++++++++++支付宝回调通知开始++++++++++++=");
 
-        //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以下仅供参考)//
-
-        AliPayOfNotify notify = new AliPayOfNotify();
-
-        if (re.getParameter("notify_time") != null)
-            notify.setNotify_time(Integer.parseInt(re.getParameter("notify_time")));
-        if (re.getParameter("notify_type") != null)
-            notify.setNotify_type(re.getParameter("notify_type"));
-        if (re.getParameter("notify_id") != null)
-            notify.setNotify_id(re.getParameter("notify_id"));
-        if (re.getParameter("app_id") != null)
-            notify.setApp_id(re.getParameter("app_id"));
-        if (re.getParameter("sign_type") != null)
-            notify.setSign_type(re.getParameter("sign_type"));
-        if (re.getParameter("sign") != null)
-            notify.setSign(re.getParameter("sign"));
-        if (re.getParameter("trade_no") != null)
-            notify.setTrade_no(re.getParameter("trade_no"));
-        if (re.getParameter("out_trade_no") != null)
-            notify.setOut_trade_no(re.getParameter("out_trade_no"));
-        if (re.getParameter("trade_status") != null)
-            notify.setTrade_status(re.getParameter("trade_status"));
-        if (re.getParameter("total_amount") != null)
-            notify.setTotal_amount(BigDecimal.valueOf(Long.parseLong(re.getParameter("total_amount"))));
-        if (re.getParameter("gmt_payment") != null)
-            notify.setGmt_payment(Integer.parseInt(re.getParameter("gmt_payment")));
-        if (notify.getTrade_status() != null){
-            if (notify.getTrade_status().equals("TRADE_FINISHED") || notify.getTrade_status().equals("TRADE_SUCCESS")) {
-                long pay_at = 0;
-                if (notify.getGmt_payment() > 0)  pay_at = notify.getGmt_payment();
-                else pay_at = notify.getNotify_time();
-                try {
-                    int result = 0;
-                    bankDepositOrder bankDepositOrder = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
-                    if (bankDepositOrder != null){
-                        if(bankDepositOrder.getRechargeType() == RechargeType.deposit.getValue()){
-                            //
+            //获取支付宝POST过来反馈信息
+            Map<String, String> params = new HashMap<String, String>();
+            Map requestParams = re.getParameterMap();
+            for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext(); ) {
+                String name = (String) iter.next();
+                String[] values = (String[]) requestParams.get(name);
+                String valueStr = "";
+                for (int i = 0; i < values.length; i++) {
+                    valueStr = (i == values.length - 1) ? valueStr + values[i]
+                            : valueStr + values[i] + ",";
+                }
+                //乱码解决，这段代码在出现乱码时使用。如果mysign和sign不相等也可以使用这段代码转化
+                //valueStr = new String(valueStr.getBytes("ISO-8859-1"), "gbk");
+                params.put(name, valueStr);
+            }
 
 
-                            result = payRestfulService.updateDepositOrderById_Yajin(Long.valueOf(notify.getOut_trade_no()),notify.getTrade_no(),(int)pay_at,2);
-                            //同时更新用户状态
-                            if (result > 0){
-                                userInfo userInfo = new userInfo();
-                                userInfo.setId(bankDepositOrder.getUserId());
-                                userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
-                                userRestfulService.updateUserInfo(userInfo);
+            logger.info("params：" + params.toString());
+
+            //获取支付宝的通知返回参数，可参考技术文档中页面跳转同步通知参数列表(以下仅供参考)//
+            //商户订单号
+            String out_trade_no = re.getParameter("out_trade_no");
+            //支付宝交易号
+            String trade_no = re.getParameter("trade_no");
+            //交易状态
+            String trade_status = re.getParameter("trade_status");
+            logger.info("商户订单号:" + out_trade_no + " 支付宝交易号" + trade_no + " 交易状态" + trade_status);
+
+            AliPayOfNotify notify = new AliPayOfNotify();
+
+            if (re.getParameter("notify_time") != null)
+                notify.setNotify_time((int)UnixTimeUtils.getUnixTime(re.getParameter("notify_time")));
+            if (re.getParameter("notify_type") != null)
+                notify.setNotify_type(re.getParameter("notify_type"));
+            if (re.getParameter("notify_id") != null)
+                notify.setNotify_id(re.getParameter("notify_id"));
+            if (re.getParameter("app_id") != null)
+                notify.setApp_id(re.getParameter("app_id"));
+            if (re.getParameter("sign_type") != null)
+                notify.setSign_type(re.getParameter("sign_type"));
+            if (re.getParameter("sign") != null)
+                notify.setSign(re.getParameter("sign"));
+            if (re.getParameter("trade_no") != null)
+                notify.setTrade_no(re.getParameter("trade_no"));
+            if (re.getParameter("out_trade_no") != null)
+                notify.setOut_trade_no(re.getParameter("out_trade_no"));
+            if (re.getParameter("trade_status") != null)
+                notify.setTrade_status(re.getParameter("trade_status"));
+            if (re.getParameter("total_amount") != null)
+                notify.setTotal_amount(BigDecimal.valueOf(Long.parseLong(re.getParameter("total_amount"))));
+            if (re.getParameter("gmt_payment") != null)
+                notify.setGmt_payment((int)UnixTimeUtils.getUnixTime(re.getParameter("gmt_payment")));
+            if (notify.getTrade_status() != null) {
+                if (notify.getTrade_status().equals("TRADE_FINISHED") || notify.getTrade_status().equals("TRADE_SUCCESS")) {
+                    long pay_at = 0;
+                    if (notify.getGmt_payment() > 0) pay_at = notify.getGmt_payment();
+                    else pay_at = notify.getNotify_time();
+                    try {
+                        int result = 0;
+                        bankDepositOrder bankDepositOrder = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
+                        if (bankDepositOrder != null) {
+                            if (bankDepositOrder.getRechargeType() == RechargeType.deposit.getValue()) {
+                                //
+
+
+                                result = payRestfulService.updateDepositOrderById_Yajin(Long.valueOf(notify.getOut_trade_no()), notify.getTrade_no(), (int) pay_at, 2);
+                                //同时更新用户状态
+                                if (result > 0) {
+                                    userInfo userInfo = new userInfo();
+                                    userInfo.setId(bankDepositOrder.getUserId());
+                                    userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
+                                    userRestfulService.updateUserInfo(userInfo);
+                                }
+                            }
+                            //余额充值成功更新充值订单信息
+                            else {
+                                bankDepositOrder order = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
+                                if (order.getStatus() == 2) {
+                                    return "success";
+                                } else {
+                                    payRestfulService.updateDepositOrderById(Long.valueOf(notify.getOut_trade_no()), PayType.Alipay, notify.getTrade_no(), "", (int) pay_at);
+                                }
                             }
                         }
-                        //余额充值成功更新充值订单信息
-                        else{
-                            bankDepositOrder order = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
-                            if (order.getStatus() == 2){
-                                return "success";
-                            }else {
-                                payRestfulService.updateDepositOrderById(Long.valueOf(notify.getOut_trade_no()), PayType.Alipay, notify.getTrade_no(), "", (int)pay_at);
-                            }
-                        }
+                        return "success";
+                    } catch (Exception e) {
+                        return "fail";
                     }
-                    return "success";
-                } catch (Exception e) {
+                } else {
                     return "fail";
                 }
-            }else {
+            } else {
                 return "fail";
             }
-        }else {
-            return "fail";
+        }catch (Exception e)
+        {
+            logger.error("支付宝回调出现异常：",e);
         }
+        return "fail";
     }
 
     /**

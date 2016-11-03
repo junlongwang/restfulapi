@@ -4,6 +4,7 @@ import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
+
 import com.joybike.server.api.ThirdPayService.WxappConstructUrlInter;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.ThirdPayBean;
@@ -11,7 +12,6 @@ import com.joybike.server.api.model.WxNotifyOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.HashMap;
 

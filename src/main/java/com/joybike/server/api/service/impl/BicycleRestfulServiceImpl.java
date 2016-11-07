@@ -159,7 +159,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int deleteSubscribeInfo(long userId, String vehicleId) throws Exception {
-        return subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
+        return vehicleDao.updateVehicleUseStatus(vehicleId,UseStatus.free) * subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
 
     }
 

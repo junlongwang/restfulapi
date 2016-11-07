@@ -1,6 +1,7 @@
 import com.joybike.server.api.model.WxNotifyOrder;
 import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.model.userInfo;
+import com.joybike.server.api.util.UnixTimeUtils;
 import com.joybike.server.api.util.XStreamUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -74,6 +75,13 @@ public class xstreamUnitTest {
         HttpEntity<Amortize> formEntity = new HttpEntity<Amortize>(amortize,headers);
         String result = restTemplate.postForObject("http://amortize.web.58dns.org/consume", formEntity, String.class);
         System.out.println(result);
+    }
+
+    @Test
+    public void test()
+    {
+        long o =UnixTimeUtils.getUnixTime("2016-11-03 23:33:49");
+        System.out.println(o);
     }
 
 

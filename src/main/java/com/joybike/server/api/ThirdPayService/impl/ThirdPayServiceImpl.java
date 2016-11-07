@@ -126,7 +126,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
             result = wxPublicConstructUrlInter.getRefundUrl(payBean);
         }
         else{
-
+            result = aliPayConstructUrlInter.getRefundUrl(payBean);
         }
         return result;
     }

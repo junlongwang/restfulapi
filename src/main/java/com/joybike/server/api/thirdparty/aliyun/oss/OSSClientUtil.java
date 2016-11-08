@@ -23,25 +23,25 @@ public class OSSClientUtil {
 
     //Log log = LogFactory.getLog(OSSClientUtil.class);
     // endpoint以杭州为例，其它region请按实际情况填写
-    private static String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
+    private String endpoint = "http://oss-cn-shanghai.aliyuncs.com";
     // accessKey
-    private static String accessKeyId = "LTAIRYcpxEtj4Jo2";
-    private static String accessKeySecret = "OhG9MVQzO092ZIif6kJk3pzl3bdvx9";
+    private String accessKeyId = "LTAIRYcpxEtj4Jo2";
+    private String accessKeySecret = "OhG9MVQzO092ZIif6kJk3pzl3bdvx9";
     //空间
-    private static String bucketName = "joybike-user";
+    private String bucketName = "joybike-user";
     //文件存储目录
-    private static String filedir = "data/";
+    private String filedir = "data/";
 
-    private static OSSClient ossClient;
+    private OSSClient ossClient;
 
-    static  {
+    {
         ossClient = new OSSClient(endpoint, accessKeyId, accessKeySecret);
     }
 
     /**
      * 销毁
      */
-    public static void destory() {
+    public void destory() {
         ossClient.shutdown();
     }
 
@@ -53,7 +53,7 @@ public class OSSClientUtil {
 //        System.out.println(util.getImgUrl(url));
 //        util.destory();
 
-        String pic_path = "C:\\Users\\58\\Desktop\\图片1.jpg";//图片路径
+        String pic_path = "C:\\Users\\58\\Desktop\\WechatIMG23.jpeg";//图片路径
         FileInputStream fileInputStream = null;
         try {
             fileInputStream = new FileInputStream(pic_path);
@@ -87,10 +87,6 @@ public class OSSClientUtil {
     public static String uploadRepairImg(byte[] bytes)
     {
         OSSClientUtil util=new OSSClientUtil();
-//        String url=util.uploadImg2Oss();
-//        System.out.println(url);
-//        System.out.println(util.getImgUrl(url));
-
         InputStream inputStream = new ByteArrayInputStream(bytes);
         String name = UUID.randomUUID().toString()+".jpg";
         util.uploadFile2OSS(inputStream, "RepairImg/",name);

@@ -3,7 +3,9 @@
 //import com.alipay.api.AlipayApiException;
 //import com.alipay.api.AlipayClient;
 //import com.alipay.api.DefaultAlipayClient;
+//import com.alipay.api.request.AlipayPlatformOpenidGetRequest;
 //import com.alipay.api.request.AlipayTradePayRequest;
+//import com.alipay.api.response.AlipayPlatformOpenidGetResponse;
 //import com.alipay.api.response.AlipayTradePayResponse;
 //import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 //import com.joybike.server.api.dto.AlipayDto;
@@ -41,30 +43,31 @@
 //
 //
 //    @Test
-//    public  void aTest() throws AlipayApiException {
-//        AlipayClient alipayClient = new DefaultAlipayClient("http://openapi.alipay.com/gateway.do","2016102202289143",
-//                "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAL+V3cjrWGPzv0tx6PuU5QuFtNKOh3z2uefh3/mkMk5Ynf5u6ideNTm+wig9gZ+zIwtnb195yESVYEXFI3lKhokl2AGWqkcTLyde9ONR1vuPyMJSwrj5AwoslEg7VAUO7pcoE4t14/4H+jp7wNq7OdDdkp2s1/YcwmxVO7UthrQBAgMBAAECgYADcNSX3CotOV5xI22UvxrR9yfFNEwYoXG7SWI1YI6Ku6qyvBk2dcms7NEd2eTvEk+Jz+S/KTfAi5I8DotRjVYXLoMtaf5J5JZv7YHhTb5s+mwaYv76Zj/xPDS9N8Gdn5Im2J7rAoIqT0LgrLsItxyblCSDIGl+osrI4oc0wwRJMQJBAOCucs7y0KtQ5tl5OSJwREGwYYNMCh2wVSU8eVZdC8PjzKbDJ3wCC9dSD0MHUFst40QpAuX236RGhCZyIZVY5BUCQQDaSmqjPa+ivUwPo4I/HsiFUrXVChA/hGje5KhJ7AQgrZwCWBVddeMW83BBRUwjSxIxpOyS+oZr/rIsl7SbNq89AkEAzg8P2j6VI9lRrrffr3b5Eqm59NmjGXFj1X+t5If3R1O/mF2486FIzNREjPvDNaxTF2rpbpDIsPe/MSdRJ5BbtQJAVnDhiYMD6g3L8OVuzlACV8lI9/PkO0LTxHAHtD4h5E7bWJJI45mrM4tzCGXIoLE5oy8L/6f1Uw6ov7/TZSNigQJAcUpgecFc5STQvpXYch9ptufqu+96GhR6pQDgkXUXnSWrNxmyNPFPoioip9nOV/symU0Du65r+kNy/lexVT94wA==",
-//                "json","GBK","MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/ld3I61hj879Lcej7lOULhbTSjod89rnn4d/5pDJOWJ3+buonXjU5vsIoPYGfsyMLZ29fechElWBFxSN5SoaJJdgBlqpHEy8nXvTjUdb7j8jCUsK4+QMKLJRIO1QFDu6XKBOLdeP+B/o6e8DauznQ3ZKdrNf2HMJsVTu1LYa0AQIDAQAB");
-//        AlipayTradePayRequest request = new AlipayTradePayRequest();
-//        request.setBizContent("{" +
-//                "    \"out_trade_no\":\"20150320010101001\","
-//                        +
-//                        "    \"scene\":\"bar_code,wave_code\","
-//                        +
-//                        "    \"auth_code\":\"28763443825664394\","
-//                        +
-//                        "    \"subject\":\"Iphone6 16G\","
-//                        +
-//                        "    \"timeout_express\":\"90m\","
-//                        +
-//                        "  }");
-//        AlipayTradePayResponse response = alipayClient.execute(request);
-//        if(response.isSuccess()){
-//            System.out.println("调用成功");
-//        } else {
-//            System.out.println("调用失败");
-//        }
+//    public static void main(String[] args) throws AlipayApiException {
+//
+//        String serverUrl = "https://openapi.alipay.com/gateway.do";
+//
+//        String appId = "2088521096580226";
+//
+//        String privateKey = "MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBALEjhVas+4WJWzL/a3lg6dCIstR1Qs2/RipWGj1MMg0imqUnIJWiK3uf35JBPHVDSAykiWZbw7gjsARo+Q75UhMt+obwiG66CNxMaB5fbmGuYgu0FaykRlYOd0H4ct4B8HiGwN/Q0Yp8J10K3CAS54EqI7r8mfnfKnUtqu39VR4bAgMBAAECgYAtHHCunCsJ3Ose17FVHfstokJ4nMxAfX+u9HKGPctZUQC1InvH357XQuW652YwLsxAe/6J1MDJOj1vQhR7Xb8qulmrP/dOyKQmIhMhByDd2RwT6WifBRqCJeRJgvTPXjUu0S207iU7JXXGuQhL36zCkFol6pXfjlfwuX0cuvkXcQJBAOkB2A08hWQ8SCcQss8WKt9N/jo26ucLe6jqXAhbMll4WD/G4kAoC3B22KpxgxZ93eIbhvn4VT5PxOOo44l1OwUCQQDCnlhqNKWSAP5wPEjlE4NhElGt1DKDIoHLk1l6r7tRhaORyjGoMF0LfcZCLxX6CnF5t8tj6V0lwUWKrX3T5X6fAkASSQHCcChrqEtlPWs60xuEMKOtv9eJUB5hMBsO0NFPsiECyEHDFSForvrrzUKjRjdeYhiijzlpTWs/Dmbkx51dAkAdi2ZGsTlVYds+dJhoVj8ClIJbzjPg3nMv0W2rB1R7ersrHbPOIZFudiiL0ZQXglBZtwIkZ7/hRGbnN5E7gsJnAkA0ezah9rEmPK6JASsUZxQHxhJV4N1lLVM0u9tKwr3hEpUMgNvtIqTmNSPErzJ9Qn8CEMiEDTCX";
+//
+//        AlipayClient client = new DefaultAlipayClient(serverUrl, appId, privateKey, "json");
+//
+//        AlipayPlatformOpenidGetRequest req = new AlipayPlatformOpenidGetRequest();
+//
+//        req.setBizContent("{\"user_ids\":[\"2088521096580226\",\"2088521096580226\",\"2088521096580226\"]}");
+//
+//
+//
+//        AlipayPlatformOpenidGetResponse res = client.execute(req, null);
+//
+//        System.out.println(res.getMsg());
+//
+//        System.out.println(res.getParams());
+//
+//        System.out.println(res.getBody());
 //    }
+//
 //
 //    @Test
 //    public void bTest(){

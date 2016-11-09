@@ -1,6 +1,7 @@
 import com.joybike.server.api.model.WxNotifyOrder;
 import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.model.userInfo;
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.util.UnixTimeUtils;
 import com.joybike.server.api.util.XStreamUtils;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -14,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.*;
 
 /**
  * Created by 58 on 2016/10/24.
@@ -78,11 +81,42 @@ public class xstreamUnitTest {
     }
 
     @Test
-    public void test()
-    {
-        long o =UnixTimeUtils.getUnixTime("2016-11-03 23:33:49");
+    public void test() {
+        long o = UnixTimeUtils.getUnixTime("2016-11-03 23:33:49");
         System.out.println(o);
+
+        String pic_path = "C:\\Users\\58\\Desktop\\WechatIMG23.jpeg";//图片路径
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(pic_path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+
+            String imageName = OSSClientUtil.uploadRepairImg(input2byte(fileInputStream));
+            System.out.println(imageName);
+            fileInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
+    private byte[] input2byte(InputStream inStream)
+            throws IOException {
+        ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        byte[] buff = new byte[100];
+        int rc = 0;
+        while ((rc = inStream.read(buff, 0, 100)) > 0) {
+            swapStream.write(buff, 0, rc);
+        }
+        byte[] in2b = swapStream.toByteArray();
+
+        swapStream.close();
+        return in2b;
+    }
+
+
 
 
 

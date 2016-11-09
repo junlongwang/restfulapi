@@ -122,7 +122,7 @@ public class userInfo implements Serializable {
     }
 
     public String getPhoto() {
-        return OSSConsts.PRE_IMG_URL+photo;
+        return photo;
     }
 
     public String getIphone() {
@@ -167,7 +167,7 @@ public class userInfo implements Serializable {
 
 
     public String getIdentityCardphoto() {
-        return OSSConsts.PRE_IMG_URL+identityCardphoto;
+        return identityCardphoto;
     }
 
     public void setIdentityCardphoto(String identityCardphoto) {
@@ -191,7 +191,7 @@ public class userInfo implements Serializable {
     }
 
     public String getUserImg() {
-        return OSSConsts.PRE_IMG_URL+userImg;
+        return userImg;
     }
 
     public void setUserImg(String userImg) {

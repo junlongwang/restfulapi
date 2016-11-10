@@ -13,13 +13,19 @@ import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.SMSHelper;
 import com.joybike.server.api.thirdparty.SMSResponse;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
 import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -61,18 +67,6 @@ public class UserRestfulApi {
             user.setIdNumber(userInfoDto.getIdNumber());
             user.setRealName(userInfoDto.getRealName());
             user.setNationality(userInfoDto.getNationality());
-            if (userInfoDto.getIdentityCardphoto() != null) {
-                String fileName = OSSClientUtil.uploadUserImg(userInfoDto.getIdentityCardphoto());
-                user.setIdentityCardphoto(fileName);
-            }
-            if (userInfoDto.getPhoto() != null) {
-                String fileName = OSSClientUtil.uploadUserImg(userInfoDto.getPhoto());
-                user.setPhoto(fileName);
-            }
-            if (userInfoDto.getUserImg() != null) {
-                String fileName = OSSClientUtil.uploadUserImg(userInfoDto.getUserImg());
-                user.setUserImg(fileName);
-            }
             userRestfulService.updateUserInfo(user);
             userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
             return ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo));
@@ -157,10 +151,10 @@ public class UserRestfulApi {
 //            {
 //                return ResponseEntity.ok(new Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null));
 //            }
-            logger.info("===========================================");
+            //logger.info("===========================================");
 
             String redisValue = RedixUtil.getString(mobile);
-            logger.info(redisValue + "=" + validateCode);
+            //logger.info(redisValue + "=" + validateCode);
 
             //获取VALUE,进行验证
             if (validateCode.equals(redisValue)) {
@@ -225,6 +219,124 @@ public class UserRestfulApi {
 
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(false,3, e.getMessage(), null));
+        }
+    }
+
+
+    /**
+     * 上传用户头像图片
+     * @param userId 用户ID
+     * @param request 请求
+     * @return
+     */
+    @RequestMapping(value = "uploadUserHeadImg")
+    public ResponseEntity<Message<String>> uploadUserHeadImg(@RequestParam("userId") long userId,HttpServletRequest request) {
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String imageName = OSSClientUtil.uploadUserImg(file.getInputStream());
+                    userInfo user = new userInfo();
+                    user.setId(userId);
+                    user.setUserImg(imageName);
+                    userRestfulService.updateUserInfo(user);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+            }
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), null, "请上传文件！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传用户头像图片报错：",e);
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+    /**
+     * 上传用户身份证图片
+     * @param userId 用户ID
+     * @param request 请求
+     * @return
+     */
+    @RequestMapping(value = "uploadIDCardImg")
+    public ResponseEntity<Message<String>> uploadIDCardImg(@RequestParam("userId") long userId,HttpServletRequest request) {
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String imageName = OSSClientUtil.uploadUserImg(file.getInputStream());
+                    userInfo user = new userInfo();
+                    user.setId(userId);
+                    //用户身份证图片
+                    user.setIdentityCardphoto(imageName);
+                    userRestfulService.updateUserInfo(user);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+            }
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), null, "请上传文件！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传用户身份证图片报错：",e);
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+    /**
+     * 上传用户和身份证合影
+     * @param userId 用户ID
+     * @param request 请求
+     * @return
+     */
+    @RequestMapping(value = "uploadUserImg")
+    public ResponseEntity<Message<String>> uploadIDCardImg2(@RequestParam("userId") long userId,HttpServletRequest request) {
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String imageName = OSSClientUtil.uploadUserImg(file.getInputStream());
+                    userInfo user = new userInfo();
+                    user.setId(userId);
+
+                    //用户和身份证合影
+                    user.setPhoto(imageName);
+                    userRestfulService.updateUserInfo(user);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+
+            }
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), null, "请上传文件！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传用户和身份证合影报错：",e);
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 }

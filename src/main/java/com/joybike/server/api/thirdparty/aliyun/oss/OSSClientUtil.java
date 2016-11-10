@@ -61,7 +61,7 @@ public class OSSClientUtil {
             e.printStackTrace();
         }
         try {
-            String url=uploadRepairImg(input2byte(fileInputStream));
+            String url=uploadRepairImg(fileInputStream);
             System.out.println(url);
             fileInputStream.close();
         } catch (IOException e) {
@@ -70,28 +70,23 @@ public class OSSClientUtil {
 
     }
 
-    public static String uploadUserImg(byte[] bytes)
+
+    public static String uploadUserImg(InputStream inputStream )
     {
         OSSClientUtil util=new OSSClientUtil();
-//        String url=util.uploadImg2Oss();
-//        System.out.println(url);
-//        System.out.println(util.getImgUrl(url));
-
-        InputStream inputStream = new ByteArrayInputStream(bytes);
         String name = UUID.randomUUID().toString()+".jpg";
         util.uploadFile2OSS(inputStream, "userImg/",name);
         util.destory();
-        return name;
+        return OSSConsts.PRE_IMG_URL+"userImg/"+name;
     }
 
-    public static String uploadRepairImg(byte[] bytes)
+    public static String uploadRepairImg(InputStream inputStream)
     {
         OSSClientUtil util=new OSSClientUtil();
-        InputStream inputStream = new ByteArrayInputStream(bytes);
         String name = UUID.randomUUID().toString()+".jpg";
         util.uploadFile2OSS(inputStream, "RepairImg/",name);
         util.destory();
-        return name;
+        return OSSConsts.PRE_IMG_URL+"RepairImg/"+name;
     }
 
 

@@ -94,7 +94,7 @@ public class xstreamUnitTest {
         }
         try {
 
-            String imageName = OSSClientUtil.uploadRepairImg(input2byte(fileInputStream));
+            String imageName = OSSClientUtil.uploadRepairImg(fileInputStream);
             System.out.println(imageName);
             fileInputStream.close();
         } catch (IOException e) {

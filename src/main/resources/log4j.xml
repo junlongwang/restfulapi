@@ -9,6 +9,7 @@
     </appender>
     <appender name="requestLog" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="/opt/soft/logs/server.log"/>
+        <!--<param name="File" value="/opt/soft/logs/server.log"/>-->
         <param name="Append" value="true"/>
         <param name="Threshold" value="INFO"/>
         <param name="DatePattern" value="'_'yyyyMMddHH'.log'"/>
@@ -19,6 +20,7 @@
     <appender name="errorLog" class="org.apache.log4j.DailyRollingFileAppender">
         <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
         <param name="File" value="/opt/soft/logs/error.log"/>
+        <!--<param name="File" value="/opt/soft/logs/error.log"/>-->
         <param name="Append" value="true"/>
         <param name="Threshold" value="ERROR"/>
         <param name="DatePattern" value="'_'yyyy-MM-dd'.log'"/>
@@ -29,6 +31,7 @@
     <appender name="infoLog" class="org.apache.log4j.DailyRollingFileAppender">
         <errorHandler class="org.apache.log4j.helpers.OnlyOnceErrorHandler"/>
         <param name="File" value="/opt/soft/logs/info.log"/>
+        <!--<param name="File" value="/opt/soft/logs/info.log"/>-->
         <param name="Append" value="true"/>
         <param name="Threshold" value="INFO"/>
         <param name="DatePattern" value="'_'yyyy-MM-dd'.log'"/>

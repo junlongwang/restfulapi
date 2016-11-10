@@ -48,11 +48,11 @@ public class WxRestfulApi {
 	public String code(HttpServletRequest request, HttpServletResponse response,String url) throws Exception {
 		 	String state = "STATE"; 
 			String baseUrl = WeiXinConfig.AUTHOR_URL;
-			String finUrl = "?appid="+WeiXinConfig.WECHAT_WEB_APP_ID+"&redirect_uri="+URLEncoder.encode("http://zszypay.91lds.com/zszy-pay/wx/info?url="+url, "utf-8")+"&response_type=code&scope=snsapi_userinfo&state="+state+"#wechat_redirect";
+			String finUrl = "?appid="+WeiXinConfig.WECHAT_WEB_APP_ID+"&redirect_uri="+URLEncoder.encode("http://api.joybike.com.cn/restful/wx/info?url="+url, "utf-8")+"&response_type=code&scope=snsapi_userinfo&state="+state+"#wechat_redirect";
 			return "redirect:" + baseUrl+finUrl;
 	 }
 	
-	 @RequestMapping("/info")//获取用户信息
+	 	@RequestMapping("/info")//获取用户信息
 		public String info(HttpServletRequest request, HttpServletResponse response,String code,String url) throws Exception {
 		    System.out.println(url);
 		 	List<NameValuePair> list = new ArrayList<NameValuePair>();
@@ -83,7 +83,7 @@ public class WxRestfulApi {
 		public String baseCode(HttpServletRequest request, HttpServletResponse response,String url) throws Exception {
 			 	String state = "STATE";
 				String baseUrl = WeiXinConfig.AUTHOR_URL;
-				String finUrl = "?appid="+WeiXinConfig.WECHAT_WEB_APP_ID+"&redirect_uri="+URLEncoder.encode("http://zszypay.91lds.com/zszy-pay/wx/base/info?url="+url, "utf-8")+"&response_type=code&scope=snsapi_base&state="+state+"#wechat_redirect";
+				String finUrl = "?appid="+WeiXinConfig.WECHAT_WEB_APP_ID+"&redirect_uri="+URLEncoder.encode("http://api.joybike.com.cn/restful/wx/base/info?url="+url, "utf-8")+"&response_type=code&scope=snsapi_base&state="+state+"#wechat_redirect";
 				return "redirect:" + baseUrl+finUrl;
 		 }
 		

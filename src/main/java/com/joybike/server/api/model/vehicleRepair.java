@@ -122,7 +122,7 @@ public class vehicleRepair implements Serializable {
     }
 
     public String getFaultImg() {
-        return OSSConsts.PRE_IMG_URL+faultImg;
+        return faultImg;
     }
 
     public void setFaultImg(String faultImg) {

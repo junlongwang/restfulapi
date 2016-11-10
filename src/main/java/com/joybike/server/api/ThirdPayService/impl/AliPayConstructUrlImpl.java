@@ -190,7 +190,7 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
         String paygateway = "https://mapi.alipay.com/gateway.do?";
         String ItemUrl = Payment.CreateUrl(paygateway, input_charset, service,
                 partner, sign_type, batch_no, refund_date, batch_num,
-                detail_data, notify_url, private_key,null);
+                detail_data, notify_url, Md5_key,null);
         logger.info("refound.zfb:itemurl:" + ItemUrl);
         String result = "";
         try {

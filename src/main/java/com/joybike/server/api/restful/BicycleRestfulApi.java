@@ -238,7 +238,7 @@ public class BicycleRestfulApi {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "uploadRepairImg")
+    @RequestMapping(value = "uploadRepairImg2")
     @ResponseBody
     public ResponseEntity<Message<String>> uploadRepairImg2(@RequestParam("bicycleCode") String bicycleCode,HttpServletRequest request) throws Exception {
 

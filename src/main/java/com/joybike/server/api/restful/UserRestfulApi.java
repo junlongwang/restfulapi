@@ -169,6 +169,25 @@ public class UserRestfulApi {
     }
 
     /**
+     * 根据用户ID获取用户信息
+     *
+     * @param userId
+     * @return
+     */
+    //@SystemControllerLog(description = "验证码验证登录")
+    @RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
+    public ResponseEntity<Message<userInfo>> getUserInfo(long userId) {
+        try {
+
+            userInfo userInfo = userRestfulService.getUserInfoById(userId);
+            return ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UerInfo_ERROR.getErrorCode(), ReturnEnum.UerInfo_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+
+    /**
      * 获取用户已完成订单
      *
      * @param userId
@@ -198,27 +217,27 @@ public class UserRestfulApi {
 
             VehicleOrderSubscribeDto dto = bicycleRestfulService.getUseInfo(userId);
 
-            if (dto.getVehicleOrderDto() != null && dto.getInfo() != null){
-                if (dto.getVehicleOrderDto().getStatus() == 1){
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0,null, dto));
-                }else{
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4,null, dto));
+            if (dto.getVehicleOrderDto() != null && dto.getInfo() != null) {
+                if (dto.getVehicleOrderDto().getStatus() == 1) {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0, null, dto));
+                } else {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4, null, dto));
                 }
 
-            }else if (dto.getVehicleOrderDto() != null && dto.getInfo() == null){
-                if (dto.getVehicleOrderDto().getStatus() == 1){
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0,null, dto));
-                }else{
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4,null, dto));
+            } else if (dto.getVehicleOrderDto() != null && dto.getInfo() == null) {
+                if (dto.getVehicleOrderDto().getStatus() == 1) {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0, null, dto));
+                } else {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4, null, dto));
                 }
-            }else if (dto.getVehicleOrderDto() == null && dto.getInfo() != null){
-                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 1,null, dto));
-            }else{
-                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 2,null, null));
+            } else if (dto.getVehicleOrderDto() == null && dto.getInfo() != null) {
+                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 1, null, dto));
+            } else {
+                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 2, null, null));
             }
 
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(false,3, e.getMessage(), null));
+            return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(false, 3, e.getMessage(), null));
         }
     }
 

@@ -26,5 +26,12 @@ public interface UserInfoDao extends IRepository<userInfo> {
      */
     userInfo getInfoByPhone(String phone) throws Exception;
 
+    /**
+     * 获取用户信息根据用户id
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    userInfo getUserInfoById(long userId) throws Exception;
 
 }

@@ -79,4 +79,9 @@ public class UserRestfulServiceImpl implements UserRestfulService {
             return userInfoDao.getUserInfo(userId);
         }
     }
+
+    @Override
+    public userInfo getUserInfoById(long userId) throws Exception {
+        return userInfoDao.getUserInfoById(userId);
+    }
 }

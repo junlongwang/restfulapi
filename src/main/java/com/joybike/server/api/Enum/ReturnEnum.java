@@ -63,6 +63,7 @@ public enum ReturnEnum {
     Iphone_Error(4003,"验证码发送失败,发送通道异常！"),
     Iphone_Validate_Error(4004, "验证码验证失败！，请重新获取！"),
     Iphone_Sender_Error(4005,"验证码已经发送，5分钟内不允许重复请求！"),
+    UerInfo_ERROR(4006,"获取用户信息错误"),
     /***********
      * 车辆错误
      *******************/

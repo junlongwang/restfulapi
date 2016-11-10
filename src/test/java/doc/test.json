@@ -1,0 +1,20 @@
+{
+  "headers": {},
+  "statusCodeValue": 200,
+  "body": {
+    "data": {
+      "realName": "龙子渊",
+      "authenStatus": 0,
+      "nationality": "中国",
+      "updateAt": 0,
+      "id": 1,
+      "idNumber": "1234567890",
+      "securityStatus": 1,
+      "iphone": "13910991532",
+      "createAt": 1476858779
+    },
+    "success": true,
+    "errorCode": 0
+  },
+  "statusCode": "OK"
+}

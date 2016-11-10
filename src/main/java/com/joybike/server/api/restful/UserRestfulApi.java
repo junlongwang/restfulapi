@@ -200,7 +200,7 @@ public class UserRestfulApi {
             List<VehicleOrderDto> list = bicycleRestfulService.getOrderPaySuccess(userId);
             return ResponseEntity.ok(new Message<List<VehicleOrderDto>>(true, 0, null, list));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<List<VehicleOrderDto>>(false, ReturnEnum.Order_Eroor.getErrorCode(), ReturnEnum.Order_Eroor.getErrorDesc() + "-" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<List<VehicleOrderDto>>(false, ReturnEnum.UerInfo_ERROR.getErrorCode(), ReturnEnum.UerInfo_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 

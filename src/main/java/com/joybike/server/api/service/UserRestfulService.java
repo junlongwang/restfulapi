@@ -32,5 +32,13 @@ public interface UserRestfulService {
      */
     userInfo getUserInfoByMobile(String mobile) throws Exception;
 
+    /**
+     * 根据用户ID获取用户信息
+     *
+     * @param userId
+     * @return
+     */
+    userInfo getUserInfoById(long userId) throws Exception;
+
 
 }

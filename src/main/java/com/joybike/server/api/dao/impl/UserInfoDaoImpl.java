@@ -27,7 +27,7 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     final String userInfoSql = "select * from userInfo where id = :userId";
 
     @Override
-    public userInfo getUserInfo(long userId)  throws Exception{
+    public userInfo getUserInfo(long userId) throws Exception {
         Map map = new HashMap();
         map.put("userId", userId);
         try {
@@ -51,7 +51,7 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     final String phoneSql = "select * from userInfo where iphone = :phone";
 
     @Override
-    public userInfo getInfoByPhone(String phone)  throws Exception{
+    public userInfo getInfoByPhone(String phone) throws Exception {
         Map map = new HashMap();
         map.put("phone", phone);
         try {
@@ -64,6 +64,30 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
+    }
+
+    /**
+     * 根据用户ID获取用户信息
+     *
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    final String getUserInfoByIdSql = "select * from userInfo where id = :userId";
+
+    @Override
+    public userInfo getUserInfoById(long userId) throws Exception {
+        Map map = new HashMap();
+        map.put("userId", userId);
+        try {
+            try {
+                return (userInfo) this.jdbcTemplate.queryForObject(getUserInfoByIdSql, map, new BeanPropertyRowMapper(userInfo.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
     }
 
 }

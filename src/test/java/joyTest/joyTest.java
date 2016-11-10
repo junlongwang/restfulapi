@@ -213,4 +213,14 @@ public class joyTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void getByidTest(){
+        try {
+            userInfo userInfo = userRestfulService.getUserInfoById(1);
+            System.out.println(userInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

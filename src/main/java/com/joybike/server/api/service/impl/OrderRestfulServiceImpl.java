@@ -214,7 +214,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
     }
 
     /**
-     * 锁车支付 
+     * 锁车支付
      * @param bicycleCode
      * @param endAt
      * @param endLongitude

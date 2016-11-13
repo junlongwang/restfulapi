@@ -8,9 +8,12 @@ import com.joybike.server.api.dao.OrderItemDao;
 import com.joybike.server.api.dao.ProductDao;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
+import com.joybike.server.api.dto.UserPayIngDto;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
@@ -20,7 +23,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lishaoyong on 16/10/23.
@@ -41,7 +46,11 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
     BicycleRestfulService bicycleRestfulService;
 
     @Autowired
+    PayRestfulService payRestfulService;
+
+    @Autowired
     SubscribeInfoDao subscribeInfoDao;
+
 
 
     /**
@@ -204,6 +213,35 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         return vehicleOrderDao.getOrderByid(id);
     }
 
+    /**
+     * 锁车支付 
+     * @param bicycleCode
+     * @param endAt
+     * @param endLongitude
+     * @param endDimension
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public UserPayIngDto userPayOrder(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception {
+        UserPayIngDto userPayIngDto = new UserPayIngDto();
+        VehicleOrderDto dto = bicycleRestfulService.lock(bicycleCode,endAt,endLongitude,endDimension);
+
+        if (dto != null){
+            int payValue = payRestfulService.consume(dto.getOrderCode(),dto.getBeforePrice(),dto.getUserId(),0);
+            if (payValue > 0){
+                userPayIngDto.setPayType(1);
+                userPayIngDto.setVehicleOrderDto(dto);
+            }else{
+                userPayIngDto.setPayType(0);
+                userPayIngDto.setVehicleOrderDto(dto);
+            }
+        }else{
+            userPayIngDto.setPayType(0);
+            userPayIngDto.setVehicleOrderDto(null);
+        }
+        return userPayIngDto;
+    }
 
 
 }

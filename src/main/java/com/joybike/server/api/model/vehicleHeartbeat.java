@@ -22,8 +22,8 @@ public class vehicleHeartbeat implements Serializable {
     **/
     private String firmwareVersion;
 
-    /** 
-     * 车锁配置版本
+    /**
+     * 车锁配置
      *  @Author lisy
     **/
     private String allocation;

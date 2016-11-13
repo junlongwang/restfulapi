@@ -107,13 +107,22 @@ public class VehicleOrderDto implements Serializable {
      */
     private Integer cyclingTime;
 
+    /**
+     * 坐标数据
+     */
     private List<vehicleHeartbeat> vehicleHeartbeatList;
+
+
+    /**
+     * 轨迹图
+     */
+    private String cyclingImg;
 
     public VehicleOrderDto() {
 
     }
 
-    public VehicleOrderDto(Long id, String orderCode, Long userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String vehicleId, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, Integer cyclingTime, List<vehicleHeartbeat> vehicleHeartbeatList) {
+    public VehicleOrderDto(Long id, String orderCode, Long userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String vehicleId, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, Integer cyclingTime, List<vehicleHeartbeat> vehicleHeartbeatList, String cyclingImg) {
         this.id = id;
         this.orderCode = orderCode;
         this.userId = userId;
@@ -130,6 +139,7 @@ public class VehicleOrderDto implements Serializable {
         this.endLongitude = endLongitude;
         this.cyclingTime = cyclingTime;
         this.vehicleHeartbeatList = vehicleHeartbeatList;
+        this.cyclingImg = cyclingImg;
     }
 
     @Override
@@ -151,6 +161,7 @@ public class VehicleOrderDto implements Serializable {
                 ", endLongitude=" + endLongitude +
                 ", cyclingTime=" + cyclingTime +
                 ", vehicleHeartbeatList=" + vehicleHeartbeatList +
+                ", cyclingImg='" + cyclingImg + '\'' +
                 '}';
     }
 
@@ -280,5 +291,13 @@ public class VehicleOrderDto implements Serializable {
 
     public void setVehicleHeartbeatList(List<vehicleHeartbeat> vehicleHeartbeatList) {
         this.vehicleHeartbeatList = vehicleHeartbeatList;
+    }
+
+    public void setCyclingImg(String cyclingImg) {
+        this.cyclingImg = cyclingImg;
+    }
+
+    public String getCyclingImg() {
+        return cyclingImg;
     }
 }

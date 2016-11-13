@@ -3,6 +3,7 @@ package joyTest;
 import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.Enum.DepositStatus;
 import com.joybike.server.api.Enum.PayType;
+import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.model.*;
@@ -222,7 +223,7 @@ public class joyTest {
         try {
             userInfo userInfo = userRestfulService.getUserInfoById(1);
             System.out.println(userInfo);
-            System.out.println("1000:::" + JSON.toJSON(ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo))));
+            System.out.println("1000:::" + JSON.toJSON(ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UerInfo_ERROR.getErrorCode(), ReturnEnum.UerInfo_ERROR.getErrorDesc(), null))));
 
         } catch (Exception e) {
             e.printStackTrace();

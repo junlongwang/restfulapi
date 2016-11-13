@@ -645,19 +645,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception {
 
         List<VehicleOrderDto> list = vehicleOrderDao.getOrderPaySuccess(userId);
-        if (list.size() > 0) {
-            list.forEach(new Consumer<VehicleOrderDto>() {
-                @Override
-                public void accept(VehicleOrderDto dto) {
-                    try {
-                        List<vehicleHeartbeat> list = getVehicleHeartbeatList(dto.getVehicleId(), dto.getBeginAt(), dto.getEndAt());
-                        dto.setVehicleHeartbeatList(list);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
         list.stream().sorted((p, p2) -> (p2.getEndAt().compareTo(p.getEndAt()))).collect(toList());
         return list;
     }

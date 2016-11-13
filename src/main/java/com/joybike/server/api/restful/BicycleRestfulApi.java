@@ -232,15 +232,15 @@ public class BicycleRestfulApi {
     }
 
     /**
-     *
+     *上传车辆停放位置图片
      * @param bicycleCode
      * @param request
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "uploadRepairImg2")
+    @RequestMapping(value = "uploadParkingImg")
     @ResponseBody
-    public ResponseEntity<Message<String>> uploadRepairImg2(@RequestParam("bicycleCode") String bicycleCode,HttpServletRequest request) throws Exception {
+    public ResponseEntity<Message<String>> uploadParkingImg(@RequestParam("userId") long userId,@RequestParam("bicycleCode") String bicycleCode,HttpServletRequest request) throws Exception {
 
         try {
             //获取解析器
@@ -254,24 +254,17 @@ public class BicycleRestfulApi {
                 while(it.hasNext()){
                     //根据文件名称取文件
                     MultipartFile file = multiRequest.getFile(it.next());
-                    String fileName = file.getOriginalFilename();
-                    String path = request.getSession().getServletContext().getRealPath("/");
-                    String localPath = path + fileName;
-                    logger.info("上传文件目录："+localPath);
-//                    File newFile = new File(localPath);
-//                    //上传的文件写入到指定的文件中
-//                    file.transferTo(newFile);
                     String imageName = OSSClientUtil.uploadRepairImg(file.getInputStream());
 
                     return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
                 }
             }
-            return ResponseEntity.ok(new Message<String>(false, 0, null, "上传失败！"));
+            return ResponseEntity.ok(new Message<String>(false, 111, null, "上传车辆停放位置图片失败！"));
         }
         catch (Exception e)
         {
-            logger.error("上传车辆故障图片报错：",e);
+            logger.error("上传车辆停放位置图片报错：",e);
         }
-        return ResponseEntity.ok(new Message<String>(false, 0, null, "上传失败！"));
+        return ResponseEntity.ok(new Message<String>(false, 111, null, "上传车辆停放位置图片失败！"));
     }
 }

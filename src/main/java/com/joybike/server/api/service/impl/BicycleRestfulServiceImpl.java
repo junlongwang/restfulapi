@@ -733,5 +733,10 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         return price;
     }
 
+    public int updateVehicleImg(String vehicleId, String vehicleImg) throws Exception
+    {
+        return  bicycleRestfulService.updateVehicleImg(vehicleId,vehicleImg);
+    }
+
 
 }

@@ -30,7 +30,7 @@ public class vehicleRepairDto implements Serializable{
      *  @Author lisy
      **/
     @JSONField(ordinal = 3)
-    private byte[] faultImg;
+    private String faultImg;
 
     /**
      * 信息提交人
@@ -64,11 +64,11 @@ public class vehicleRepairDto implements Serializable{
         this.cause = cause;
     }
 
-    public byte[] getFaultImg() {
+    public String getFaultImg() {
         return faultImg;
     }
 
-    public void setFaultImg(byte[] faultImg) {
+    public void setFaultImg(String faultImg) {
         this.faultImg = faultImg;
     }
 
@@ -88,7 +88,7 @@ public class vehicleRepairDto implements Serializable{
         this.createAt = createAt;
     }
 
-    public vehicleRepairDto(String bicycleCode, String cause, byte[] faultImg, Long createId, Integer createAt) {
+    public vehicleRepairDto(String bicycleCode, String cause, String faultImg, Long createId, Integer createAt) {
         this.bicycleCode = bicycleCode;
         this.cause = cause;
         this.faultImg = faultImg;
@@ -105,7 +105,7 @@ public class vehicleRepairDto implements Serializable{
         return "vehicleRepairDto{" +
                 "bicycleCode='" + bicycleCode + '\'' +
                 ", cause='" + cause + '\'' +
-                ", faultImg=" + Arrays.toString(faultImg) +
+                ", faultImg=" + faultImg +
                 ", createId=" + createId +
                 ", createAt=" + createAt +
                 '}';

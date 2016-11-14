@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <style type="text/css">
+        body,html,#container{
+            height: 100%;
+            margin: 0px;
+            font: 12px Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei', '微软雅黑', Arial;
+        }
+        .info-title{
+            color: white;
+            font-size: 14px;
+            background-color: rgba(0,155,255,0.8);
+            line-height: 26px;
+            padding: 0px 0 0 6px;
+            font-weight: lighter;
+            letter-spacing: 1px
+        }
+        .info-content{
+            padding: 4px;
+            color: #666666;
+            line-height: 23px;
+        }
+        .info-content img{
+            float: left;
+            margin: 3px;
+        }
+    </style>
+    <title>Demo1</title>
+</head>
+<body>
+<div id="container" tabindex="0"></div>
+<div class="button-group">
+    <input id="link" class="button" value="计算距离" type="button"/>
+    <input id="print" class="button" value="生成图片" type="button"/>
+</div>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=8255a46f698ce402928806547d2baa37"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
+    var map = new AMap.Map('container',{
+        resizeEnable: true,
+        zoom: 12,
+        center: [116.401208,39.907771]
+    });
+    //设置点标注
+    var marker = new AMap.Marker();
+    //加载地图插件    
+    AMap.plugin(['AMap.ToolBar','AMap.Scale'],function(){
+        var toolBar = new AMap.ToolBar();
+        var scale = new AMap.Scale();
+        map.addControl(toolBar);
+        map.addControl(scale);
+    })
+    //数组，用来存放点击过的经纬度坐标
+    var lineArr = new Array();
+
+    //为地图注册click事件获取鼠标点击的经纬度坐标
+    var dis=0;
+    var clickEventListener = map.on('click', function(e) {
+        marker.setMap(map);
+        marker.setPosition([e.lnglat.getLng(),e.lnglat.getLat()]);
+        //将坐标放入数组中
+        lineArr.push([e.lnglat.getLng(),e.lnglat.getLat()]);
+        if(lineArr.length<=1){
+
+        }else{
+            $.ajax({
+                type:"post",
+                url:"http://restapi.amap.com/v3/distance",
+                data:{"key":"ee95e52bf08006f63fd29bcfbcf21df0","type":3,"origins":lineArr[lineArr.length-1]+"","destination":lineArr[lineArr.length-2]+""},
+                success:function(result){
+                    dis+=parseInt(result.results[0].distance);
+                    alert("两点间的距离是"+result.results[0].distance+"米"+"，当前总距离："+dis+"米");
+                },
+                dataType:"json"
+            });
+        }
+    });
+    //地图右下角  计算距离  按钮的单击事件
+    AMap.event.addDomListener(document.getElementById('link'), 'click', function() {
+        alert("总距离是"+dis+"米");
+    });
+    //生成图片
+    AMap.event.addDomListener(document.getElementById('print'), 'click', function() {
+        var str=""+lineArr[0];
+        for(var i=0;i<lineArr.length;i++){
+            str+=";"+lineArr[i];
+        }
+        window.location="http://restapi.amap.com/v3/staticmap?zoom=12&scale=1&size=1024*1024&markers=mid,0x26df3f,起:"+lineArr[0]+"|mid,0xFF0000,终:"+lineArr[lineArr.length-1]+"&paths=8,0x0000ff,1,,:"+str+"&key=ee95e52bf08006f63fd29bcfbcf21df0";
+    });
+
+</script>
+<script type="text/javascript" src="http://webapi.amap.com/demos/js/liteToolbar.js"></script>
+</body>
+</html>

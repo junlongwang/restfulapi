@@ -182,5 +182,25 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
         }
     }
 
+    /**
+     * 获取车辆信息
+     * @param vehicleLockId
+     * @return
+     */
+    public  vehicle getVehicleBylockId(String vehicleLockId) throws Exception
+    {
+        try {
+            Map map = new HashMap();
+            map.put("lockId", vehicleLockId);
+            try {
+                return (vehicle)this.jdbcTemplate.queryForObject("select * from vehicle where lockId=:lockId", map, new BeanPropertyRowMapper(vehicle.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
 
 }

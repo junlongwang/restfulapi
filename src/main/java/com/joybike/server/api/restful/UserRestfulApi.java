@@ -152,7 +152,7 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
-    public ResponseEntity<Message<userInfo>> validate(String mobile, String validateCode) {
+    public ResponseEntity<Message<userInfo>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
         try {
             //如果KEY 过期
 //            if(!RedixUtil.exits(mobile))

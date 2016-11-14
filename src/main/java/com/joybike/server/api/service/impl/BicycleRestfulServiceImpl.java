@@ -77,7 +77,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                 //删除原订单
                 subscribeInfoDao.delete(uInfo.getId());
-                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
                 //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
                 //返回预约信息
@@ -95,7 +96,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                 //删除原订单
                 subscribeInfoDao.delete(uInfo.getId());
-                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
+
                 //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
                 //返回预约信息
@@ -110,7 +113,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
         if (uInfo == null && vInfo != null) {
             if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+                vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
+
                 //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
                 //返回预约信息
@@ -124,7 +129,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         }
 
         if (uInfo == null && vInfo == null) {
-            subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode);
+            vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
+            subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
+
             //保存预约信息
             long subscribeId = subscribeInfoDao.save(info);
             //返回预约信息
@@ -137,7 +144,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     }
 
     //保存预约信息
-    public static subscribeInfo insertSubscribeInfo(long userId, String bicycleCode, int startAt, SubscribeStatus subscribeStatus, String subcribeCode) {
+    public static subscribeInfo insertSubscribeInfo(long userId, String bicycleCode, int startAt, SubscribeStatus subscribeStatus, String subcribeCode,BigDecimal dimension,BigDecimal longitude) {
         subscribeInfo info = new subscribeInfo();
         info.setUserId(userId);
         info.setVehicleId(bicycleCode);
@@ -146,6 +153,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         info.setCreateAt(UnixTimeUtils.now());
         info.setStatus(subscribeStatus.getValue());
         info.setSubscribeCode(subcribeCode);
+        info.setDimension(dimension);
+        info.setLongitude(longitude);
         return info;
     }
 
@@ -737,6 +746,5 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     {
         return  bicycleRestfulService.updateVehicleImg(vehicleId,vehicleImg);
     }
-
 
 }

@@ -268,7 +268,7 @@
                     <!--这里写错了，逗号改为分号（window）或者 冒号(linux-->
                     <compilerArguments>
                         <verbose />
-                        <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
+                        <bootclasspath>${java.home}/lib/rt.jar:${java.home}/lib/jce.jar</bootclasspath>
                     </compilerArguments>
 
                 </configuration>

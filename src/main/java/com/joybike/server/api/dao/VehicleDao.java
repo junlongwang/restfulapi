@@ -57,4 +57,6 @@ public interface VehicleDao extends IRepository<vehicle> {
      * @return
      */
     int updateVehicleStatus(String vehicleId, VehicleEnableType vehicleEnableType) throws Exception;
+
+    int updateVehicleImg(String vehicleId, String vehicleImg) throws Exception;
 }

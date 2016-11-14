@@ -171,11 +171,7 @@ public class BicycleRestfulApi {
             com.joybike.server.api.model.vehicleRepair form = new vehicleRepair();
             form.setVehicleId(vehicleRepair.getBicycleCode());
             form.setCause(vehicleRepair.getCause());
-
-//            if (vehicleRepair.getFaultImg() != null && vehicleRepair.getFaultImg().length > 0) {
-//                String imageName = OSSClientUtil.uploadRepairImg(vehicleRepair.getFaultImg());
-//                form.setFaultImg(imageName);
-//            }
+            form.setFaultImg(vehicleRepair.getFaultImg());
             form.setCreateId(vehicleRepair.getCreateId());
             form.setCreateAt(vehicleRepair.getCreateAt());
             form.setDisposeStatus(DisposeStatus.untreated.getValue());
@@ -255,7 +251,7 @@ public class BicycleRestfulApi {
                     //根据文件名称取文件
                     MultipartFile file = multiRequest.getFile(it.next());
                     String imageName = OSSClientUtil.uploadRepairImg(file.getInputStream());
-
+                    bicycleRestfulService.updateVehicleImg(bicycleCode,imageName);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
                 }
             }

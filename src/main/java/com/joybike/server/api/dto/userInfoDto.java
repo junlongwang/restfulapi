@@ -49,21 +49,21 @@ public class userInfoDto implements Serializable {
      *  @Author lisy
      **/
     @JSONField(ordinal = 6)
-    private byte[] photo;
+    private String photo;
 
     /**
      * 身份证照片
      *  @Author lisy
      **/
     @JSONField(ordinal = 7)
-    private byte[] identityCardphoto;
+    private String identityCardphoto;
 
     /**
      * 用户头像图片
      *  @Author lisy
      **/
     @JSONField(ordinal = 8)
-    private byte[] userImg;
+    private String userImg;
 
     public Long getUserId() {
         return userId;
@@ -105,32 +105,32 @@ public class userInfoDto implements Serializable {
         this.nationality = nationality;
     }
 
-    public byte[] getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(byte[] photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 
-    public byte[] getIdentityCardphoto() {
+    public String getIdentityCardphoto() {
         return identityCardphoto;
     }
 
-    public void setIdentityCardphoto(byte[] identityCardphoto) {
+    public void setIdentityCardphoto(String identityCardphoto) {
         this.identityCardphoto = identityCardphoto;
     }
 
-    public byte[] getUserImg() {
+    public String getUserImg() {
         return userImg;
     }
 
-    public void setUserImg(byte[] userImg) {
+    public void setUserImg(String userImg) {
         this.userImg = userImg;
     }
 
     public userInfoDto(){}
-    public userInfoDto(Long userId, String iphone, String realName, String idNumber, String nationality, byte[] photo, byte[] identityCardphoto, byte[] userImg) {
+    public userInfoDto(Long userId, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, String userImg) {
         this.userId = userId;
         this.iphone = iphone;
         this.realName = realName;
@@ -149,9 +149,9 @@ public class userInfoDto implements Serializable {
                 ", realName='" + realName + '\'' +
                 ", idNumber='" + idNumber + '\'' +
                 ", nationality='" + nationality + '\'' +
-                ", photo=" + Arrays.toString(photo) +
-                ", identityCardphoto=" + Arrays.toString(identityCardphoto) +
-                ", userImg=" + Arrays.toString(userImg) +
+                ", photo=" + photo +
+                ", identityCardphoto=" + identityCardphoto +
+                ", userImg=" + userImg +
                 '}';
     }
 }

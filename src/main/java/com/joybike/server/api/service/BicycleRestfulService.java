@@ -161,4 +161,6 @@ public interface BicycleRestfulService {
      * @throws Exception
      */
     VehicleOrderSubscribeDto getUseInfo(long userId) throws Exception;
+
+    int updateVehicleImg(String vehicleId, String vehicleImg) throws Exception;
 }

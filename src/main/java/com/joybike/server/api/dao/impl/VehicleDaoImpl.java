@@ -146,4 +146,17 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
+
+    @Override
+    public int updateVehicleImg(String vehicleId, String vehicleImg) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("vehicleId", vehicleId);
+            map.put("vehicleImg", vehicleImg);
+            return execSQL("update vehicle set vehicleImg = :vehicleImg where vehicleId = :vehicleId", map);
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
 }

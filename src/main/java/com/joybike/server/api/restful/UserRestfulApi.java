@@ -1,10 +1,8 @@
 package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
-import com.joybike.server.api.dto.UserDto;
-import com.joybike.server.api.dto.VehicleOrderDto;
-import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
-import com.joybike.server.api.dto.userInfoDto;
+import com.joybike.server.api.dao.smsDao;
+import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -48,6 +46,9 @@ public class UserRestfulApi {
 
     @Autowired
     private OrderRestfulService orderRestfulService;
+
+    @Autowired
+    private smsDao smsDao;
 
 
     /**
@@ -138,22 +139,26 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "获取系统推送信息")
     @RequestMapping(value = "getMessages", method = RequestMethod.GET)
-    public ResponseEntity<Message<List<SysMessage>>> getMessages() {
-        return ResponseEntity.ok(new Message<List<SysMessage>>(true, 0, null, new ArrayList<SysMessage>()));
+    public ResponseEntity<Message<List<sms>>> getMessages(@RequestParam("userId") long userId) {
+        List<sms> lst =  smsDao.getSmsMessages(userId);
+        return ResponseEntity.ok(new Message<List<sms>>(true, 0, null, lst));
     }
 
 
     /**
      * 验证码验证登录
      *
-     * @param mobile
-     * @param validateCode
+     * @param dto
      * @return
      */
     //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
-    public ResponseEntity<Message<UserDto>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
+
+    public ResponseEntity<Message<UserDto>> validate(@RequestBody userValidateDto dto) {
         try {
+
+            logger.info("++++++++++++++++++validate++++++++++++++++");
+            logger.info(dto.getMobile()+"  "+ dto.getValidateCode());
             //如果KEY 过期
 //            if(!RedixUtil.exits(mobile))
 //            {
@@ -161,13 +166,14 @@ public class UserRestfulApi {
 //            }
             //logger.info("===========================================");
 
-            String redisValue = RedixUtil.getString(mobile);
+            String redisValue = RedixUtil.getString(dto.getMobile());
             //logger.info(redisValue + "=" + validateCode);
 
             //获取VALUE,进行验证
-            if (validateCode.equals(redisValue)) {
+            if (dto.getValidateCode().equals(redisValue)) {
                 //根据用户号码，进行查询，存在返回信息；不存在创建
-                userInfo u = userRestfulService.getUserInfoByMobile(mobile);
+
+                userInfo u = userRestfulService.getUserInfoByMobile(dto.getMobile());
                 UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
                 return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
             }

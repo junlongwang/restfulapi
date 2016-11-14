@@ -66,6 +66,14 @@ public class UserRestfulApi {
             user.setIphone(userInfoDto.getIphone());
             user.setIdNumber(userInfoDto.getIdNumber());
             user.setRealName(userInfoDto.getRealName());
+            if(userInfoDto.getIdNumber()!=null && !"".equals(userInfoDto.getIdNumber()) && userInfoDto.getRealName()!=null && !"".equals(userInfoDto.getRealName()))
+            {
+                user.setAuthenStatus(1);
+            }
+            user.setIdentityCardphoto(userInfoDto.getIdentityCardphoto());
+            user.setPhoto(userInfoDto.getPhoto());
+            user.setUserImg(userInfoDto.getUserImg());
+
             user.setNationality(userInfoDto.getNationality());
             userRestfulService.updateUserInfo(user);
             userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
@@ -144,7 +152,7 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
-    public ResponseEntity<Message<userInfo>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
+    public ResponseEntity<Message<userInfo>> validate(String mobile, String validateCode) {
         try {
             //如果KEY 过期
 //            if(!RedixUtil.exits(mobile))
@@ -305,6 +313,7 @@ public class UserRestfulApi {
                     user.setId(userId);
                     //用户身份证图片
                     user.setIdentityCardphoto(imageName);
+                    user.setAuthenStatus(1);
                     userRestfulService.updateUserInfo(user);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
                 }
@@ -342,6 +351,7 @@ public class UserRestfulApi {
                     String imageName = OSSClientUtil.uploadUserImg(file.getInputStream());
                     userInfo user = new userInfo();
                     user.setId(userId);
+                    user.setAuthenStatus(1);
 
                     //用户和身份证合影
                     user.setPhoto(imageName);

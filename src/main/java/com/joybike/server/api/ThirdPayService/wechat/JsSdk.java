@@ -6,12 +6,12 @@ import net.sf.json.JSONObject;
 
 public class JsSdk {
 	
-	  private static  String  jsapi_ticket=null;
-	  private static long  jsapi_ticket_expire_time=0;
-	  private static String  access_token=null;
-	  private static long  access_token_expire_time=0;
-	  
-	  private String  getAccessToken(){
+	private static  String  jsapi_ticket=null;
+	private static long  jsapi_ticket_expire_time=0;
+	private static String  access_token=null;
+	private static long  access_token_expire_time=0;
+
+	public String getAccessToken(){
 		    // access_token 应该全局存储与更新，以下代码以写入到文件中做示例
 		    if (access_token_expire_time < System.currentTimeMillis()) {
 		      // 如果是企业号用以下URL获取access_token

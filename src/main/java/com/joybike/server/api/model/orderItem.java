@@ -81,11 +81,16 @@ public class orderItem implements Serializable {
      */
     private Integer cyclingTime;
 
+    /**
+     * 骑行距离
+     */
+    private BigDecimal tripDist;
+
     public orderItem(){
 
     }
 
-    public orderItem(Long id, Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, String cyclingImg, Integer createAt, Integer cyclingTime) {
+    public orderItem(Long id, Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, String cyclingImg, Integer createAt, Integer cyclingTime, BigDecimal tripDist) {
         this.id = id;
         this.userId = userId;
         this.orderCode = orderCode;
@@ -99,6 +104,7 @@ public class orderItem implements Serializable {
         this.cyclingImg = cyclingImg;
         this.createAt = createAt;
         this.cyclingTime = cyclingTime;
+        this.tripDist = tripDist;
     }
 
     @Override
@@ -117,7 +123,16 @@ public class orderItem implements Serializable {
                 ", cyclingImg='" + cyclingImg + '\'' +
                 ", createAt=" + createAt +
                 ", cyclingTime=" + cyclingTime +
+                ", tripDist=" + tripDist +
                 '}';
+    }
+
+    public BigDecimal getTripDist() {
+        return tripDist;
+    }
+
+    public void setTripDist(BigDecimal tripDist) {
+        this.tripDist = tripDist;
     }
 
     public void setCyclingTime(Integer cyclingTime) {

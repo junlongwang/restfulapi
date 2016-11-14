@@ -162,5 +162,12 @@ public interface BicycleRestfulService {
      */
     VehicleOrderSubscribeDto getUseInfo(long userId) throws Exception;
 
+    /**
+     * 修改车辆图片
+     * @param vehicleId
+     * @param vehicleImg
+     * @return
+     * @throws Exception
+     */
     int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception;
 }

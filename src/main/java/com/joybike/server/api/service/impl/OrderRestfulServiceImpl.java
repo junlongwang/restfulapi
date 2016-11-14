@@ -230,14 +230,14 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         if (dto != null){
             int payValue = payRestfulService.consume(dto.getOrderCode(),dto.getBeforePrice(),dto.getUserId(),0);
             if (payValue > 0){
-                userPayIngDto.setPayType(1);
+                userPayIngDto.setRestType(1);
                 userPayIngDto.setVehicleOrderDto(dto);
             }else{
-                userPayIngDto.setPayType(0);
+                userPayIngDto.setRestType(0);
                 userPayIngDto.setVehicleOrderDto(dto);
             }
         }else{
-            userPayIngDto.setPayType(0);
+            userPayIngDto.setRestType(0);
             userPayIngDto.setVehicleOrderDto(null);
         }
         return userPayIngDto;

@@ -2,9 +2,7 @@ package com.joybike.server.api.dao;
 
 import com.joybike.server.api.Infrustructure.IRepository;
 import com.joybike.server.api.model.orderItem;
-import com.joybike.server.api.model.vehicleOrder;
 
-import java.math.BigDecimal;
 
 /**
  * Created by lishaoyong on 16/10/21.

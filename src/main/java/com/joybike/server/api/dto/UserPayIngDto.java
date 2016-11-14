@@ -11,10 +11,10 @@ import java.util.Map;
 public class UserPayIngDto  implements Serializable {
 
     /**
-     * 是否支付完成:0 否 1:余额不足
+     * 是否支付完成:0 钱不够 1:支付完成
      */
     @JSONField(ordinal = 1)
-    private Integer payType;
+    private Integer restType;
 
     /**
      * 支付完成的信息
@@ -27,25 +27,25 @@ public class UserPayIngDto  implements Serializable {
 
     }
 
-    public UserPayIngDto(Integer payType, VehicleOrderDto vehicleOrderDto) {
-        this.payType = payType;
+    public UserPayIngDto(Integer restType, VehicleOrderDto vehicleOrderDto) {
+        this.restType = restType;
         this.vehicleOrderDto = vehicleOrderDto;
     }
 
     @Override
     public String toString() {
         return "UserPayIngDto{" +
-                "payType=" + payType +
+                "restType=" + restType +
                 ", vehicleOrderDto=" + vehicleOrderDto +
                 '}';
     }
 
-    public Integer getPayType() {
-        return payType;
+    public Integer getRestType() {
+        return restType;
     }
 
-    public void setPayType(Integer payType) {
-        this.payType = payType;
+    public void setRestType(Integer restType) {
+        this.restType = restType;
     }
 
     public VehicleOrderDto getVehicleOrderDto() {

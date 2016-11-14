@@ -605,26 +605,33 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public VehicleOrderDto lock(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception {
+
         //修改车状态
         subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
+        if (subscribeInfo != null){
 
-        orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
+            orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
 
-        int cyclingTime = endAt - item.getBeginAt();
-        //计算金额
-        BigDecimal payPrice = payPrice(cyclingTime);
+            int cyclingTime = endAt - item.getBeginAt();
+            //计算金额
+            BigDecimal payPrice = payPrice(cyclingTime);
 
-        int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
-        int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
+            int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
 
 //        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
-        int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
+            int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
 
-        if (v1 * o1 * v3 > 0){
-            return vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
+            if (v1 * o1 * v3 > 0){
+                System.out.println(v1 * o1 * v3);
+                return vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
+            }else{
+                return null;
+            }
         }else{
-            return null;
+            throw new RestfulException(ReturnEnum.NoPay);
         }
+
 
     }
 
@@ -636,8 +643,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
-    public int updateVehicleStatausByCode(String orderCode) throws Exception{
-        return vehicleOrderDao.updateStatausByCode(orderCode);
+    public int updateVehicleStatausByCode(String orderCode,long payId) throws Exception{
+        return vehicleOrderDao.updateStatausByCode(orderCode,payId);
     }
 
     /**

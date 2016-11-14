@@ -123,7 +123,7 @@ public interface BicycleRestfulService {
      * @param orderCode
      * @return
      */
-    int updateVehicleStatausByCode(String orderCode) throws Exception;
+    int updateVehicleStatausByCode(String orderCode,long payId) throws Exception;
 
     /**
      * 获取用户已完成的骑行订单(支付与完成未支付的)

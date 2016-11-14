@@ -4,6 +4,7 @@ import com.joybike.server.api.Enum.*;
 import com.joybike.server.api.ThirdPayService.AliPayConstructUrlInter;
 import com.joybike.server.api.dao.*;
 import com.joybike.server.api.dto.AlipayDto;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
@@ -43,7 +44,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     private BankMoneyFlowDao moneyFlowDao;
 
     @Autowired
-    private UserRestfulService userInfoService;
+    private SubscribeInfoDao subscribeInfoDao;
 
     @Autowired
     private UserCouponDao userCouponDao;
@@ -244,109 +245,116 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Override
     public int consume(String orderCode, BigDecimal payPrice, long userId, long consumedDepositId) throws Exception {
 
-        double amount = acountDao.getUserAmount(userId);
-        bankDepositOrder bankDepositOrder = depositOrderDao.getDepositOrderById(consumedDepositId);
+        VehicleOrderDto dto =  vehicleOrderDao.getOrderByOrderCode(orderCode);
 
-        //可用余额不足,返回支付
-        if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
+        if (dto.getStatus() == 15){
+            throw new RestfulException(ReturnEnum.NoPay);
+        }else{
+            double amount = acountDao.getUserAmount(userId);
+
+            bankDepositOrder bankDepositOrder = depositOrderDao.getDepositOrderById(consumedDepositId);
+
+            //可用余额不足,返回支付
+            if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
 //            throw new RestfulException(ReturnEnum.Pay_Low);
-            return -1;
-            //可用余额充足,扣费
+                return -1;
+                //可用余额充足,扣费
 
-        } else if (BigDecimal.valueOf(amount).compareTo(payPrice) >= 0) {
+            } else if (BigDecimal.valueOf(amount).compareTo(payPrice) >= 0) {
 
-            BigDecimal price = BigDecimal.valueOf(0).add(payPrice);
+                BigDecimal price = BigDecimal.valueOf(0).add(payPrice);
 
-            long consumedId = 0;
-            //记录消费信息，如果有金额，先记录消费信息
-            if (bankDepositOrder != null) {
-                consumedId = bankConsumedOrderDao.save(bankConsumedOrderInfo(userId, orderCode, payPrice, bankDepositOrder.getAward().add(bankDepositOrder.getCash()), ConsumedStatus.susuccess, 0));
+                long consumedId = 0;
+                //记录消费信息，如果有金额，先记录消费信息
+                if (bankDepositOrder != null) {
+                    consumedId = bankConsumedOrderDao.save(bankConsumedOrderInfo(userId, orderCode, payPrice, bankDepositOrder.getAward().add(bankDepositOrder.getCash()), ConsumedStatus.susuccess, 0));
 
-            } else {
-                consumedId = bankConsumedOrderDao.save(bankConsumedOrderInfo(userId, orderCode, payPrice, BigDecimal.valueOf(0), ConsumedStatus.susuccess, 0));
-            }
+                } else {
+                    consumedId = bankConsumedOrderDao.save(bankConsumedOrderInfo(userId, orderCode, payPrice, BigDecimal.valueOf(0), ConsumedStatus.susuccess, 0));
+                }
 
-            List<bankDepositOrder> depositList = depositOrderDao.getConsumedDepositOrderList(userId, DepositStatus.susuccess);
+                List<bankDepositOrder> depositList = depositOrderDao.getConsumedDepositOrderList(userId, DepositStatus.susuccess);
 
-            depositList.stream().sorted((p, p2) -> (p.getPayAt().compareTo(p2.getPayAt()))).collect(toList());
+                depositList.stream().sorted((p, p2) -> (p.getPayAt().compareTo(p2.getPayAt()))).collect(toList());
 
-            //充值扣款
-            for (bankDepositOrder order : depositList) {
+                //充值扣款
+                for (bankDepositOrder order : depositList) {
 
-                if (order.getResidualAward().add(order.getResidualCash()).compareTo(payPrice) >= 0) {
+                    if (order.getResidualAward().add(order.getResidualCash()).compareTo(payPrice) >= 0) {
 
-                    try {
+                        try {
 
-                        if (order.getResidualAward().compareTo(payPrice) >= 0) {
+                            if (order.getResidualAward().compareTo(payPrice) >= 0) {
 
-                            order.setResidualAward(order.getResidualAward().subtract(payPrice));
+                                order.setResidualAward(order.getResidualAward().subtract(payPrice));
 
-                            //修改充值
-                            depositOrderDao.update(order);
-                            //保存流水
-                            moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), BigDecimal.valueOf(0), payPrice, consumedId, orderCode, DealType.consumed, 3));
-                            payPrice = BigDecimal.valueOf(0);
+                                //修改充值
+                                depositOrderDao.update(order);
+                                //保存流水
+                                moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), BigDecimal.valueOf(0), payPrice, consumedId, orderCode, DealType.consumed, 3));
+                                payPrice = BigDecimal.valueOf(0);
+                            }
+
+                            if (order.getResidualAward().compareTo(payPrice) < 0) {
+
+                                //修改账户信息
+                                BigDecimal cash = payPrice.subtract(order.getResidualAward());
+
+                                order.setResidualCash(order.getResidualCash().subtract(cash));
+                                order.setResidualAward(BigDecimal.valueOf(0));
+                                //修改充值
+                                depositOrderDao.update(order);
+                                //保存流水
+                                moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), cash, payPrice.subtract(cash), consumedId, orderCode, DealType.consumed, 3));
+                                payPrice = BigDecimal.valueOf(0);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                    }
 
-                        if (order.getResidualAward().compareTo(payPrice) < 0) {
+                    if (order.getResidualAward().add(order.getResidualCash()).compareTo(payPrice) < 0) {
 
-                            //修改账户信息
-                            BigDecimal cash = payPrice.subtract(order.getResidualAward());
+                        payPrice = payPrice.subtract(order.getResidualCash()).subtract(order.getResidualAward());
 
-                            order.setResidualCash(order.getResidualCash().subtract(cash));
+                        try {
+
+                            order.setResidualCash(BigDecimal.valueOf(0));
                             order.setResidualAward(BigDecimal.valueOf(0));
                             //修改充值
                             depositOrderDao.update(order);
                             //保存流水
-                            moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), cash, payPrice.subtract(cash), consumedId, orderCode, DealType.consumed, 3));
-                            payPrice = BigDecimal.valueOf(0);
+
+                            moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), order.getResidualCash(), order.getResidualAward(), consumedId, orderCode, DealType.consumed, 3));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
                     }
                 }
 
-                if (order.getResidualAward().add(order.getResidualCash()).compareTo(payPrice) < 0) {
+                bankAcount cashAmount = acountDao.getAcount(userId, AcountType.cash);
+                bankAcount blanceAmount = acountDao.getAcount(userId, AcountType.balance);
 
-                    payPrice = payPrice.subtract(order.getResidualCash()).subtract(order.getResidualAward());
-
-                    try {
-
-                        order.setResidualCash(BigDecimal.valueOf(0));
-                        order.setResidualAward(BigDecimal.valueOf(0));
-                        //修改充值
-                        depositOrderDao.update(order);
-                        //保存流水
-
-                        moneyFlowDao.save(flowInfo(userId, order.getPayType(), order.getId(), order.getResidualCash(), order.getResidualAward(), consumedId, orderCode, DealType.consumed, 3));
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                if (blanceAmount.getPrice().compareTo(price) >= 0) {
+                    acountDao.updateAcount(userId, AcountType.balance, blanceAmount.getPrice().subtract(price));
                 }
+                if (blanceAmount.getPrice().compareTo(price) < 0) {
+                    BigDecimal cash = price.subtract(blanceAmount.getPrice());
+                    acountDao.updateAcount(userId, AcountType.balance, price.subtract(cash));
+                    acountDao.updateAcount(userId, AcountType.cash, cashAmount.getPrice().subtract(cash));
+                }
+
+                //修改订单支付状态为付款完成
+                vehicleOrderDao.updateStatausByCode(orderCode,consumedId);
+                subscribeInfoDao.deleteByOrderCode(orderCode);
+
+                return 0;
+            } else {
+                return -1;
             }
-
-            bankAcount cashAmount = acountDao.getAcount(userId, AcountType.cash);
-            bankAcount blanceAmount = acountDao.getAcount(userId, AcountType.balance);
-
-            if (blanceAmount.getPrice().compareTo(price) >= 0) {
-                acountDao.updateAcount(userId, AcountType.balance, blanceAmount.getPrice().subtract(price));
-            }
-            if (blanceAmount.getPrice().compareTo(price) < 0) {
-                BigDecimal cash = price.subtract(blanceAmount.getPrice());
-                acountDao.updateAcount(userId, AcountType.balance, price.subtract(cash));
-                acountDao.updateAcount(userId, AcountType.cash, cashAmount.getPrice().subtract(cash));
-            }
-
-            //修改订单支付状态为付款完成
-            vehicleOrderDao.updateStatausByCode(orderCode);
-
-            return 0;
-        } else {
-            return -1;
         }
-
     }
 
     /**

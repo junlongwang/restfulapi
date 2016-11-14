@@ -58,4 +58,6 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
 
     int deleteByExpire() throws Exception;
 
+    int deleteByOrderCode(String orderCode);
+
 }

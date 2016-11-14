@@ -100,13 +100,14 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param id
      * @return
      */
-    final String updateByIdSql = "update vehicleOrder set status = :status where orderCode = :orderCode";
+    final String updateByIdSql = "update vehicleOrder set status = :status,payId = :payId where orderCode = :orderCode";
 
     @Override
-    public int updateStatausByCode(String orderCode) throws Exception{
+    public int updateStatausByCode(String orderCode,long payId) throws Exception{
         Map orderMap = new HashMap();
         orderMap.put("orderCode", orderCode);
         orderMap.put("status", OrderStatus.complete.getValue());
+        orderMap.put("payId",payId);
         return execSQL(updateByIdSql, orderMap);
     }
 

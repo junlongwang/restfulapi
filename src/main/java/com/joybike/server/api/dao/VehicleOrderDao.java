@@ -44,7 +44,7 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * @param orderCode
      * @return
      */
-    int updateStatausByCode(String orderCode) throws Exception;
+    int updateStatausByCode(String orderCode,long payId) throws Exception;
 
 
     /**

@@ -61,6 +61,19 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
         }
     }
 
+    final String deleteByOrderCodeSql = "delete from subscribeinfo where subscribeCode = :subscribeCode";
+
+    @Override
+    public int deleteByOrderCode(String orderCode) {
+        try {
+            Map map = new HashMap();
+            map.put("subscribeCode", orderCode);
+            return execSQL(deleteByOrderCodeSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
     /**
      * 删除车辆预约信息,两种情况，1:取消预约，2:到达15分钟预约时间
      *

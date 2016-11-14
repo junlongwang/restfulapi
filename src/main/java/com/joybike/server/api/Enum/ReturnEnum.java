@@ -96,7 +96,7 @@ public enum ReturnEnum {
 
     @Override
     public String toString() {
-        return String.valueOf(errorCode);
+        return String.valueOf(errorCode + ":" + errorDesc);
     }
 
     /*===================================================================================*/

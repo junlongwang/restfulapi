@@ -123,8 +123,21 @@ public class VehicleOrderDto implements Serializable {
      */
     private String cyclingImg;
 
+    /**
+     * 剩余余额
+     */
+    private BigDecimal amount;
+
     public VehicleOrderDto() {
 
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     @Override
@@ -148,10 +161,11 @@ public class VehicleOrderDto implements Serializable {
                 ", tripDist=" + tripDist +
                 ", vehicleHeartbeatList=" + vehicleHeartbeatList +
                 ", cyclingImg='" + cyclingImg + '\'' +
+                ", amount=" + amount +
                 '}';
     }
 
-    public VehicleOrderDto(Long id, String orderCode, Long userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String vehicleId, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, Integer cyclingTime, BigDecimal tripDist, List<vehicleHeartbeat> vehicleHeartbeatList, String cyclingImg) {
+    public VehicleOrderDto(Long id, String orderCode, Long userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String vehicleId, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, Integer cyclingTime, BigDecimal tripDist, List<vehicleHeartbeat> vehicleHeartbeatList, String cyclingImg, BigDecimal amount) {
         this.id = id;
         this.orderCode = orderCode;
         this.userId = userId;
@@ -170,6 +184,7 @@ public class VehicleOrderDto implements Serializable {
         this.tripDist = tripDist;
         this.vehicleHeartbeatList = vehicleHeartbeatList;
         this.cyclingImg = cyclingImg;
+        this.amount = amount;
     }
 
     public Long getId() {

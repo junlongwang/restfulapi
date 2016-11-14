@@ -14,6 +14,7 @@ import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
@@ -50,6 +51,9 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
 
     @Autowired
     SubscribeInfoDao subscribeInfoDao;
+
+    @Autowired
+    UserRestfulService userRestfulService;
 
 
 
@@ -230,10 +234,12 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         if (dto != null){
             int payValue = payRestfulService.consume(dto.getOrderCode(),dto.getBeforePrice(),dto.getUserId(),0);
             if (payValue > 0){
+                dto.setAmount(BigDecimal.valueOf(userRestfulService.getUserAcountMoneyByuserId(dto.getUserId())));
                 userPayIngDto.setRestType(1);
                 userPayIngDto.setVehicleOrderDto(dto);
             }else{
                 userPayIngDto.setRestType(0);
+                dto.setAmount(BigDecimal.valueOf(userRestfulService.getUserAcountMoneyByuserId(dto.getUserId())));
                 userPayIngDto.setVehicleOrderDto(dto);
             }
         }else{

@@ -6,6 +6,7 @@ import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dto.UserDto;
+import com.joybike.server.api.dto.UserPayIngDto;
 import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.*;
@@ -235,6 +236,16 @@ public class joyTest {
     public void aTest(){
         try {
             UserDto dto = userRestfulService.getUserInfoById(11);
+            System.out.println(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void BTest(){
+        try {
+            UserPayIngDto dto = orderRestfulService.userPayOrder("BIKE005",1479149206,41.069,117.432);
             System.out.println(dto);
         } catch (Exception e) {
             e.printStackTrace();

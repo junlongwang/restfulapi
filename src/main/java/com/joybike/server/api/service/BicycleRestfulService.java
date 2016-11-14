@@ -169,6 +169,5 @@ public interface BicycleRestfulService {
      * @return
      * @throws Exception
      */
-    int updateVehicleImg(String vehicleId, String vehicleImg) throws Exception;
-
+    int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception;
 }

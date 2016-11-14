@@ -35,7 +35,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     SubscribeInfoDao subscribeInfoDao;
 
     @Autowired
-    VehicleDao vehicleDao;
+    private VehicleDao vehicleDao;
 
     @Autowired
     private VehicleHeartbeatDao vehicleHeartbeatDao;
@@ -51,9 +51,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
     @Autowired
     private OrderItemDao orderItemDao;
-
-    @Autowired
-    private BicycleRestfulService bicycleRestfulService;
 
     /**
      * 添加预约信息,如果返回的id>0则为该用户的预约ID
@@ -283,8 +280,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             if (vehicle.getUseStatus() == 0) {
 
 
-                subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
-                subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+                subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
+                subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
 
                 //车辆跟人的预约但都存在的时候
                 if (vinfo != null && uInfo != null) {
@@ -292,9 +289,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     if (vinfo.getUserId().equals(uInfo.getUserId())) {
                         //时间过期,删除重新创建
                         if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                            bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                            bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                            bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                            vehicleSubscribe(userId, bicycleCode, beginAt);
+                            updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -310,7 +307,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         } else {
 
                             //时间没有过期,直接修改
-                            bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                            updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -327,10 +324,10 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     //用户扫码的车辆不是预约车辆，且这辆车已经被预约，判断是该车是不是预约过期
                     if (!vinfo.getUserId().equals(uInfo.getUserId())) {
                         if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                            bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                            bicycleRestfulService.deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                            bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                            bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                            deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                            vehicleSubscribe(userId, bicycleCode, beginAt);
+                            updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -351,9 +348,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //用户有预约,但车没有预约
                 if (uInfo != null && vinfo == null) {
                     if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        bicycleRestfulService.deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                        bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                        bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                        deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                        vehicleSubscribe(userId, bicycleCode, beginAt);
+                        updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
                         long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -368,7 +365,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     } else {
 
                         //时间没有过期,直接修改
-                        bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                        updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
                         long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -388,9 +385,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 if (uInfo == null && vinfo != null) {
                     //如果过期
                     if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                        bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                        bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                        deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                        vehicleSubscribe(userId, bicycleCode, beginAt);
+                        updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
                         long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -410,8 +407,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //车与人都没有预约
                 if (uInfo == null && vinfo == null) {
 
-                    bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                    bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                    vehicleSubscribe(userId, bicycleCode, beginAt);
+                    updateSubscribeInfo(userId, bicycleCode);
                     //创建订单
                     long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -430,8 +427,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             //车辆被预约时
             if (vehicle.getUseStatus() == 1) {
 
-                subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
-                subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+                subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
+                subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
 
                 //车辆跟人的预约但都存在的时候
                 if (vinfo != null && uInfo != null) {
@@ -439,10 +436,10 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     if (vinfo.getUserId().equals(uInfo.getUserId())) {
                         //时间过期,删除重新创建
                         if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                            bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                            bicycleRestfulService.deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                            bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                            bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                            deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                            vehicleSubscribe(userId, bicycleCode, beginAt);
+                            updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -457,7 +454,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         } else {
 
                             //时间没有过期,直接修改
-                            bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                            updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -475,10 +472,10 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     //用户扫码的车辆不是预约车辆，且这辆车已经被预约，判断是该车是不是预约过期
                     if (!vinfo.getUserId().equals(uInfo.getUserId())) {
                         if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                            bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                            bicycleRestfulService.deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                            bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                            bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                            deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                            vehicleSubscribe(userId, bicycleCode, beginAt);
+                            updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -499,9 +496,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //用户有预约,但车没有预约
                 if (uInfo != null && vinfo == null) {
                     if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        bicycleRestfulService.deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                        bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                        bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                        deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                        vehicleSubscribe(userId, bicycleCode, beginAt);
+                        updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
                         long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -515,7 +512,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         dto = getOrderInfo(orderId);
                     } else {
                         //时间没有过期,直接修改
-                        bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                        updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
                         long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -535,9 +532,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 if (uInfo == null && vinfo != null) {
                     //如果过期
                     if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        bicycleRestfulService.deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                        bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                        bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                        deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                        vehicleSubscribe(userId, bicycleCode, beginAt);
+                        updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
                         long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
                         //修改车的使用状态
@@ -557,8 +554,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //车与人都没有预约
                 if (uInfo == null && vinfo == null) {
 
-                    bicycleRestfulService.vehicleSubscribe(userId, bicycleCode, beginAt);
-                    bicycleRestfulService.updateSubscribeInfo(userId, bicycleCode);
+                    vehicleSubscribe(userId, bicycleCode, beginAt);
+                    updateSubscribeInfo(userId, bicycleCode);
                     //创建订单
                     long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
@@ -576,8 +573,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
             //当车辆状态为使用中,去找他有没有对应的单
             if (vehicle.getUseStatus() == 2) {
-                subscribeInfo vinfo = bicycleRestfulService.getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
-                subscribeInfo uInfo = bicycleRestfulService.getSubscribeInfoByUserId(userId, SubscribeStatus.use);
+                subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
+                subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.use);
 
                 if (vinfo.getUserId().equals(uInfo.getUserId())) {
                     throw new RestfulException(ReturnEnum.Use_Self_Vehicle);
@@ -742,9 +739,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         return price;
     }
 
-    public int updateVehicleImg(String vehicleId, String vehicleImg) throws Exception
+    public int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception
     {
-        return  bicycleRestfulService.updateVehicleImg(vehicleId,vehicleImg);
+        return  vehicleDao.updateVehicleImg(vehicleId,vehicleImg,remark);
     }
 
 }

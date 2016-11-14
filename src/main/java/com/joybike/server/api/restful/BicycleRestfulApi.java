@@ -236,7 +236,7 @@ public class BicycleRestfulApi {
      */
     @RequestMapping(value = "uploadParkingImg")
     @ResponseBody
-    public ResponseEntity<Message<String>> uploadParkingImg(@RequestParam("userId") long userId,@RequestParam("bicycleCode") String bicycleCode,HttpServletRequest request) throws Exception {
+    public ResponseEntity<Message<String>> uploadParkingImg(@RequestParam("userId") long userId,@RequestParam("bicycleCode") String bicycleCode,@RequestParam("remark") String remark,HttpServletRequest request) throws Exception {
 
         try {
             //获取解析器
@@ -251,7 +251,7 @@ public class BicycleRestfulApi {
                     //根据文件名称取文件
                     MultipartFile file = multiRequest.getFile(it.next());
                     String imageName = OSSClientUtil.uploadRepairImg(file.getInputStream());
-                    bicycleRestfulService.updateVehicleImg(bicycleCode,imageName);
+                    bicycleRestfulService.updateVehicleImg(bicycleCode,imageName,remark);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
                 }
             }

@@ -3,6 +3,7 @@ package com.joybike.server.api.dao.impl;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.UserInfoDao;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.model.userInfo;
 import com.joybike.server.api.util.RestfulException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -76,12 +77,12 @@ public class UserInfoDaoImpl extends Reository<userInfo> implements UserInfoDao 
     final String getUserInfoByIdSql = "select * from userInfo where id = :userId";
 
     @Override
-    public userInfo getUserInfoById(long userId) throws Exception {
+    public UserDto getUserInfoById(long userId) throws Exception {
         Map map = new HashMap();
         map.put("userId", userId);
         try {
             try {
-                return (userInfo) this.jdbcTemplate.queryForObject(getUserInfoByIdSql, map, new BeanPropertyRowMapper(userInfo.class));
+                return (UserDto) this.jdbcTemplate.queryForObject(getUserInfoByIdSql, map, new BeanPropertyRowMapper(UserDto.class));
             } catch (Exception e) {
                 return null;
             }

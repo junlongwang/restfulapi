@@ -10,6 +10,7 @@ import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -153,8 +154,11 @@ public class BicycleRestfulApi {
             } else {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));
             }
-        } catch (Exception e) {
-            return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + e.getMessage().toString(), null));
+        } catch (RestfulException re){
+            return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + re.getMessage().toString(), null));
+        }
+        catch (Exception e) {
+            return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.joybike.server.api.service;
 
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.model.userInfo;
 
 /**
@@ -38,7 +39,7 @@ public interface UserRestfulService {
      * @param userId
      * @return
      */
-    userInfo getUserInfoById(long userId) throws Exception;
+    UserDto getUserInfoById(long userId) throws Exception;
 
 
 }

@@ -5,6 +5,7 @@ import com.joybike.server.api.Enum.DepositStatus;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.SubscribeInfoDao;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.*;
@@ -62,7 +63,7 @@ public class joyTest {
 
         userInfo u = null;
         try {
-            u = userRestfulService.getUserInfoByMobile("13721766224");
+            u = userRestfulService.getUserInfoByMobile("13721761224");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -221,10 +222,20 @@ public class joyTest {
     @Test
     public void getByidTest(){
         try {
-            userInfo userInfo = userRestfulService.getUserInfoById(1);
+            UserDto userInfo = userRestfulService.getUserInfoById(1);
             System.out.println(userInfo);
             System.out.println("1000:::" + JSON.toJSON(ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UerInfo_ERROR.getErrorCode(), ReturnEnum.UerInfo_ERROR.getErrorDesc(), null))));
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void aTest(){
+        try {
+            UserDto dto = userRestfulService.getUserInfoById(11);
+            System.out.println(dto);
         } catch (Exception e) {
             e.printStackTrace();
         }

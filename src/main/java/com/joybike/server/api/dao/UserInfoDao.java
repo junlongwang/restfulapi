@@ -1,6 +1,7 @@
 package com.joybike.server.api.dao;
 
 import com.joybike.server.api.Infrustructure.IRepository;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.model.userInfo;
 
 
@@ -32,6 +33,6 @@ public interface UserInfoDao extends IRepository<userInfo> {
      * @return
      * @throws Exception
      */
-    userInfo getUserInfoById(long userId) throws Exception;
+    UserDto getUserInfoById(long userId) throws Exception;
 
 }

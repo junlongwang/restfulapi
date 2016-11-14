@@ -261,4 +261,29 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
+
+    /**
+     * 获取用户已完成订单的总里程
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    final String getTripDistSql = "select sum(b.tripDist) tripDist from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+            " where a.userId = :userId and a.status = 15";
+    @Override
+    public BigDecimal getTripDist(long userId) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            try{
+                return this.jdbcTemplate.queryForObject(getTripDistSql, map, BigDecimal.class);
+
+            }catch (Exception e){
+                return BigDecimal.valueOf(0);
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+
+    }
 }

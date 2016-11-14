@@ -1,7 +1,7 @@
 package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
-import com.joybike.server.api.Infrustructure.SystemControllerLog;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.dto.userInfoDto;
@@ -13,7 +13,6 @@ import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.SMSHelper;
 import com.joybike.server.api.thirdparty.SMSResponse;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
-import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
 import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +58,7 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "更新用户信息")
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public ResponseEntity<Message<userInfo>> update(@RequestBody userInfoDto userInfoDto) {
+    public ResponseEntity<Message<UserDto>> update(@RequestBody userInfoDto userInfoDto) {
         try {
             userInfo user = new userInfo();
             user.setId(userInfoDto.getUserId());
@@ -76,10 +75,11 @@ public class UserRestfulApi {
 
             user.setNationality(userInfoDto.getNationality());
             userRestfulService.updateUserInfo(user);
-            userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
-            return ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo));
+            userInfo u = userRestfulService.getUserInfoByMobile(user.getIphone());
+            UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
+            return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -152,7 +152,7 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
-    public ResponseEntity<Message<userInfo>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
+    public ResponseEntity<Message<UserDto>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
         try {
             //如果KEY 过期
 //            if(!RedixUtil.exits(mobile))
@@ -167,12 +167,13 @@ public class UserRestfulApi {
             //获取VALUE,进行验证
             if (validateCode.equals(redisValue)) {
                 //根据用户号码，进行查询，存在返回信息；不存在创建
-                userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);
-                return ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo));
+                userInfo u = userRestfulService.getUserInfoByMobile(mobile);
+                UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
+                return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
             }
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc(), null));
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc(), null));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc() + "-" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -184,13 +185,13 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
-    public ResponseEntity<Message<userInfo>> getUserInfo(long userId) {
+    public ResponseEntity<Message<UserDto>> getUserInfo(long userId) {
         try {
 
-            userInfo userInfo = userRestfulService.getUserInfoById(userId);
-            return ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo));
+            UserDto userInfo = userRestfulService.getUserInfoById(userId);
+            return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UerInfo_ERROR.getErrorCode(), ReturnEnum.UerInfo_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UerInfo_ERROR.getErrorCode(), ReturnEnum.UerInfo_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 

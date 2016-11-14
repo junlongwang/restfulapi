@@ -28,4 +28,6 @@ public interface OrderItemDao extends IRepository<orderItem> {
      * @throws Exception
      */
     int updateOrderByLock(long userId, String bicycleCode, int endAt, double endLongitude, double endDimension, int cyclingTime) throws Exception;
+
+
 }

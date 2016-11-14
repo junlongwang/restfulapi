@@ -3,6 +3,8 @@ package com.joybike.server.api.service.impl;
 
 import com.joybike.server.api.dao.BankAcountDao;
 import com.joybike.server.api.dao.UserInfoDao;
+import com.joybike.server.api.dao.VehicleOrderDao;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.model.userInfo;
 import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.MergeUtil;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 /**
  * Created by lishaoyong on 16/10/23.
@@ -25,6 +29,9 @@ public class UserRestfulServiceImpl implements UserRestfulService {
 
     @Autowired
     private UserInfoDao userInfoDao;
+
+    @Autowired
+    private VehicleOrderDao vehicleOrderDao;
 
 
     /**
@@ -76,12 +83,16 @@ public class UserRestfulServiceImpl implements UserRestfulService {
             user.setUpdateAt(0);
             user.setCreateAt(UnixTimeUtils.now());
             long userId = userInfoDao.save(user);
-            return userInfoDao.getUserInfo(userId);
+            userInfo dto =  userInfoDao.getUserInfo(userId);
+            return dto;
         }
     }
 
     @Override
-    public userInfo getUserInfoById(long userId) throws Exception {
-        return userInfoDao.getUserInfoById(userId);
+    public UserDto getUserInfoById(long userId) throws Exception {
+        UserDto dto =  userInfoDao.getUserInfoById(userId);
+        dto.setTotalMileage(vehicleOrderDao.getTripDist(userId));
+        dto.setAmount(BigDecimal.valueOf(getUserAcountMoneyByuserId(userId)));
+        return dto;
     }
 }

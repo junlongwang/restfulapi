@@ -39,7 +39,7 @@ public class WxRestfulApi {
             Map<String,String> map = wechatHelper.getSignPackage(url);
 			return ResponseEntity.ok(new Message<Map<String,String>>(true, 0, null,map));
 		} catch (Exception e) {
-			return ResponseEntity.ok(new Message<Map<String,String>>(false, ReturnEnum.Acount_Error.getErrorCode(), ReturnEnum.Acount_Error.getErrorDesc() + "-" + e.getMessage(), null));
+			return ResponseEntity.ok(new Message<Map<String,String>>(false, ReturnEnum.UNKNOWN.getErrorCode(), ReturnEnum.UNKNOWN.getErrorDesc() + "-" + e.getMessage(), null));
 		}
 	}
     //snsapi_userinfo 弹出授权页面，可通过openid拿到昵称、性别、所在地

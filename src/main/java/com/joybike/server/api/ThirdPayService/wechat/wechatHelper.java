@@ -45,8 +45,8 @@ public class wechatHelper {
             list.add(new BasicNameValuePair("grant_type", "client_credential"));
             list.add(new BasicNameValuePair("appid",WeiXinConfig.WECHAT_WEB_APP_ID));
             list.add(new BasicNameValuePair("secret",WeiXinConfig.WECHAT_WEB_APP_SECRET));
-			String res = HttpUtils.post("https://api.weixin.qq.com/cgi-bin/token", list);
-            System.out.println("res>>>>>"+res);
+            String res = HttpUtils.doGet("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+WeiXinConfig.WECHAT_WEB_APP_ID+"&secret="+WeiXinConfig.WECHAT_WEB_APP_SECRET);
+            System.out.println("res getAccessToken>>>>>"+res);
             JSONObject json = JSONObject.fromObject(res);
             if(json != null && json.containsKey("access_token")) {
                 access_token_expire_time=System.currentTimeMillis()+7000*1000;

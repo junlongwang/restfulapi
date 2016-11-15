@@ -66,6 +66,7 @@ public class PayRestfulApi {
             //押金充值
             if (payBean.getRechargeType() == 1) {
                 try {
+                    logger.info("微信公众号支付请求信息：" + payBean.toString());
                     String rechargeResult = forRecharge(payBean, userId);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {

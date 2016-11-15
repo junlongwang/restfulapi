@@ -1,6 +1,7 @@
 package com.joybike.server.api.service;
 
 
+import com.joybike.server.api.dto.UserPayIngDto;
 import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.product;
@@ -8,6 +9,7 @@ import com.joybike.server.api.model.vehicleOrder;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by lishaoyong on 16/10/23.
@@ -17,18 +19,18 @@ public interface OrderRestfulService {
     /**
      * 创建订单
      *
-     * @param userId         用户ID
+     * @param userId          户ID
      * @param vehicleId      车身印刷ID
-     * @param beginAt        开始时间
-     * @param beginLongitude 骑行开始的经度
-     * @param beginDimension 骑行开始的维度
+     * @param beginAt        开始
+     * @param beginLongitude  行开始 经度
+     * @param beginDimension  行开始 维度
      * @return
      */
     long addOrder(long userId, String vehicleId, int beginAt, double beginLongitude, double beginDimension) throws Exception;
 
 
     /**
-     * 根据用户ID获取用户未完成的订单
+     *  据 户ID获取 户 完成 订单
      *
      * @param userId
      * @return
@@ -36,7 +38,7 @@ public interface OrderRestfulService {
     vehicleOrder getNoPayOrderByUserId(long userId) throws Exception;
 
     /**
-     * 根据车辆ID获取用户未完成订单
+     *  据车辆ID获取 户 完成订单
      *
      * @param vehicleId
      * @return
@@ -45,7 +47,7 @@ public interface OrderRestfulService {
 
 
     /**
-     * 修改产品信息
+     * 修 产品信息
      *
      * @param id
      * @param productName
@@ -57,7 +59,7 @@ public interface OrderRestfulService {
 
 
     /**
-     * 删除产品
+     * 删 产品
      *
      * @param id
      * @return
@@ -80,13 +82,13 @@ public interface OrderRestfulService {
     List<product> getProductList();
 
     /**
-     * 获取用户订单资源
+     * 获取 户订单资
      *
-     * @param  orderCode
+     * @param orderCode
      * @return
      * @throws Exception
      */
-    orderItem getOrderItemByOrderCode( String orderCode) throws Exception;
+    orderItem getOrderItemByOrderCode(String orderCode) throws Exception;
 
     /**
      * 获取订单信息
@@ -97,4 +99,15 @@ public interface OrderRestfulService {
     vehicleOrder getOrder(long id) throws Exception;
 
 
+    /**
+     *锁车支付
+     *
+     * @param bicycleCode
+     * @param endAt
+     * @param endLongitude
+     * @param endDimension
+     * @return
+     * @throws Exception
+     */
+    UserPayIngDto userPayOrder(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception;
 }

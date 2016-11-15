@@ -2,6 +2,7 @@ package joyTest;
 
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dto.UnlockDto;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;

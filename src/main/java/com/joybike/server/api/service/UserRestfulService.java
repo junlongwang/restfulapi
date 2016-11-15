@@ -1,5 +1,6 @@
 package com.joybike.server.api.service;
 
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.model.userInfo;
 
 /**
@@ -31,6 +32,14 @@ public interface UserRestfulService {
      * @return
      */
     userInfo getUserInfoByMobile(String mobile) throws Exception;
+
+    /**
+     * 根据用户ID获取用户信息
+     *
+     * @param userId
+     * @return
+     */
+    UserDto getUserInfoById(long userId) throws Exception;
 
 
 }

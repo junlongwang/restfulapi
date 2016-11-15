@@ -1,10 +1,8 @@
 package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.ReturnEnum;
-import com.joybike.server.api.Infrustructure.SystemControllerLog;
-import com.joybike.server.api.dto.VehicleOrderDto;
-import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
-import com.joybike.server.api.dto.userInfoDto;
+import com.joybike.server.api.dao.smsDao;
+import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
@@ -18,8 +16,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -44,6 +47,9 @@ public class UserRestfulApi {
     @Autowired
     private OrderRestfulService orderRestfulService;
 
+    @Autowired
+    private smsDao smsDao;
+
 
     /**
      * 更新用户信息
@@ -53,31 +59,28 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "更新用户信息")
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public ResponseEntity<Message<userInfo>> update(@RequestBody userInfoDto userInfoDto) {
+    public ResponseEntity<Message<UserDto>> update(@RequestBody userInfoDto userInfoDto) {
         try {
             userInfo user = new userInfo();
             user.setId(userInfoDto.getUserId());
             user.setIphone(userInfoDto.getIphone());
             user.setIdNumber(userInfoDto.getIdNumber());
             user.setRealName(userInfoDto.getRealName());
+            if(userInfoDto.getIdNumber()!=null && !"".equals(userInfoDto.getIdNumber()) && userInfoDto.getRealName()!=null && !"".equals(userInfoDto.getRealName()))
+            {
+                user.setAuthenStatus(1);
+            }
+            user.setIdentityCardphoto(userInfoDto.getIdentityCardphoto());
+            user.setPhoto(userInfoDto.getPhoto());
+            user.setUserImg(userInfoDto.getUserImg());
+
             user.setNationality(userInfoDto.getNationality());
-            if (userInfoDto.getIdentityCardphoto() != null) {
-                String fileName = OSSClientUtil.uploadUserImg(userInfoDto.getIdentityCardphoto());
-                user.setIdentityCardphoto(fileName);
-            }
-            if (userInfoDto.getPhoto() != null) {
-                String fileName = OSSClientUtil.uploadUserImg(userInfoDto.getPhoto());
-                user.setPhoto(fileName);
-            }
-            if (userInfoDto.getUserImg() != null) {
-                String fileName = OSSClientUtil.uploadUserImg(userInfoDto.getUserImg());
-                user.setUserImg(fileName);
-            }
             userRestfulService.updateUserInfo(user);
-            userInfo userInfo = userRestfulService.getUserInfoByMobile(user.getIphone());
-            return ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo));
+            userInfo u = userRestfulService.getUserInfoByMobile(user.getIphone());
+            UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
+            return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
@@ -136,43 +139,68 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "获取系统推送信息")
     @RequestMapping(value = "getMessages", method = RequestMethod.GET)
-    public ResponseEntity<Message<List<SysMessage>>> getMessages() {
-        return ResponseEntity.ok(new Message<List<SysMessage>>(true, 0, null, new ArrayList<SysMessage>()));
+    public ResponseEntity<Message<List<sms>>> getMessages(@RequestParam("userId") long userId) {
+        List<sms> lst =  smsDao.getSmsMessages(userId);
+        return ResponseEntity.ok(new Message<List<sms>>(true, 0, null, lst));
     }
 
 
     /**
      * 验证码验证登录
      *
-     * @param mobile
-     * @param validateCode
+     * @param dto
      * @return
      */
     //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
-    public ResponseEntity<Message<userInfo>> validate(@RequestParam("mobile") String mobile, @RequestParam("validateCode") String validateCode) {
+
+    public ResponseEntity<Message<UserDto>> validate(@RequestBody userValidateDto dto) {
         try {
+
+            logger.info("++++++++++++++++++validate++++++++++++++++");
+            logger.info(dto.getMobile()+"  "+ dto.getValidateCode());
             //如果KEY 过期
 //            if(!RedixUtil.exits(mobile))
 //            {
 //                return ResponseEntity.ok(new Message<userInfo>(false,ReturnEnum.Iphone_Validate_Error.getErrorCode(), ReturnEnum.Iphone_Validate_Error.getErrorDesc(), null));
 //            }
-            logger.info("===========================================");
+            //logger.info("===========================================");
 
-            String redisValue = RedixUtil.getString(mobile);
-            logger.info(redisValue + "=" + validateCode);
+            String redisValue = RedixUtil.getString(dto.getMobile());
+            //logger.info(redisValue + "=" + validateCode);
 
             //获取VALUE,进行验证
-            if (validateCode.equals(redisValue)) {
+            if (dto.getValidateCode().equals(redisValue)) {
                 //根据用户号码，进行查询，存在返回信息；不存在创建
-                userInfo userInfo = userRestfulService.getUserInfoByMobile(mobile);
-                return ResponseEntity.ok(new Message<userInfo>(true, 0, null, userInfo));
+
+                userInfo u = userRestfulService.getUserInfoByMobile(dto.getMobile());
+                UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
+                return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
             }
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc(), null));
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc(), null));
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<userInfo>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc() + "-" + e.getMessage(), null));
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UseRregister_Error.getErrorCode(), ReturnEnum.UseRregister_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
+
+    /**
+     * 根据用户ID获取用户信息
+     *
+     * @param userId
+     * @return
+     */
+    //@SystemControllerLog(description = "验证码验证登录")
+    @RequestMapping(value = "getUserInfo", method = RequestMethod.GET)
+    public ResponseEntity<Message<UserDto>> getUserInfo(long userId) {
+        try {
+
+            UserDto userInfo = userRestfulService.getUserInfoById(userId);
+            return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<UserDto>(false, ReturnEnum.UerInfo_ERROR.getErrorCode(), ReturnEnum.UerInfo_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
 
     /**
      * 获取用户已完成订单
@@ -204,27 +232,147 @@ public class UserRestfulApi {
 
             VehicleOrderSubscribeDto dto = bicycleRestfulService.getUseInfo(userId);
 
-            if (dto.getVehicleOrderDto() != null && dto.getInfo() != null){
-                if (dto.getVehicleOrderDto().getStatus() == 1){
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0,null, dto));
-                }else{
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4,null, dto));
+            if (dto.getVehicleOrderDto() != null && dto.getInfo() != null) {
+                if (dto.getVehicleOrderDto().getStatus() == 1) {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0, null, dto));
+                } else {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4, null, dto));
                 }
 
-            }else if (dto.getVehicleOrderDto() != null && dto.getInfo() == null){
-                if (dto.getVehicleOrderDto().getStatus() == 1){
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0,null, dto));
-                }else{
-                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4,null, dto));
+            } else if (dto.getVehicleOrderDto() != null && dto.getInfo() == null) {
+                if (dto.getVehicleOrderDto().getStatus() == 1) {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 0, null, dto));
+                } else {
+                    return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 4, null, dto));
                 }
-            }else if (dto.getVehicleOrderDto() == null && dto.getInfo() != null){
-                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 1,null, dto));
-            }else{
-                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 2,null, null));
+            } else if (dto.getVehicleOrderDto() == null && dto.getInfo() != null) {
+                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 1, null, dto));
+            } else {
+                return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(true, 2, null, null));
             }
 
         } catch (Exception e) {
-            return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(false,3, e.getMessage(), null));
+            return ResponseEntity.ok(new Message<VehicleOrderSubscribeDto>(false, 3, e.getMessage(), null));
+        }
+    }
+
+
+    /**
+     * 上传用户头像图片
+     * @param userId 用户ID
+     * @param request 请求
+     * @return
+     */
+    @RequestMapping(value = "uploadUserHeadImg")
+    public ResponseEntity<Message<String>> uploadUserHeadImg(@RequestParam("userId") long userId,HttpServletRequest request) {
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String imageName = OSSClientUtil.uploadUserImg(file.getInputStream());
+                    userInfo user = new userInfo();
+                    user.setId(userId);
+                    user.setUserImg(imageName);
+                    userRestfulService.updateUserInfo(user);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+            }
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), null, "请上传文件！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传用户头像图片报错：",e);
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+    /**
+     * 上传用户身份证图片
+     * @param userId 用户ID
+     * @param request 请求
+     * @return
+     */
+    @RequestMapping(value = "uploadIDCardImg")
+    public ResponseEntity<Message<String>> uploadIDCardImg(@RequestParam("userId") long userId,HttpServletRequest request) {
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String imageName = OSSClientUtil.uploadUserImg(file.getInputStream());
+                    userInfo user = new userInfo();
+                    user.setId(userId);
+                    //用户身份证图片
+                    user.setIdentityCardphoto(imageName);
+                    user.setAuthenStatus(1);
+                    userRestfulService.updateUserInfo(user);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+            }
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), null, "请上传文件！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传用户身份证图片报错：",e);
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+    /**
+     * 上传用户和身份证合影
+     * @param userId 用户ID
+     * @param request 请求
+     * @return
+     */
+    @RequestMapping(value = "uploadUserImg")
+    public ResponseEntity<Message<String>> uploadIDCardImg2(@RequestParam("userId") long userId,HttpServletRequest request) {
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String imageName = OSSClientUtil.uploadUserImg(file.getInputStream());
+                    userInfo user = new userInfo();
+                    user.setId(userId);
+                    user.setAuthenStatus(1);
+
+                    //用户和身份证合影
+                    user.setPhoto(imageName);
+                    userRestfulService.updateUserInfo(user);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+
+            }
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), null, "请上传文件！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传用户和身份证合影报错：",e);
+            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 }

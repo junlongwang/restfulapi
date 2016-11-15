@@ -56,4 +56,8 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
     subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId,SubscribeStatus status) throws Exception;
 
 
+    int deleteByExpire() throws Exception;
+
+    int deleteByOrderCode(String orderCode);
+
 }

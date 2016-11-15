@@ -1,6 +1,7 @@
 package com.joybike.server.api.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * Created by lishaoyong on 16/10/20.
@@ -47,8 +48,18 @@ public class subscribeInfo implements Serializable {
      */
     private String subscribeCode;
 
+    /**
+     * 纬度
+     */
+    private BigDecimal dimension;
 
-    public subscribeInfo(Long id, Long userId, String vehicleId, Integer startAt, Integer endAt, Integer createAt, Integer status,String subscribeCode ) {
+    /**
+     * 经度
+     */
+    private BigDecimal longitude;
+
+
+    public subscribeInfo(Long id, Long userId, String vehicleId, Integer startAt, Integer endAt, Integer createAt, Integer status, String subscribeCode, BigDecimal dimension, BigDecimal longitude) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
@@ -57,6 +68,8 @@ public class subscribeInfo implements Serializable {
         this.createAt = createAt;
         this.status = status;
         this.subscribeCode = subscribeCode;
+        this.dimension = dimension;
+        this.longitude = longitude;
     }
 
     @Override
@@ -69,12 +82,30 @@ public class subscribeInfo implements Serializable {
                 ", endAt=" + endAt +
                 ", createAt=" + createAt +
                 ", status=" + status +
-                ",subscribeCode=" + subscribeCode +
+                ", subscribeCode='" + subscribeCode + '\'' +
+                ", dimension=" + dimension +
+                ", longitude=" + longitude +
                 '}';
     }
 
     public subscribeInfo(){
 
+    }
+
+    public BigDecimal getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(BigDecimal dimension) {
+        this.dimension = dimension;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
     }
 
     public void setSubscribeCode(String subscribeCode) {

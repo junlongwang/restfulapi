@@ -1,3 +1,4 @@
+import com.joybike.server.api.dto.userValidateDto;
 import com.joybike.server.api.model.WxNotifyOrder;
 import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.model.userInfo;
@@ -94,7 +95,7 @@ public class xstreamUnitTest {
         }
         try {
 
-            String imageName = OSSClientUtil.uploadRepairImg(input2byte(fileInputStream));
+            String imageName = OSSClientUtil.uploadRepairImg(fileInputStream);
             System.out.println(imageName);
             fileInputStream.close();
         } catch (IOException e) {
@@ -114,6 +115,15 @@ public class xstreamUnitTest {
 
         swapStream.close();
         return in2b;
+    }
+
+    @Test
+    public void ftest()
+    {
+        userValidateDto dto = new userValidateDto();
+        dto.setMobile("1111");
+        dto.setValidateCode("1111");
+        System.out.println(JSON.toJSONString(dto));
     }
 
 

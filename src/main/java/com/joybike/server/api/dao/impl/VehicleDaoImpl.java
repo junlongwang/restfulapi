@@ -146,4 +146,61 @@ public class VehicleDaoImpl extends Reository<vehicle> implements VehicleDao {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
     }
+
+    @Override
+    public int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("vehicleId", vehicleId);
+            map.put("vehicleImg", vehicleImg);
+            map.put("remark",remark);
+            return execSQL("update vehicle set vehicleImg = :vehicleImg,remark = :remark where vehicleId = :vehicleId", map);
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 获取车辆信息
+     * @param vehicleId
+     * @return
+     */
+    final String getVehicleByCodeSql = "select * from vehicle where vehicleId = :vehicleId";
+
+    @Override
+    public vehicle getVehicleByCode(String vehicleId) throws Exception{
+        try {
+            Map map = new HashMap();
+            map.put("vehicleId", vehicleId);
+            try {
+                return (vehicle)this.jdbcTemplate.queryForObject(getVehicleByCodeSql, map, new BeanPropertyRowMapper(vehicle.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 获取车辆信息
+     * @param vehicleLockId
+     * @return
+     */
+    public  vehicle getVehicleBylockId(String vehicleLockId) throws Exception
+    {
+        try {
+            Map map = new HashMap();
+            map.put("lockId", vehicleLockId);
+            try {
+                return (vehicle)this.jdbcTemplate.queryForObject("select * from vehicle where lockId=:lockId", map, new BeanPropertyRowMapper(vehicle.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+
 }

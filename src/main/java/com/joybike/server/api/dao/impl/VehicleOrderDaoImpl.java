@@ -100,13 +100,14 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param id
      * @return
      */
-    final String updateByIdSql = "update vehicleOrder set status = :status where orderCode = :orderCode";
+    final String updateByIdSql = "update vehicleOrder set status = :status,payId = :payId where orderCode = :orderCode";
 
     @Override
-    public int updateStatausByCode(String orderCode) throws Exception{
+    public int updateStatausByCode(String orderCode,long payId) throws Exception{
         Map orderMap = new HashMap();
         orderMap.put("orderCode", orderCode);
         orderMap.put("status", OrderStatus.complete.getValue());
+        orderMap.put("payId",payId);
         return execSQL(updateByIdSql, orderMap);
     }
 
@@ -145,7 +146,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param userId
      * @return
      */
-    final String getOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+    final String getOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.cyclingImg,b.tripDist from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
             " where a.userId = ? and a.status = 15";
 
     @Override
@@ -260,5 +261,30 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
+    }
+
+    /**
+     * 获取用户已完成订单的总里程
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    final String getTripDistSql = "select sum(b.tripDist) tripDist from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+            " where a.userId = :userId and a.status = 15";
+    @Override
+    public BigDecimal getTripDist(long userId) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            try{
+                return this.jdbcTemplate.queryForObject(getTripDistSql, map, BigDecimal.class);
+
+            }catch (Exception e){
+                return BigDecimal.valueOf(0);
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+
     }
 }

@@ -9,13 +9,26 @@ import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
+import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
+import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.apache.log4j.Logger;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -141,7 +154,10 @@ public class BicycleRestfulApi {
             } else {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));
             }
-        } catch (Exception e) {
+        } catch (RestfulException re){
+            return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + re.getMessage().toString(), null));
+        }
+        catch (Exception e) {
             return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
@@ -159,11 +175,7 @@ public class BicycleRestfulApi {
             com.joybike.server.api.model.vehicleRepair form = new vehicleRepair();
             form.setVehicleId(vehicleRepair.getBicycleCode());
             form.setCause(vehicleRepair.getCause());
-
-            if (vehicleRepair.getFaultImg() != null && vehicleRepair.getFaultImg().length > 0) {
-                String imageName = OSSClientUtil.uploadRepairImg(vehicleRepair.getFaultImg());
-                form.setFaultImg(imageName);
-            }
+            form.setFaultImg(vehicleRepair.getFaultImg());
             form.setCreateId(vehicleRepair.getCreateId());
             form.setCreateAt(vehicleRepair.getCreateAt());
             form.setDisposeStatus(DisposeStatus.untreated.getValue());
@@ -175,7 +187,84 @@ public class BicycleRestfulApi {
     }
 
 
+    /**
+     * 上传车辆故障照片
+     * @param bicycleCode
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "uploadRepairImg")
+    @ResponseBody
+    public ResponseEntity<Message<String>> uploadRepairImg(@RequestParam("bicycleCode") String bicycleCode,HttpServletRequest request) throws Exception {
 
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String fileName = file.getOriginalFilename();
+                    String path = request.getSession().getServletContext().getRealPath("/");
+                    String localPath = path + fileName;
+                    logger.info("上传文件目录："+localPath);
+//                    File newFile = new File(localPath);
+//                    //上传的文件写入到指定的文件中
+//                    file.transferTo(newFile);
+                    String imageName = OSSClientUtil.uploadRepairImg(file.getInputStream());
 
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+            }
+            return ResponseEntity.ok(new Message<String>(false, 0, null, "上传失败！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传车辆故障图片报错：",e);
+        }
+        return ResponseEntity.ok(new Message<String>(false, 0, null, "上传失败！"));
+    }
 
+    /**
+     *上传车辆停放位置图片
+     * @param bicycleCode
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "uploadParkingImg")
+    @ResponseBody
+    public ResponseEntity<Message<String>> uploadParkingImg(@RequestParam("userId") long userId,@RequestParam("bicycleCode") String bicycleCode,@RequestParam("remark") String remark,HttpServletRequest request) throws Exception {
+
+        try {
+            //获取解析器
+            CommonsMultipartResolver resolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+            //判断是否是文件
+            if(resolver.isMultipart(request)){
+                //进行转换
+                MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)(request);
+                //获取所有文件名称
+                Iterator<String> it = multiRequest.getFileNames();
+                while(it.hasNext()){
+                    //根据文件名称取文件
+                    MultipartFile file = multiRequest.getFile(it.next());
+                    String imageName = OSSClientUtil.uploadRepairImg(file.getInputStream());
+                    bicycleRestfulService.updateVehicleImg(bicycleCode,imageName,remark);
+                    return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
+                }
+            }
+            return ResponseEntity.ok(new Message<String>(false, 111, null, "上传车辆停放位置图片失败！"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传车辆停放位置图片报错：",e);
+        }
+        return ResponseEntity.ok(new Message<String>(false, 111, null, "上传车辆停放位置图片失败！"));
+    }
 }

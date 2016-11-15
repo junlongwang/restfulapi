@@ -6,6 +6,7 @@ import com.joybike.server.api.Infrustructure.Reository;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.model.subscribeInfo;
 import com.joybike.server.api.util.RestfulException;
+import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +39,36 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
             } catch (Exception e) {
                 return null;
             }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 删除过期
+     * @return
+     * @throws Exception
+     */
+    final String deleteByExpireSql = "delete from subscribeinfo where :endAt - createAt > 900 and status <>2";
+    @Override
+    public int deleteByExpire() throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("endAt", UnixTimeUtils.now());
+            return execSQL(deleteByExpireSql, map);
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    final String deleteByOrderCodeSql = "delete from subscribeinfo where subscribeCode = :subscribeCode";
+
+    @Override
+    public int deleteByOrderCode(String orderCode) {
+        try {
+            Map map = new HashMap();
+            map.put("subscribeCode", orderCode);
+            return execSQL(deleteByOrderCodeSql, map);
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }

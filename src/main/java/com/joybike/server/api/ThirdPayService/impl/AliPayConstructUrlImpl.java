@@ -178,9 +178,9 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
      */
     @Override
     public String getRefundUrl(ThirdPayBean payBean){
-        String service = "refund_fastpay_by_platform_nopwd";
+        String service = "refund_fastpay_by_platform_pwd";
         String notify_url = null;
-        String input_charset = "utf-8";
+        String _input_charset = "utf-8";
         String sign_type = "MD5";
         String refund_date = DateUtil.parse(new Date(), "yyyy-MM-dd hh:mm:ss");
         String batch_no =DateUtil.parse(new Date(), "yyyyMMddhhmmss")+payBean.getCosumeid();//DateUtil.parse(new Date(), "yyyyMMddhhmmss")  + draw.getApplySourceId();
@@ -188,13 +188,13 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
         String detail_data = payBean.getTransaction_id() + "^" + payBean.getOrderMoney()
                 + "^";
         String paygateway = "https://mapi.alipay.com/gateway.do?";
-        String ItemUrl = Payment.CreateUrl(paygateway, input_charset, service,
+        String ItemUrl = Payment.CreateUrl(paygateway, _input_charset, service,
                 partner, sign_type, batch_no, refund_date, batch_num,
                 detail_data, notify_url, Md5_key,null);
         logger.info("refound.zfb:itemurl:" + ItemUrl);
         String result = "";
         try {
-            result = UrlUtil.doPostForStr(ItemUrl, null, "UTF-8");
+            result = UrlUtil.doPostForStr(ItemUrl, null, "GBK");
         } catch (IOException e) {
             e.printStackTrace();
             logger.info("原路提现(支付宝)：请求失败(" + ItemUrl + "),交易号("

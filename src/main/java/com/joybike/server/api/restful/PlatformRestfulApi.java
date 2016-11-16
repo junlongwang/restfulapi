@@ -39,7 +39,7 @@ public class PlatformRestfulApi {
         //如果appKey非法，返回失败
         if(!appKeys.contains(appKey))
         {
-            return  ResponseEntity.ok(new Message<Token>(false,0,"非法请求！",null));
+            return  ResponseEntity.ok(new Message<Token>(false,1001,"非法请求！",null));
         }
         String access_token = null;
         Token token = null;

@@ -220,7 +220,7 @@ public class UserRestfulApi {
     }
 
     /**
-     * 获取用户已完成订单
+     * 获取用户已完成最后订单
      *
      * @param userId
      * @return

@@ -54,10 +54,10 @@ public class OrderItemDaoImpl extends Reository<orderItem> implements OrderItemD
      * @return
      * @throws Exception
      */
-    final String updateOrderItemByLockSql = "update orderItem set endAt = :endAt,cyclingTime = :cyclingTime ,endDimension = :endDimension,endLongitude = :endLongitude where userId = :userId and vehicleCode = :vehicleId";
+    final String updateOrderItemByLockSql = "update orderItem set endAt = :endAt,cyclingTime = :cyclingTime ,endDimension = :endDimension,endLongitude = :endLongitude,endAddress = :endAddress where userId = :userId and vehicleCode = :vehicleId";
 
     @Override
-    public int updateOrderByLock(long userId, String bicycleCode, int endAt, double endLongitude, double endDimension, int cyclingTime) throws Exception {
+    public int updateOrderByLock(long userId, String bicycleCode, int endAt, double endLongitude, double endDimension, int cyclingTime,String endAddress) throws Exception {
         Map itemMap = new HashMap();
         itemMap.put("endAt", endAt);
         itemMap.put("endDimension", endDimension);
@@ -65,6 +65,7 @@ public class OrderItemDaoImpl extends Reository<orderItem> implements OrderItemD
         itemMap.put("userId", userId);
         itemMap.put("vehicleId", bicycleCode);
         itemMap.put("cyclingTime",cyclingTime);
+        itemMap.put("endAddress",endAddress);
         return execSQL(updateOrderItemByLockSql, itemMap);
     }
 }

@@ -11,6 +11,7 @@ import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
+import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -617,7 +618,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             BigDecimal payPrice = payPrice(cyclingTime);
 
             int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
-            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
+            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
 
 //        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
             int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);

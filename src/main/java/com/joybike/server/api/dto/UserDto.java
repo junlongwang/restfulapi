@@ -94,16 +94,26 @@ public class UserDto implements Serializable {
     @JSONField(ordinal = 12)
     private Integer authenStatus;
 
+
     /**
      * 总里程
      */
     @JSONField(ordinal = 13)
     private BigDecimal totalMileage;
 
+
     /**
      * 总余额
      */
+    @JSONField(ordinal = 14)
     private BigDecimal amount;
+
+
+    /**
+     * 总时间
+     */
+    @JSONField(ordinal = 15)
+    private Integer totalcyclingTime;
 
     @Override
     public String toString() {
@@ -122,10 +132,14 @@ public class UserDto implements Serializable {
                 ", authenStatus=" + authenStatus +
                 ", totalMileage=" + totalMileage +
                 ", amount=" + amount +
+                ", totalcyclingTime=" + totalcyclingTime +
                 '}';
     }
 
-    public UserDto(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, BigDecimal totalMileage, BigDecimal amount) {
+    public UserDto(){
+    }
+
+    public UserDto(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, BigDecimal totalMileage, BigDecimal amount, Integer totalcyclingTime) {
         this.id = id;
         this.iphone = iphone;
         this.realName = realName;
@@ -140,9 +154,15 @@ public class UserDto implements Serializable {
         this.authenStatus = authenStatus;
         this.totalMileage = totalMileage;
         this.amount = amount;
+        this.totalcyclingTime = totalcyclingTime;
     }
 
-    public UserDto(){
+    public Integer getTotalcyclingTime() {
+        return totalcyclingTime;
+    }
+
+    public void setTotalcyclingTime(Integer totalcyclingTime) {
+        this.totalcyclingTime = totalcyclingTime;
     }
 
     public BigDecimal getAmount() {

@@ -663,6 +663,22 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     }
 
     /**
+     * 获取用户已完成的骑行订单(支付与完成未支付的)与形成记录
+     *
+     * @param userId
+     * @return
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
+    public VehicleOrderDto getLastSuccessOrder(long userId) throws Exception {
+
+        VehicleOrderDto dto = vehicleOrderDao.getLastOrderPaySuccess(userId);
+
+        return dto;
+    }
+
+
+    /**
      * 修改车的使用状态
      *
      * @param vehicleId

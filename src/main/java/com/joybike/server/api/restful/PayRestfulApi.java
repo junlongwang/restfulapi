@@ -351,6 +351,7 @@ public class PayRestfulApi {
     @RequestMapping(value = "refund", method = RequestMethod.POST)
     public ResponseEntity<Message<String>> refund(@RequestBody RefundDto refundDto) {
         if(refundDto.getUserId() > 0){
+            logger.info("userID为：" + refundDto.getUserId() + "的用户开始请求押金退款");
             bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
             if(order != null){
                 logger.info("充值信息为：" + order.toString() + "的退款开始");
@@ -377,6 +378,7 @@ public class PayRestfulApi {
                         user.setId(order.getUserId());
                         user.setSecurityStatus(0);
                         int res_upUser = 0;
+                        logger.info("开始更新用户ID为：" + user.getId() + "的用户押金状态");
                         try {
                             res_upUser = userRestfulService.updateUserInfo(user);
                             logger.info("用户ID为:" + order.getUserId() + "的用户状态更新结果为" + res_upUser);

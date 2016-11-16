@@ -170,4 +170,12 @@ public interface BicycleRestfulService {
      * @throws Exception
      */
     int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception;
+
+    /**
+     * 获取用户最后一次订单
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    VehicleOrderDto getLastSuccessOrder(long userId) throws Exception;
 }

@@ -220,6 +220,23 @@ public class UserRestfulApi {
     }
 
     /**
+     * 获取用户已完成订单
+     *
+     * @param userId
+     * @return
+     */
+    //@SystemControllerLog(description = "获取用户已完成订单")
+    @RequestMapping(value = "getLastSuccessOrder", method = RequestMethod.GET)
+    public ResponseEntity<Message<VehicleOrderDto>> getLastSuccessOrder(@RequestParam("userId") long userId) {
+        try {
+            VehicleOrderDto dto = bicycleRestfulService.getLastSuccessOrder(userId);
+            return ResponseEntity.ok(new Message<VehicleOrderDto>(true, 0, null, dto));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Order_Eroor.getErrorCode(), ReturnEnum.Order_Eroor.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+    /**
      * 使用信息
      *
      * @param userId

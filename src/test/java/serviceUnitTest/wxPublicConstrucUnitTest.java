@@ -37,16 +37,16 @@ private PayRestfulService payRestfulService;
     @Test
     public void test()
     {
-//        ThirdPayBean payOrder = new ThirdPayBean();
-//        payOrder.setPruductDesc("longziyuan");
-//        payOrder.setId(Long.valueOf("1415651253232327"));
-//        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
-//        payOrder.setOperIP("192.168.0.1");
-//        payOrder.setOpenid("o6_bmjrPTlm6_2sgVt7hMZOPfL2M");
-//        payOrder.setChannelId(1);
-//
-//        String a = ThirdPayService.execute(payOrder);
-//        System.out.println(a);
+        ThirdPayBean payOrder = new ThirdPayBean();
+        payOrder.setPruductDesc("longziyuan");
+        payOrder.setId(Long.valueOf("1411321312"));
+        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
+        payOrder.setOperIP("10.172.9.68");
+        payOrder.setOpenid("oyPXcwU5B-cZBwKD9KvQLk__bzYc");
+        payOrder.setChannelId(2);
+
+        String a = ThirdPayService.execute(payOrder);
+        System.out.println(a);
 //        bankDepositOrder order = new bankDepositOrder();
 //        long a = 11;
 //        order.setUserId(a);
@@ -98,14 +98,14 @@ private PayRestfulService payRestfulService;
 //        refundDto.setUserId(Long.valueOf(11));
 //        bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
 //        System.out.print(order);
-        ThirdPayBean payBean = new ThirdPayBean();
-        payBean.setOrderMoney(BigDecimal.valueOf(0.01));
-        payBean.setChannelId(1);
-        payBean.setTransaction_id("2016110321001004640222889074");
-        payBean.setCosumeid(Long.valueOf(304));
-        payBean.setRefundid(1L);
-        //调用第三方支付退款操作
-        String result = ThirdPayService.executeRefund(payBean);
-        System.out.print(result);
+//        ThirdPayBean payBean = new ThirdPayBean();
+//        payBean.setOrderMoney(BigDecimal.valueOf(0.01));
+//        payBean.setChannelId(1);
+//        payBean.setTransaction_id("2016111521001004640261548793");
+//        payBean.setCosumeid(Long.valueOf(316));
+//        payBean.setRefundid(1L);
+//        //调用第三方支付退款操作
+//        String result = ThirdPayService.executeRefund(payBean);
+//        System.out.print(result);
     }
 }

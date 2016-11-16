@@ -66,6 +66,7 @@ public class PayRestfulApi {
             //押金充值
             if (payBean.getRechargeType() == 1) {
                 try {
+                    logger.info("微信公众号支付请求信息：" + payBean.toString());
                     String rechargeResult = forRecharge(payBean, userId);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
@@ -75,6 +76,7 @@ public class PayRestfulApi {
                 //余额充值
                 try {
                     String rechargeResult = recharge(payBean, userId);
+                    logger.info("微信公众号支付请求信息：" + payBean.toString());
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));

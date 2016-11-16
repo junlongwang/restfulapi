@@ -392,4 +392,14 @@ public class UserRestfulApi {
             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
+
+    /**
+     * 上传用户和身份证合影
+     * @param userId 用户ID
+     * @return
+     */
+    @RequestMapping(value = "share")
+    public ResponseEntity<Message<String>> share(@RequestParam("userId") long userId) {
+        return ResponseEntity.ok(new Message<String>(true, 0, null, "http://h5.joybike.com.cn/forward/H5/joy_bike/mytripdetail.html?userId="+userId));
+    }
 }

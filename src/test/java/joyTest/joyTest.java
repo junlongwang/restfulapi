@@ -246,8 +246,11 @@ public class joyTest {
     @Test
     public void BTest(){
         try {
-            VehicleOrderDto dto = bicycleRestfulService.getLastSuccessOrder(11);
-            System.out.println(dto);
+//            VehicleOrderDto dto = bicycleRestfulService.getLastSuccessOrder(11);
+//            System.out.println(dto);
+            UserDto userInfo = userRestfulService.getUserInfoById(11);
+
+            System.out.println(userInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }

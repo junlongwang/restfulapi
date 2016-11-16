@@ -91,9 +91,13 @@ public class UserRestfulServiceImpl implements UserRestfulService {
     @Override
     public UserDto getUserInfoById(long userId) throws Exception {
         UserDto dto =  userInfoDao.getUserInfoById(userId);
-        dto.setTotalMileage(vehicleOrderDao.getTripDist(userId));
-        dto.setTotalcyclingTime(vehicleOrderDao.getTimes(userId));
-        dto.setAmount(BigDecimal.valueOf(getUserAcountMoneyByuserId(userId)));
+        if (dto != null){
+
+            dto.setTotalMileage(vehicleOrderDao.getTripDist(userId));
+            dto.setTotalcyclingTime(vehicleOrderDao.getTimes(userId));
+            dto.setAmount(BigDecimal.valueOf(getUserAcountMoneyByuserId(userId)));
+        }
+
         return dto;
     }
 }

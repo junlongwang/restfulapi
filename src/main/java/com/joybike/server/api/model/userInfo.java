@@ -16,7 +16,17 @@ public class userInfo implements Serializable {
      */
     private String iphone;
 
-    /** 
+    private String guid;
+
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
+    /**
      * 用户姓名
      *  @Author lisy
     **/
@@ -83,7 +93,7 @@ public class userInfo implements Serializable {
 
     }
 
-    public userInfo(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
+    public userInfo(Long id, String iphone, String realName, String guid, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
         this.id = id;
         this.iphone = iphone;
         this.realName = realName;
@@ -96,6 +106,7 @@ public class userInfo implements Serializable {
         this.userImg = userImg;
         this.securityStatus = securityStatus;
         this.authenStatus = authenStatus;
+        this.guid = guid;
     }
 
     @Override

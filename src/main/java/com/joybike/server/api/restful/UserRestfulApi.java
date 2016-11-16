@@ -75,6 +75,7 @@ public class UserRestfulApi {
             user.setUserImg(userInfoDto.getUserImg());
 
             user.setNationality(userInfoDto.getNationality());
+            user.setGuid(userInfoDto.getGuid());
             userRestfulService.updateUserInfo(user);
             userInfo u = userRestfulService.getUserInfoByMobile(user.getIphone());
             UserDto userInfo = userRestfulService.getUserInfoById(u.getId());

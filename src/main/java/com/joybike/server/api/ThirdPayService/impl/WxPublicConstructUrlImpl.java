@@ -92,17 +92,9 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
                     signMap.put("timeStamp", timeStamp);
                     signMap.put("signType", signType);
                     String paySign =SignUtil.sign(signMap,key).toUpperCase();
-
-                    StringBuffer str = new StringBuffer();
-                    str.append("\"appId\" : \"").append(appid).append("\"").append(",\n"); //公众号名称，由商户传入
-                    str.append("\"timeStamp\" : \"").append(timeStamp).append("\"").append(",\n"); //时间戳
-                    str.append("\"nonceStr\" : \"").append(nonceStr).append("\"").append(",\n"); //随机串
-                    str.append("\"package\" : \"").append(packageValue).append("\"").append(",\n");//扩展包
-                    str.append("\"signType\" : \""+signType+"\",\n"); //微信签名方式:1.sha1
-                    str.append("\"paySign\" : \"").append(paySign).append("\""); //微信签名
-
+                    signMap.put("paySign", paySign);
                     redirectParam.setMethod("POST");
-                    redirectParam.setPara(str.toString());
+                    redirectParam.setPara(JsonUtil.mapToJson(signMap));
                 }
             }
         }catch(Exception e){

@@ -313,4 +313,29 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
         }
 
     }
+
+    /**
+     * 获取用户已完成订单的总里程
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    final String getTimesSql = "select sum(b.cyclingTime) cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+            " where a.userId = :userId and a.status = 15";
+    @Override
+    public Integer getTimes(long userId) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            try{
+                return this.jdbcTemplate.queryForObject(getTimesSql, map, Integer.class);
+
+            }catch (Exception e){
+                return 0;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+
+    }
 }

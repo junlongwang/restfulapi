@@ -152,6 +152,7 @@ public class PayRestfulApi {
             logger.error("微信充值回调根据订单id获取订单信息失败");
         }
         if(!updateTag){
+
             if (wxNotifyOrder.getTransaction_id() != null) {
                 returncode = ThirdPayService.callBack(wxNotifyOrder);
             }
@@ -173,6 +174,7 @@ public class PayRestfulApi {
                             if (result > 0){
                                 userInfo userInfo = new userInfo();
                                 userInfo.setId(bankDepositOrder.getUserId());
+                                userInfo.setGuid(wxNotifyOrder.getOpenid());
                                 userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
                                 int userResult = userRestfulService.updateUserInfo(userInfo);
                                 if(userResult > 0)
@@ -184,6 +186,10 @@ public class PayRestfulApi {
                         else{
                             result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
                             String attach = wxNotifyOrder.getAttach();
+                            userInfo userInfo = new userInfo();
+                            userInfo.setId(bankDepositOrder.getUserId());
+                            userInfo.setGuid(wxNotifyOrder.getOpenid());
+                            userRestfulService.updateUserInfo(userInfo);
                             if(attach != null && attach != ""){
                                 Long consumeid = Long.valueOf(attach);
                                 Long userid = bankDepositOrder.getUserId();

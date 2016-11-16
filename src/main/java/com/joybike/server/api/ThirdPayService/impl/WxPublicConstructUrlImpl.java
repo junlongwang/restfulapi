@@ -3,6 +3,7 @@ import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
 import com.joybike.server.api.model.ThirdPayBean;
 import com.joybike.server.api.model.RedirectParam;
 import com.joybike.server.api.model.WxNotifyOrder;
+import com.joybike.server.api.thirdparty.wxtenpay.PackageRequestHandler;
 import com.joybike.server.api.thirdparty.wxtenpay.util.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -55,19 +56,20 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             if(payOrder.getCosumeid() != null){
                 map.put("attach",String.valueOf(payOrder.getCosumeid()));//附加数据
             }
+            map.put("body", payOrder.getPruductDesc());//随机字符串
             map.put("out_trade_no", payOrder.getId().toString());//商户订单号
             Double fMoney = (Double.valueOf(String.valueOf(payOrder.getOrderMoney())) * 100);
             BigDecimal total_fee = new BigDecimal(fMoney);
             map.put("total_fee",String.valueOf(total_fee));//总金额
             String spbillCreateIp = payOrder.getOperIP();
             if( StringUtil.isEmpty(spbillCreateIp) || "null".equals(spbillCreateIp) ) spbillCreateIp = "127.0.0.1";
-            map.put("spbill_create_ip", spbillCreateIp); //终端IP
+            map.put("spbill_create_ip", "127.0.0.1"); //终端IP
             map.put("notify_url",notifyUrl);//通知地址. PayConfig.PAY_NOTIFY_URL
             map.put("trade_type", "JSAPI");//交易类型
             map.put("openid", payOrder.getOpenid());//openid
             String sign=SignUtil.sign(map,key).toUpperCase();
             map.put("sign", sign);//签名
-            String xml=ParseXml.parseXML(map);//转化为xml格式
+            String xml=getXmlParam(map);//转化为xml格
             String httpType = "SSL";
             String timeOut = "60000";
             String res = HttpRequestSimple.sendHttpMsg(wxPreUrl, xml, httpType, timeOut);
@@ -107,6 +109,27 @@ public class WxPublicConstructUrlImpl implements WxPublicConstructUrlInter {
             return null;
         }
         return redirectParam;
+    }
+
+    private String getXmlParam(Map map){
+        StringBuffer strXml = new StringBuffer();
+        strXml.append("<xml>");
+        strXml.append("<appid>").append(appid).append("</appid>");
+        if(map.get("attach") != null && map.get("attach") != ""){
+            strXml.append("<attach>").append(map.get("attach")).append("</attach>");
+        }
+        strXml.append("<body>").append(map.get("body")).append("</body>");
+        strXml.append("<mch_id>").append(map.get("mch_id")).append("</mch_id>");
+        strXml.append("<nonce_str>").append(map.get("nonce_str")).append("</nonce_str>");
+        strXml.append("<notify_url>").append(map.get("notify_url")).append("</notify_url>");
+        strXml.append("<openid>").append(map.get("openid")).append("</openid>");
+        strXml.append("<out_trade_no>").append(map.get("out_trade_no")).append("</out_trade_no>");
+        strXml.append("<spbill_create_ip>").append(map.get("spbill_create_ip")).append("</spbill_create_ip>");
+        strXml.append("<total_fee>").append(map.get("total_fee")).append("</total_fee>");
+        strXml.append("<trade_type>").append(map.get("trade_type")).append("</trade_type>");
+        strXml.append("<sign>").append(map.get("sign")).append("</sign>");
+        strXml.append("</xml>");
+        return strXml.toString();
     }
 
     @Override

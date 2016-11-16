@@ -126,6 +126,7 @@ public class PayRestfulApi {
     public String payOfNotify(HttpServletRequest request) {
         DataInputStream in;
         String wxNotifyXml = "";
+        boolean isCosumeSuccess = true;
         try {
             in = new DataInputStream(request.getInputStream());
             byte[] dataOrigin = new byte[request.getContentLength()];
@@ -173,20 +174,28 @@ public class PayRestfulApi {
                                 userInfo userInfo = new userInfo();
                                 userInfo.setId(bankDepositOrder.getUserId());
                                 userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
-                                userRestfulService.updateUserInfo(userInfo);
+                                int userResult = userRestfulService.updateUserInfo(userInfo);
+                                if(userResult > 0)
+                                    return responseHtml;
                             }
+
                         }
                         //余额充值成功更新充值订单信息
                         else{
                             result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
+                            String attach = wxNotifyOrder.getAttach();
+                            if(attach != null && attach != ""){
+                                Long consumeid = Long.valueOf(attach);
+                                Long userid = bankDepositOrder.getUserId();
+                                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid);
+                                String ordercode = vehicleOrder.getOrderCode();
+                                BigDecimal payPrice = vehicleOrder.getBeforePrice();
+                                int cosumeResult = payRestfulService.consume(ordercode,payPrice,userid,id);
+                                if (result > 0 && cosumeResult == 0) {
+                                    return responseHtml;
+                                }
+                            }
                         }
-                    }
-                    String attach = wxNotifyOrder.getAttach();
-//                    if(attach != null && attach != ""){
-//                        Long consumeid = Long.valueOf(attach);
-//                    }
-                    if (result > 0) {
-                        return responseHtml;
                     }
                 } catch (Exception e) {
                     return "";
@@ -279,7 +288,9 @@ public class PayRestfulApi {
                                     userInfo userInfo = new userInfo();
                                     userInfo.setId(bankDepositOrder.getUserId());
                                     userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
-                                    userRestfulService.updateUserInfo(userInfo);
+                                    int userResult = userRestfulService.updateUserInfo(userInfo);
+                                    if(userResult > 0)
+                                        return "success";
                                 }
                             }
                             //余额充值成功更新充值订单信息
@@ -289,10 +300,22 @@ public class PayRestfulApi {
                                     return "success";
                                 } else {
                                     payRestfulService.updateDepositOrderById(Long.valueOf(notify.getOut_trade_no()), PayType.Alipay, notify.getTrade_no(), "", (int) pay_at);
+                                    String attach = re.getParameter("attach");
+                                    if(attach != null && attach != ""){
+                                        Long consumeid = Long.valueOf(attach);
+                                        Long userid = bankDepositOrder.getUserId();
+                                        vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid);
+                                        String ordercode = vehicleOrder.getOrderCode();
+                                        BigDecimal payPrice = vehicleOrder.getBeforePrice();
+                                        int cosumeResult = payRestfulService.consume(ordercode,payPrice,userid,Long.valueOf(notify.getOut_trade_no()));
+                                        if (result > 0 && cosumeResult == 0) {
+                                            return "success";
+                                        }
+                                    }
+                                    return "success";
                                 }
                             }
                         }
-                        return "success";
                     } catch (Exception e) {
                         return "fail";
                     }

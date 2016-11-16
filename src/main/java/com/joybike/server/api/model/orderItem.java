@@ -86,25 +86,19 @@ public class orderItem implements Serializable {
      */
     private BigDecimal tripDist;
 
+    /**
+     * 开始地理位置
+     */
+    private String startAddress;
+
+    /**
+     * 结束地理位置
+     */
+    private String endAddress;
+
+
     public orderItem(){
 
-    }
-
-    public orderItem(Long id, Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, String cyclingImg, Integer createAt, Integer cyclingTime, BigDecimal tripDist) {
-        this.id = id;
-        this.userId = userId;
-        this.orderCode = orderCode;
-        this.vehicleCode = vehicleCode;
-        this.beginAt = beginAt;
-        this.endAt = endAt;
-        this.beginDimension = beginDimension;
-        this.beginLongitude = beginLongitude;
-        this.endDimension = endDimension;
-        this.endLongitude = endLongitude;
-        this.cyclingImg = cyclingImg;
-        this.createAt = createAt;
-        this.cyclingTime = cyclingTime;
-        this.tripDist = tripDist;
     }
 
     @Override
@@ -124,7 +118,44 @@ public class orderItem implements Serializable {
                 ", createAt=" + createAt +
                 ", cyclingTime=" + cyclingTime +
                 ", tripDist=" + tripDist +
+                ", startAddress='" + startAddress + '\'' +
+                ", endAddress='" + endAddress + '\'' +
                 '}';
+    }
+
+    public orderItem(Long id, Long userId, String orderCode, String vehicleCode, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, String cyclingImg, Integer createAt, Integer cyclingTime, BigDecimal tripDist, String startAddress, String endAddress) {
+        this.id = id;
+        this.userId = userId;
+        this.orderCode = orderCode;
+        this.vehicleCode = vehicleCode;
+        this.beginAt = beginAt;
+        this.endAt = endAt;
+        this.beginDimension = beginDimension;
+        this.beginLongitude = beginLongitude;
+        this.endDimension = endDimension;
+        this.endLongitude = endLongitude;
+        this.cyclingImg = cyclingImg;
+        this.createAt = createAt;
+        this.cyclingTime = cyclingTime;
+        this.tripDist = tripDist;
+        this.startAddress = startAddress;
+        this.endAddress = endAddress;
+    }
+
+    public String getStartAddress() {
+        return startAddress;
+    }
+
+    public void setStartAddress(String startAddress) {
+        this.startAddress = startAddress;
+    }
+
+    public String getEndAddress() {
+        return endAddress;
+    }
+
+    public void setEndAddress(String endAddress) {
+        this.endAddress = endAddress;
     }
 
     public BigDecimal getTripDist() {

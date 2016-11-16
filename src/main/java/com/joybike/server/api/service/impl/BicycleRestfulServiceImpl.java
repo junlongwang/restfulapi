@@ -11,6 +11,7 @@ import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
+import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -617,7 +618,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             BigDecimal payPrice = payPrice(cyclingTime);
 
             int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
-            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime);
+            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
 
 //        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
             int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
@@ -661,6 +662,22 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         list.stream().sorted((p, p2) -> (p2.getEndAt().compareTo(p.getEndAt()))).collect(toList());
         return list;
     }
+
+    /**
+     * 获取用户已完成的骑行订单(支付与完成未支付的)与形成记录
+     *
+     * @param userId
+     * @return
+     */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Override
+    public VehicleOrderDto getLastSuccessOrder(long userId) throws Exception {
+
+        VehicleOrderDto dto = vehicleOrderDao.getLastOrderPaySuccess(userId);
+
+        return dto;
+    }
+
 
     /**
      * 修改车的使用状态

@@ -7,6 +7,7 @@ import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.UserPayIngDto;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.*;
@@ -221,7 +222,7 @@ public class joyTest {
     }
 
     @Test
-    public void getByidTest(){
+    public void getByidTest() {
         try {
             UserDto userInfo = userRestfulService.getUserInfoById(1);
             System.out.println(userInfo);
@@ -233,7 +234,7 @@ public class joyTest {
     }
 
     @Test
-    public void aTest(){
+    public void aTest() {
         try {
             UserDto dto = userRestfulService.getUserInfoById(11);
             System.out.println(dto);
@@ -243,10 +244,34 @@ public class joyTest {
     }
 
     @Test
-    public void BTest(){
+    public void BTest() {
         try {
-            UserPayIngDto dto = orderRestfulService.userPayOrder("BIKE005",1479149206,41.069,117.432);
-            System.out.println(dto);
+//            VehicleOrderDto dto = bicycleRestfulService.getLastSuccessOrder(11);
+//            System.out.println(dto);
+//            UserDto userInfo = userRestfulService.getUserInfoById(11);
+
+//            System.out.println(userInfo);
+//
+//            long orderId = 0;
+//
+//            //获取是否有未支付订单
+//            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(11);
+//            VehicleOrderDto dto = new VehicleOrderDto();
+//            if (order != null) {
+//                System.out.println(1);
+//            } else {
+//                dto = bicycleRestfulService.unlock(11, "BIKE007", 1478057275, 116.444, 40.076);
+//            }
+//
+//            if (dto != null) {
+//                System.out.println(dto);
+//            } else {
+//                System.out.println(3);
+//            }
+
+//            public UserPayIngDto userPayOrder(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception,RestfulException {
+
+                orderRestfulService.userPayOrder("BIKE007",1479057275,116.444, 40.076);
         } catch (Exception e) {
             e.printStackTrace();
         }

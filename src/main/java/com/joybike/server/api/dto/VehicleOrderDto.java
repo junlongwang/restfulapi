@@ -117,6 +117,9 @@ public class VehicleOrderDto implements Serializable {
      */
     private List<vehicleHeartbeat> vehicleHeartbeatList;
 
+    private String startAddress;
+
+    private String endAddress;
 
     /**
      * 轨迹图
@@ -130,14 +133,6 @@ public class VehicleOrderDto implements Serializable {
 
     public VehicleOrderDto() {
 
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
     }
 
     @Override
@@ -160,31 +155,11 @@ public class VehicleOrderDto implements Serializable {
                 ", cyclingTime=" + cyclingTime +
                 ", tripDist=" + tripDist +
                 ", vehicleHeartbeatList=" + vehicleHeartbeatList +
+                ", startAddress='" + startAddress + '\'' +
+                ", endAddress='" + endAddress + '\'' +
                 ", cyclingImg='" + cyclingImg + '\'' +
                 ", amount=" + amount +
                 '}';
-    }
-
-    public VehicleOrderDto(Long id, String orderCode, Long userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String vehicleId, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, Integer cyclingTime, BigDecimal tripDist, List<vehicleHeartbeat> vehicleHeartbeatList, String cyclingImg, BigDecimal amount) {
-        this.id = id;
-        this.orderCode = orderCode;
-        this.userId = userId;
-        this.beforePrice = beforePrice;
-        this.afterPrice = afterPrice;
-        this.payId = payId;
-        this.status = status;
-        this.vehicleId = vehicleId;
-        this.beginAt = beginAt;
-        this.endAt = endAt;
-        this.beginDimension = beginDimension;
-        this.beginLongitude = beginLongitude;
-        this.endDimension = endDimension;
-        this.endLongitude = endLongitude;
-        this.cyclingTime = cyclingTime;
-        this.tripDist = tripDist;
-        this.vehicleHeartbeatList = vehicleHeartbeatList;
-        this.cyclingImg = cyclingImg;
-        this.amount = amount;
     }
 
     public Long getId() {
@@ -307,6 +282,14 @@ public class VehicleOrderDto implements Serializable {
         this.cyclingTime = cyclingTime;
     }
 
+    public BigDecimal getTripDist() {
+        return tripDist;
+    }
+
+    public void setTripDist(BigDecimal tripDist) {
+        this.tripDist = tripDist;
+    }
+
     public List<vehicleHeartbeat> getVehicleHeartbeatList() {
         return vehicleHeartbeatList;
     }
@@ -315,19 +298,59 @@ public class VehicleOrderDto implements Serializable {
         this.vehicleHeartbeatList = vehicleHeartbeatList;
     }
 
-    public void setCyclingImg(String cyclingImg) {
-        this.cyclingImg = cyclingImg;
+    public String getStartAddress() {
+        return startAddress;
+    }
+
+    public void setStartAddress(String startAddress) {
+        this.startAddress = startAddress;
+    }
+
+    public String getEndAddress() {
+        return endAddress;
+    }
+
+    public void setEndAddress(String endAddress) {
+        this.endAddress = endAddress;
     }
 
     public String getCyclingImg() {
         return cyclingImg;
     }
 
-    public void setTripDist(BigDecimal tripDist) {
-        this.tripDist = tripDist;
+    public void setCyclingImg(String cyclingImg) {
+        this.cyclingImg = cyclingImg;
     }
 
-    public BigDecimal getTripDist() {
-        return tripDist;
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public VehicleOrderDto(Long id, String orderCode, Long userId, BigDecimal beforePrice, BigDecimal afterPrice, Long payId, Integer status, String vehicleId, Integer beginAt, Integer endAt, BigDecimal beginDimension, BigDecimal beginLongitude, BigDecimal endDimension, BigDecimal endLongitude, Integer cyclingTime, BigDecimal tripDist, List<vehicleHeartbeat> vehicleHeartbeatList, String startAddress, String endAddress, String cyclingImg, BigDecimal amount) {
+        this.id = id;
+        this.orderCode = orderCode;
+        this.userId = userId;
+        this.beforePrice = beforePrice;
+        this.afterPrice = afterPrice;
+        this.payId = payId;
+        this.status = status;
+        this.vehicleId = vehicleId;
+        this.beginAt = beginAt;
+        this.endAt = endAt;
+        this.beginDimension = beginDimension;
+        this.beginLongitude = beginLongitude;
+        this.endDimension = endDimension;
+        this.endLongitude = endLongitude;
+        this.cyclingTime = cyclingTime;
+        this.tripDist = tripDist;
+        this.vehicleHeartbeatList = vehicleHeartbeatList;
+        this.startAddress = startAddress;
+        this.endAddress = endAddress;
+        this.cyclingImg = cyclingImg;
+        this.amount = amount;
     }
 }

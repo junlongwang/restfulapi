@@ -146,7 +146,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param userId
      * @return
      */
-    final String getOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.cyclingImg,b.tripDist from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+    final String getOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.cyclingImg,b.tripDist,b.startAddress,b.endAddress from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
             " where a.userId = ? and a.status = 15";
 
     @Override
@@ -158,6 +158,32 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
             } catch (Exception e) {
                 return null;
             }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 获取用户已完成的骑行订单 已支付完成的last
+     *
+     * @param userId
+     * @return
+     */
+    final String getLastOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.cyclingImg,b.tripDist,b.startAddress,b.endAddress from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+            " where a.userId = :userId and a.status = 15 order by endAt desc limit 1";
+
+    @Override
+    public VehicleOrderDto getLastOrderPaySuccess(long userId) throws Exception{
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+
+            try {
+                return (VehicleOrderDto) this.jdbcTemplate.queryForObject(getLastOrderPaySuccessSql, map, new BeanPropertyRowMapper(VehicleOrderDto.class));
+            } catch (Exception e) {
+                return null;
+            }
+
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
@@ -193,7 +219,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param userId
      * @return
      */
-    final String getOrderByIdSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+    final String getOrderByIdSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.startAddress,b.endAddress from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
                     " where a.id = :id";
 
     @Override
@@ -219,7 +245,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param userId
      * @return
      */
-    final String getOrderByUserIdSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+    final String getOrderByUserIdSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.startAddress,b.endAddress from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
             " where a.userId = :userId and a.status in (1,2)";
 
     @Override
@@ -244,7 +270,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @param userId
      * @return
      */
-    final String getOrderByOrderCode = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+    final String getOrderByOrderCode = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.startAddress,b.endAddress from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
             " where a.orderCode = :orderCode";
 
     @Override
@@ -281,6 +307,31 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
 
             }catch (Exception e){
                 return BigDecimal.valueOf(0);
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+
+    }
+
+    /**
+     * 获取用户已完成订单的总里程
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    final String getTimesSql = "select sum(b.cyclingTime) cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+            " where a.userId = :userId and a.status = 15";
+    @Override
+    public Integer getTimes(long userId) throws Exception {
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+            try{
+                return this.jdbcTemplate.queryForObject(getTimesSql, map, Integer.class);
+
+            }catch (Exception e){
+                return 0;
             }
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);

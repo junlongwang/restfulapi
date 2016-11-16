@@ -15,6 +15,7 @@ import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
+import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.StringRandom;
 import com.joybike.server.api.util.UnixTimeUtils;
@@ -96,6 +97,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         item.setBeginAt(beginAt);
         item.setBeginDimension(BigDecimal.valueOf(beginDimension));
         item.setBeginLongitude(BigDecimal.valueOf(beginLongitude));
+        item.setStartAddress(AMapUtil.getAddress(beginLongitude+","+beginDimension));
         orderItemDao.save(item);
 
         //修改预约单上的骑行订单

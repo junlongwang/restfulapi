@@ -164,6 +164,32 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
     }
 
     /**
+     * 获取用户已完成的骑行订单 已支付完成的
+     *
+     * @param userId
+     * @return
+     */
+    final String getLastOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.cyclingImg,b.tripDist from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
+            " where a.userId = :userId and a.status = 15 order by endAt desc limit 1";
+
+    @Override
+    public VehicleOrderDto getLastOrderPaySuccess(long userId) throws Exception{
+        try {
+            Map map = new HashMap();
+            map.put("userId", userId);
+
+            try {
+                return (VehicleOrderDto) this.jdbcTemplate.queryForObject(getLastOrderPaySuccessSql, map, new BeanPropertyRowMapper(VehicleOrderDto.class));
+            } catch (Exception e) {
+                return null;
+            }
+
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
      * 根据主键获取订单信息
      *
      * @param id

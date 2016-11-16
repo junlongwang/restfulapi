@@ -98,4 +98,12 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * @return
      */
     BigDecimal getTripDist(long userId) throws Exception;
+
+    /**
+     * 获取最新一次订单
+     * @param userId
+     * @return
+     * @throws Exception
+     */
+    VehicleOrderDto getLastOrderPaySuccess(long userId) throws Exception;
 }

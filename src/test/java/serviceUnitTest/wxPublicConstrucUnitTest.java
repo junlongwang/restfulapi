@@ -5,16 +5,16 @@ import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.WxPublicConstructUrlInter;
 import com.joybike.server.api.ThirdPayService.impl.WxappConstructUrlImpl;
 import com.joybike.server.api.dto.RefundDto;
-import com.joybike.server.api.model.ThirdPayBean;
-import com.joybike.server.api.model.WxNotifyOrder;
-import com.joybike.server.api.model.bankDepositOrder;
+import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.PayRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import com.joybike.server.api.util.XStreamUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -34,19 +34,21 @@ public class wxPublicConstrucUnitTest {
 private PayRestfulService payRestfulService;
     @Autowired
     private ThirdPayService ThirdPayService;
+    @Autowired
+    private UserRestfulService userRestfulService;
     @Test
     public void test()
     {
-        ThirdPayBean payOrder = new ThirdPayBean();
-        payOrder.setPruductDesc("longziyuan");
-        payOrder.setId(Long.valueOf("1411321312"));
-        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
-        payOrder.setOperIP("10.172.9.68");
-        payOrder.setOpenid("oyPXcwU5B-cZBwKD9KvQLk__bzYc");
-        payOrder.setChannelId(2);
-
-        String a = ThirdPayService.execute(payOrder);
-        System.out.println(a);
+//        ThirdPayBean payOrder = new ThirdPayBean();
+//        payOrder.setPruductDesc("longziyuan");
+//        payOrder.setId(Long.valueOf("1411321312"));
+//        payOrder.setOrderMoney(BigDecimal.valueOf(0.01));
+//        payOrder.setOperIP("10.172.9.68");
+//        payOrder.setOpenid("oyPXcwU5B-cZBwKD9KvQLk__bzYc");
+//        payOrder.setChannelId(2);
+//
+//        String a = ThirdPayService.execute(payOrder);
+//        System.out.println(a);
 //        bankDepositOrder order = new bankDepositOrder();
 //        long a = 11;
 //        order.setUserId(a);
@@ -95,17 +97,28 @@ private PayRestfulService payRestfulService;
 //            System.out.print(returncode);
 //        }
 //        RefundDto refundDto = new RefundDto();
-//        refundDto.setUserId(Long.valueOf(11));
+//        refundDto.setUserId(Long.valueOf(1));
 //        bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
 //        System.out.print(order);
 //        ThirdPayBean payBean = new ThirdPayBean();
 //        payBean.setOrderMoney(BigDecimal.valueOf(0.01));
-//        payBean.setChannelId(1);
-//        payBean.setTransaction_id("2016111521001004640261548793");
-//        payBean.setCosumeid(Long.valueOf(316));
-//        payBean.setRefundid(1L);
+//        payBean.setChannelId(2);
+//        payBean.setTransaction_id("4008342001201611169904095238");
+//        payBean.setCosumeid(Long.valueOf(446));
+//        payBean.setRefundid(123L);
 //        //调用第三方支付退款操作
 //        String result = ThirdPayService.executeRefund(payBean);
 //        System.out.print(result);
+
+        userInfo user = new userInfo();
+        user.setId(1L);
+        user.setSecurityStatus(0);
+        int res_upUser = 0;
+        try {
+            res_upUser = userRestfulService.updateUserInfo(user);
+            System.out.print(res_upUser);
+        }catch (Exception e){
+
+        }
     }
 }

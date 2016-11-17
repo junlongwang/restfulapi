@@ -14,6 +14,6 @@ public interface BankRefundOrderDao extends IRepository<bankRefundOrder> {
      * @param id
      * @return
      */
-    public int updateRefundOrderStatusById(Long id);
+    int updateRefundOrderStatusById(Long id);
 
 }

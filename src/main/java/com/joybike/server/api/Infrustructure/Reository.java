@@ -20,7 +20,7 @@ public class Reository<T> extends AbstractRepository<T> {
 
     @Override
     public long save(T model) {
-        SqlParameterSource ps = new BeanPropertySqlParameterSource(model);//从user中取出数据，与sql语句中一一对应将数据换进去
+        SqlParameterSource ps = new BeanPropertySqlParameterSource(model); //从user中取出数据，与sql语句中一一对应将数据换进去
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(INSERT_SQL, ps, keyHolder);
         long id = keyHolder.getKey().intValue();//获得主键

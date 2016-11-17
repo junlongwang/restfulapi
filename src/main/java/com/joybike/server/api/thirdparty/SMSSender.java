@@ -75,7 +75,8 @@ public class SMSSender {
         hxmap.put("dynadatas",str);
         hxmap.put("productId", "B2016000493");
         //hxmap.put("templateId", "SMS20160923729");
-        hxmap.put("templateId", "SMS20161021927");
+        //hxmap.put("templateId", "SMS20161021927");
+        hxmap.put("templateId","SMS201611171115");
         hxmap.put("signingId", "1474596563933063");
         //hxmap.put("callbackUrl", "http://YOURWebSite.com:8080/callback_url");
         //需要回调，就加上你的回调地址,不需要就不要加

@@ -108,7 +108,7 @@ public class UserRestfulApi {
                 return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(), ReturnEnum.Iphone_Error.getErrorDesc() + "-" + smsResponse.getMsg(), null));
             } else {
                 //存放到REDIX
-                RedixUtil.setString(mobile, String.valueOf(randNo), 5 * 60);
+                RedixUtil.setString(mobile, String.valueOf(randNo), 60);
             }
             return ResponseEntity.ok(new Message<String>(true, 0, null, null));
         } catch (Exception e) {

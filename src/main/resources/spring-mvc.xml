@@ -85,14 +85,14 @@
         <constructor-arg ref="dataSource"></constructor-arg>
     </bean>
 
-    <!--<mvc:interceptors>-->
-        <!--<mvc:interceptor>-->
-            <!--&lt;!&ndash; 如果不配置或/**,将拦截所有的Controller &ndash;&gt;-->
-            <!--<mvc:mapping path="/**" />-->
-            <!--&lt;!&ndash; 页面权限通用处理   &ndash;&gt;-->
-            <!--<bean class="com.joybike.server.api.Infrustructure.MyHandlerInterceptor"></bean>-->
-        <!--</mvc:interceptor>-->
-    <!--</mvc:interceptors>-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- 如果不配置或/**,将拦截所有的Controller -->
+            <mvc:mapping path="/**" />
+            <!-- 页面权限通用处理   -->
+            <bean class="com.joybike.server.api.Infrustructure.MyHandlerInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
 
     <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">-->
         <!--<property name="viewClass"-->

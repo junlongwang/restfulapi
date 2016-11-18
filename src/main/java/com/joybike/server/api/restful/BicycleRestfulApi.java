@@ -106,7 +106,13 @@ public class BicycleRestfulApi {
      */
     @RequestMapping(value = "lookup", method = RequestMethod.GET)
     public ResponseEntity<Message<String>> lookup(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
-        VehicleComHelper.find(bicycleCode);
+        vehicle vehicle= null;
+        try {
+            vehicle = bicycleRestfulService.getVehicleStatusByBicycleCode(bicycleCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        VehicleComHelper.find(vehicle.getBundlingPhone());
         return ResponseEntity.ok(new Message<String>(true, 0, null, "寻车成功！"));
     }
 
@@ -150,6 +156,8 @@ public class BicycleRestfulApi {
             }
 
             if (dto != null) {
+                vehicle vehicle=bicycleRestfulService.getVehicleStatusByBicycleCode(unlockDto.getBicycleCode());
+                VehicleComHelper.openLock(vehicle.getBundlingPhone());
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(true, 0, ReturnEnum.Unlock_Success.getErrorDesc(), dto));
             } else {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));

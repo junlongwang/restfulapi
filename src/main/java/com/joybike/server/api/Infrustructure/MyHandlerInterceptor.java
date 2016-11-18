@@ -34,10 +34,15 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
             logger.info("Authentication=" + token);
             logger.info(method.getMethod().getName());
             logger.info("+++++++++++++++++++++++++++");
-
+            logger.info("====================="+request.getRequestURI());
+            //获取TOKEN，不添加入权限
             if("/restful/platform/getToken".equals(request.getRequestURI()))
             {
-                logger.info("====================="+request.getRequestURI());
+                return true;
+            }
+            //车锁GPS数据上传，不添加入权限
+            if("/restful/post".equals(request.getRequestURI()))
+            {
                 return true;
             }
 

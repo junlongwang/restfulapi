@@ -198,6 +198,16 @@ public class OSSClientUtil {
         return null;
     }
 
+    public static String uploadUserImg(byte[] bytes)
+    {
+        OSSClientUtil util=new OSSClientUtil();
+        InputStream inputStream = new ByteArrayInputStream(bytes);
+        String name = UUID.randomUUID().toString()+".jpg";
+        util.uploadFile2OSS(inputStream,"userImg/", name);
+        util.destory();
+        return OSSConsts.PRE_IMG_URL+"userImg/"+name;
+    }
+
     private static InputStream byte2Input(byte[] buf) {
         return new ByteArrayInputStream(buf);
     }

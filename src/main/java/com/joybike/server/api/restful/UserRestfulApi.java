@@ -395,12 +395,19 @@ public class UserRestfulApi {
     }
 
     /**
-     * 上传用户和身份证合影
+     * 分享
      * @param userId 用户ID
      * @return
      */
     @RequestMapping(value = "share")
-    public ResponseEntity<Message<String>> share(@RequestParam("userId") long userId) {
+     public ResponseEntity<Message<String>> share(@RequestParam("userId") long userId) {
         return ResponseEntity.ok(new Message<String>(true, 0, null, "http://h5.joybike.com.cn/forward/H5/joy_bike/mytripdetail.html?userId="+userId));
+    }
+
+
+    @RequestMapping(value = "upload")
+    public ResponseEntity<Message<String>> upload(@RequestBody byte[] file) {
+        String imageName = OSSClientUtil.uploadUserImg(file);
+        return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
     }
 }

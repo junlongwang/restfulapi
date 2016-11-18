@@ -35,13 +35,13 @@ import java.util.regex.Pattern;
 public class WxappConstructUrlImpl implements WxappConstructUrlInter {
 
     private String wxPreUrl = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-    private String mch_id = "1404387302";
-    private String appid = "wxbabc4e15389aff36";
-    private String key = "F1BDA99703815CE223FF494A9039ADA3";
+    private String mch_id = "1407599302";
+    private String appid = "wx33a9fdf7b556e868";
+    private String key = "396C85825A96B5CAB25B9C76023853AB";
     private String notifyUrl = "http://api.joybike.com.cn/restful/pay/paynotify";
     private String wxRefundUrl = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
-    private String keypath = WxappConstructUrlImpl.class.getResource("/apiclient_cert_1404387302.p12").getFile();
+    private String keypath = WxappConstructUrlImpl.class.getResource("/apiclient_cert_1407599302.p12").getFile();
 
     private final Logger logger = Logger.getLogger(WxappConstructUrlImpl.class);
     @Override

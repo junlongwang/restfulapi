@@ -51,7 +51,7 @@ public class PayRestfulApi {
     @Autowired
     private UserRestfulService userRestfulService;
 
-    private String wxAppmch_id = "1404387302";
+    private String wxAppmch_id = "1407599302";
     private String wxPubmch_id = "1401808502";
     /**
      * 充值：可充值押金、预存现金

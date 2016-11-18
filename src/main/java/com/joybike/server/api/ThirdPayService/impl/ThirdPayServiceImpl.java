@@ -31,7 +31,7 @@ public class ThirdPayServiceImpl implements ThirdPayService {
     private AliPayConstructUrlInter aliPayConstructUrlInter;
 
 
-    private String wxAppmch_id = "1404387302";
+    private String wxAppmch_id = "1407599302";
     private String wxPubmch_id = "1401808502";
 
     @Override

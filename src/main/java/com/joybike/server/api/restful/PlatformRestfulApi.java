@@ -39,7 +39,7 @@ public class PlatformRestfulApi {
         //如果appKey非法，返回失败
         if(!appKeys.contains(appKey))
         {
-            return  ResponseEntity.ok(new Message<Token>(false,1001,"非法请求！",null));
+            return  ResponseEntity.ok(new Message<Token>(false,1000,"非法请求",null));
         }
         String access_token = null;
         Token token = null;
@@ -51,8 +51,9 @@ public class PlatformRestfulApi {
             else
             {
                 access_token = UUID.randomUUID().toString();
+                RedixUtil.setString(appKey,access_token,90);
             }
-            token = new Token(access_token,7200);
+            token = new Token(access_token,90);
         }
         catch (Exception e)
         {

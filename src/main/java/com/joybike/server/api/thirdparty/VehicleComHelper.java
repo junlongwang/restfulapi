@@ -1,5 +1,8 @@
 package com.joybike.server.api.thirdparty;
 
+import com.joybike.server.api.service.BicycleRestfulService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * 车辆硬件通信
  * Created by 58 on 2016/10/21.

@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class WxDealUtil {
 
-    private static String key = "F1BDA99703815CE223FF494A9039ADA3";
+    private static String key = "396C85825A96B5CAB25B9C76023853AB";
 
     /**
      * @time:2015-08-25

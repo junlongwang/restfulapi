@@ -64,6 +64,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public subscribeInfo vehicleSubscribe(long userId, String bicycleCode, int startAt) throws Exception {
 
+
         subscribeInfo bscribeInfo = new subscribeInfo();
 
         String subcribeCode = String.valueOf(userId) + String.valueOf(bicycleCode);

@@ -7,6 +7,7 @@ import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
@@ -50,6 +51,8 @@ public class BicycleRestfulApi {
     @Autowired
     private OrderRestfulService orderRestfulService;
 
+    @Autowired
+    private UserRestfulService userRestfulService;
 
     /**
      * 预约车辆
@@ -64,16 +67,22 @@ public class BicycleRestfulApi {
 
         try {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(subscribeDto.getUserId());
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(subscribeDto.getUserId());
 
             if (order != null) {
                 return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
-                try {
-                    subscribeInfo info = bicycleRestfulService.vehicleSubscribe(subscribeDto.getUserId(), subscribeDto.getBicycleCode(), subscribeDto.getBeginAt());
-                    return ResponseEntity.ok(new Message<subscribeInfo>(true, 0, ReturnEnum.Appointment_Success.getErrorDesc(), info));
-                } catch (Exception e) {
-                    return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.UNKNOWN.getErrorCode(), ReturnEnum.UNKNOWN.getErrorDesc() + "-" + e.getMessage(), null));
+                if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
+                    return ResponseEntity.ok(new Message<subscribeInfo>(false, 0, ReturnEnum.PayZero.getErrorDesc(), null));
+                }else{
+                    try {
+                        subscribeInfo info = bicycleRestfulService.vehicleSubscribe(subscribeDto.getUserId(), subscribeDto.getBicycleCode(), subscribeDto.getBeginAt());
+                        return ResponseEntity.ok(new Message<subscribeInfo>(true, 0, ReturnEnum.Appointment_Success.getErrorDesc(), info));
+                    } catch (Exception e) {
+                        return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.UNKNOWN.getErrorCode(), ReturnEnum.UNKNOWN.getErrorDesc() + "-" + e.getMessage(), null));
+                    }
                 }
+
             }
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.Appointment_Error.getErrorCode(), ReturnEnum.Appointment_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -142,11 +151,17 @@ public class BicycleRestfulApi {
 
             //获取是否有未支付订单
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(unlockDto.getUserId());
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(unlockDto.getUserId());
+
             VehicleOrderDto dto = new VehicleOrderDto();
             if (order != null) {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
-                 dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
+                if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
+                    return ResponseEntity.ok(new Message<VehicleOrderDto>(false, 0, ReturnEnum.PayZero.getErrorDesc(), null));
+                }else{
+                    dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
+                }
             }
 
             if (dto != null) {

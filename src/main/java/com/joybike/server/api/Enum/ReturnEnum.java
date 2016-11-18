@@ -49,7 +49,10 @@ public enum ReturnEnum {
     NoPay(2008,"没有可支付的订单"),
 
 
+
+
     refund_Error(2008, "退款失败"),
+    PayZero(2009,"余额为零"),
     /**
      * 订单 3
      */

@@ -47,6 +47,12 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
                 return true;
             }
 
+            if(request.getRequestURI().contains("/wechat"))
+            {
+                return true;
+            }
+
+
 
         if(token==null || "".equals(token)) {
             response.setContentType("application/json;charset=UTF-8");

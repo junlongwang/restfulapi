@@ -107,7 +107,7 @@ public class AMapUtil {
 			distance=Integer.parseInt((String)((JSONObject)((JSONArray) json.get("results")).get(0)).get("distance"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return distance;
 	}
@@ -131,14 +131,14 @@ public class AMapUtil {
 			json = new JSONObject(jsonText);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} finally {
 			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}
@@ -154,14 +154,14 @@ public class AMapUtil {
 		try {
 			url = new URL(strUrl);
 		} catch (MalformedURLException e2) {
-			e2.printStackTrace();
+			//e2.printStackTrace();
 			return;
 		}
 		InputStream is = null;
 		try {
 			is = url.openStream();
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			//e1.printStackTrace();
 			return;
 		}
 
@@ -178,7 +178,7 @@ public class AMapUtil {
 				os.write(buffer, 0, bytesRead);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			return;
 		} finally {
 			if(os!=null){
@@ -186,7 +186,7 @@ public class AMapUtil {
 					os.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}

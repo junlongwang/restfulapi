@@ -1,5 +1,6 @@
 package daoUnitTest;
 
+import com.joybike.server.api.dao.BankAcountDao;
 import com.joybike.server.api.dao.UserInfoDao;
 import com.joybike.server.api.model.User;
 import com.joybike.server.api.model.userInfo;
@@ -21,6 +22,9 @@ public class UserInfoDaoUnitTest {
 
     @Autowired
     private UserInfoDao userInfoDao;
+
+    @Autowired
+    private BankAcountDao bankAcountDao;
 
     @Test
     public void save()
@@ -49,8 +53,7 @@ public class UserInfoDaoUnitTest {
         userInfoDao.delete(1L);
     }
     @Test
-    public void findById()
-    {
+    public void findById() throws Exception {
         User model = new User();
         model.setId(8);
 //        User user= userInfoDao.findById(model);
@@ -58,6 +61,10 @@ public class UserInfoDaoUnitTest {
 
 //        User model=userDao.findById(8L);
 //        System.out.println(model);
+
+        double amount=bankAcountDao.getUserAmount(22);
+        System.out.println(amount);
+
     }
 
 

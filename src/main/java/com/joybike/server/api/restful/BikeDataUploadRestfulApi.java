@@ -1,5 +1,6 @@
 package com.joybike.server.api.restful;
 
+import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleDao;
@@ -92,10 +93,14 @@ public class BikeDataUploadRestfulApi {
             //车辆锁车
             if(Integer.valueOf(values[11])==1)
             {
-                //vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
-                //UserPayIngDto dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(),UnixTimeUtils.now(),Double.valueOf(heartbeat.getLongitude().toString()), Double.valueOf(heartbeat.getDimension().toString()));
+                vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
+                UserPayIngDto dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf(heartbeat.getLongitude().toString()), Double.valueOf(heartbeat.getDimension().toString()));
                 //消息推送
-
+                logger.info("--------------------消息推送--------------------");
+                logger.info(dto);
+                logger.info("--------------------消息推送--------------------");
+                logger.info(JSON.toJSON(dto));
+                logger.info("--------------------消息推送--------------------");
             }
         } catch (Exception e) {
             logger.error("车锁GPS,每隔15秒上报数据发生异常：" + e.getMessage(), e);

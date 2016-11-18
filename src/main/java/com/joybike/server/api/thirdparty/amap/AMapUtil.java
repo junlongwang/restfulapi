@@ -16,6 +16,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.omg.CORBA.*;
+import org.omg.CORBA.Object;
 
 public class AMapUtil {
 	public static void main(String[] args) throws Exception {
@@ -41,11 +43,16 @@ public class AMapUtil {
 		String address = null;
 		String url="http://restapi.amap.com/v3/geocode/regeo?key=ee95e52bf08006f63fd29bcfbcf21df0&poitype=%E5%95%86%E5%8A%A1%E5%86%99%E5%AD%97%E6%A5%BC&radius=1000&extensions=all&batch=false&roadlevel=1&output=json&location="+position;
 		JSONObject json = readJsonFromUrl(url);
+		System.out.println(json);
 		try {
 			address=(String)((JSONObject)json.get("regeocode")).get("formatted_address");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+		}
+		catch (Exception e)
+		{
+
 		}
 		return address;
 	}

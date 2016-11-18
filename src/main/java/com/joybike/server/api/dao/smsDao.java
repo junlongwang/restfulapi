@@ -13,6 +13,5 @@ import java.util.List;
  */
 
 public interface smsDao extends   IRepository<sms> {
-
     List<sms> getSmsMessages(long userId);
  }

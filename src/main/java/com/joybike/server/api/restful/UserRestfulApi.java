@@ -75,6 +75,7 @@ public class UserRestfulApi {
             user.setUserImg(userInfoDto.getUserImg());
 
             user.setNationality(userInfoDto.getNationality());
+            user.setGuid(userInfoDto.getGuid());
             userRestfulService.updateUserInfo(user);
             userInfo u = userRestfulService.getUserInfoByMobile(user.getIphone());
             UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
@@ -107,7 +108,7 @@ public class UserRestfulApi {
                 return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Iphone_Error.getErrorCode(), ReturnEnum.Iphone_Error.getErrorDesc() + "-" + smsResponse.getMsg(), null));
             } else {
                 //存放到REDIX
-                RedixUtil.setString(mobile, String.valueOf(randNo), 5 * 60);
+                RedixUtil.setString(mobile, String.valueOf(randNo), 60);
             }
             return ResponseEntity.ok(new Message<String>(true, 0, null, null));
         } catch (Exception e) {
@@ -391,5 +392,22 @@ public class UserRestfulApi {
             logger.error("上传用户和身份证合影报错：",e);
             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.UpdateUer_ERROR.getErrorCode(), ReturnEnum.UpdateUer_ERROR.getErrorDesc() + "-" + e.getMessage(), null));
         }
+    }
+
+    /**
+     * 分享
+     * @param userId 用户ID
+     * @return
+     */
+    @RequestMapping(value = "share")
+     public ResponseEntity<Message<String>> share(@RequestParam("userId") long userId) {
+        return ResponseEntity.ok(new Message<String>(true, 0, null, "http://h5.joybike.com.cn/forward/H5/joy_bike/mytripdetail.html?userId="+userId));
+    }
+
+
+    @RequestMapping(value = "upload")
+    public ResponseEntity<Message<String>> upload(@RequestBody byte[] file) {
+        String imageName = OSSClientUtil.uploadUserImg(file);
+        return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
     }
 }

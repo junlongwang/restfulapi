@@ -25,10 +25,11 @@ public class smsDaoImpl extends Reository<sms> implements smsDao {
     {
         try {
             Map map = new HashMap();
-            map.put("target", userId);
+            map.put("target", String.valueOf(userId));
             try {
                 return this.jdbcTemplate.query("SELECT * FROM `sms` WHERE target=:target || target='all' order by createAt DESC ", map, new BeanPropertyRowMapper(sms.class));
             } catch (Exception e) {
+                e.printStackTrace();
                 return null;
             }
         } catch (Exception e) {

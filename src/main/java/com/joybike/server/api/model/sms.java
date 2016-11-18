@@ -12,19 +12,20 @@ public class sms implements Serializable{
     private String content;
     private int createAt;
     private long creator;
+    private String imagUrl;
+    private String detailURL;
     private String target;
-    private int status;
 
     public sms(){}
 
-    public sms(long id, String title, String content, int createAt, long creator, String target, int status) {
-        this.id = id;
+    public sms(String title, String content, int createAt, long creator, String imagUrl, String detailURL, String target) {
         this.title = title;
         this.content = content;
         this.createAt = createAt;
         this.creator = creator;
+        this.imagUrl = imagUrl;
+        this.detailURL = detailURL;
         this.target = target;
-        this.status = status;
     }
 
     public long getId() {
@@ -67,19 +68,27 @@ public class sms implements Serializable{
         this.creator = creator;
     }
 
+    public String getImagUrl() {
+        return imagUrl;
+    }
+
+    public void setImagUrl(String imagUrl) {
+        this.imagUrl = imagUrl;
+    }
+
+    public String getDetailURL() {
+        return detailURL;
+    }
+
+    public void setDetailURL(String detailURL) {
+        this.detailURL = detailURL;
+    }
+
     public String getTarget() {
         return target;
     }
 
     public void setTarget(String target) {
         this.target = target;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 }

@@ -2,6 +2,8 @@ import com.joybike.server.api.dto.userValidateDto;
 import com.joybike.server.api.model.WxNotifyOrder;
 import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.model.userInfo;
+import com.joybike.server.api.thirdparty.SMSHelper;
+import com.joybike.server.api.thirdparty.SMSResponse;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.util.UnixTimeUtils;
 import com.joybike.server.api.util.XStreamUtils;
@@ -120,10 +122,14 @@ public class xstreamUnitTest {
     @Test
     public void ftest()
     {
-        userValidateDto dto = new userValidateDto();
-        dto.setMobile("1111");
-        dto.setValidateCode("1111");
-        System.out.println(JSON.toJSONString(dto));
+//        userValidateDto dto = new userValidateDto();
+//        dto.setMobile("1111");
+//        dto.setValidateCode("1111");
+//        System.out.println(JSON.toJSONString(dto));
+
+        SMSResponse response=SMSHelper.send("1064819062717","00");
+        System.out.println(response);
+
     }
 
 

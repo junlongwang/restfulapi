@@ -14,7 +14,7 @@ import java.util.List;
 public class VehicleOrderDto implements Serializable {
 
     /**
-     * @Author lisy
+     * @Author ID
      **/
     private Long id;
 
@@ -117,8 +117,14 @@ public class VehicleOrderDto implements Serializable {
      */
     private List<vehicleHeartbeat> vehicleHeartbeatList;
 
+    /**
+     * 开始地点中文描述
+     */
     private String startAddress;
 
+    /**
+     * 结束地点中文描述
+     */
     private String endAddress;
 
     /**

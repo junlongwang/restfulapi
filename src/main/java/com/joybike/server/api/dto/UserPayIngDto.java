@@ -11,7 +11,7 @@ import java.util.Map;
 public class UserPayIngDto  implements Serializable {
 
     /**
-     * 是否支付完成:0 钱不够 1:支付完成
+     * restType：是否支付完成。0 钱不够 1:支付完成
      */
     @JSONField(ordinal = 1)
     private Integer restType;

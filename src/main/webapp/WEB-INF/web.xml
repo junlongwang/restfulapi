@@ -35,6 +35,9 @@
         <!--<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>-->
     <!--</filter>-->
 
+    <!-- 注册拦截器 -->
+
+
     <filter>
         <filter-name>encodingFilter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>

@@ -65,6 +65,12 @@ public class userInfoDto implements Serializable {
     @JSONField(ordinal = 8)
     private String userImg;
 
+    /**
+     * 目标设备ID或者OPENID
+     */
+    @JSONField(ordinal = 9)
+    private String guid;
+
     public Long getUserId() {
         return userId;
     }
@@ -129,8 +135,18 @@ public class userInfoDto implements Serializable {
         this.userImg = userImg;
     }
 
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
     public userInfoDto(){}
-    public userInfoDto(Long userId, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, String userImg) {
+
+
+    public userInfoDto(Long userId, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, String userImg, String guid) {
         this.userId = userId;
         this.iphone = iphone;
         this.realName = realName;
@@ -139,6 +155,7 @@ public class userInfoDto implements Serializable {
         this.photo = photo;
         this.identityCardphoto = identityCardphoto;
         this.userImg = userImg;
+        this.guid = guid;
     }
 
     @Override
@@ -149,9 +166,10 @@ public class userInfoDto implements Serializable {
                 ", realName='" + realName + '\'' +
                 ", idNumber='" + idNumber + '\'' +
                 ", nationality='" + nationality + '\'' +
-                ", photo=" + photo +
-                ", identityCardphoto=" + identityCardphoto +
-                ", userImg=" + userImg +
+                ", photo='" + photo + '\'' +
+                ", identityCardphoto='" + identityCardphoto + '\'' +
+                ", userImg='" + userImg + '\'' +
+                ", guid='" + guid + '\'' +
                 '}';
     }
 }

@@ -34,46 +34,65 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
             logger.info("Authentication=" + token);
             logger.info(method.getMethod().getName());
             logger.info("+++++++++++++++++++++++++++");
+            logger.info("====================="+request.getRequestURI());
+            //获取TOKEN，不添加入权限
+            if("/restful/platform/getToken".equals(request.getRequestURI()))
+            {
+                return true;
+            }
+            //车锁GPS数据上传，不添加入权限
+            if("/restful/post".equals(request.getRequestURI()))
+            {
+                return true;
+            }
 
-//        if(token==null || "".equals(token)) {
-//            response.setContentType("text/html; charset=utf-8");
-//            PrintWriter out = response.getWriter();
-//            out.write(token + "非法请求！");
-//            out.flush();
-//            out.close();
-//            return false;
-//        }
-
-//        String andrior = RedixUtil.getString("6cf6ead412df6ad88880c4742be3d2f6");
-//        String ios = RedixUtil.getString("6566567b50be0ac7b85076ae76acbaa7");
-//        String h5 = RedixUtil.getString("f3c75e05f57b4385bdf5f0a0812d996a");
-//        boolean exits = (andrior.equals(token) || ios.equals(token) || h5.equals(token));
-//        if(!exits) {
-//            response.setContentType("text/html; charset=utf-8");
-//            PrintWriter out = response.getWriter();
-//            out.write(token + "非法请求！");
-//            out.flush();
-//            out.close();
-//            return false;
-//        }
-
-//        Map<String, String> map = new HashMap<String, String>();
-//        Enumeration headerNames = request.getHeaderNames();
-//        while (headerNames.hasMoreElements()) {
-//            String key = (String) headerNames.nextElement();
-//            String value = request.getHeader(key);
-//            map.put(key, value);
+        if(token==null || "".equals(token)) {
+            response.setContentType("application/json;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.write("{" +
+                    "\"success\": false," +
+                    "\"errorCode\": 1000," +
+                    "\"errorMessage\":\"非法请求\"" +
+                    "}");
+            out.flush();
+            out.close();
+            return false;
+        }
 //
-//            //logger.info(key+" :  "+value);
-//
-////            if("Authentication".equals(key))
-////            {
-////                if(value=="B9A45EAC2C54BF5F8379C3D3A352A052" || value.equals("B9A45EAC2C54BF5F8379C3D3A352A052"))
-////                {
-////                    return true;
-////                }
-////            }
-//        }
+        String andrior = RedixUtil.getString("6cf6ead412df6ad88880c4742be3d2f6");
+        String ios = RedixUtil.getString("6566567b50be0ac7b85076ae76acbaa7");
+        String h5 = RedixUtil.getString("f3c75e05f57b4385bdf5f0a0812d996a");
+        boolean exits = (token.equals(andrior) || token.equals(ios) || token.equals(h5));
+        if(!exits) {
+            response.setContentType("application/json;charset=UTF-8");
+            PrintWriter out = response.getWriter();
+            out.write("{" +
+                    "\"success\": false," +
+                    "\"errorCode\": 1000," +
+                    "\"errorMessage\":\"非法请求\"" +
+                    "}");
+            out.flush();
+            out.close();
+            return false;
+        }
+
+        Map<String, String> map = new HashMap<String, String>();
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            map.put(key, value);
+
+            logger.info(key+" :  "+value);
+
+//            if("Authentication".equals(key))
+//            {
+//                if(value=="B9A45EAC2C54BF5F8379C3D3A352A052" || value.equals("B9A45EAC2C54BF5F8379C3D3A352A052"))
+//                {
+//                    return true;
+//                }
+//            }
+        }
 //        System.out.println(map);
 
 
@@ -86,6 +105,7 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
         catch (Exception e)
         {
             logger.error("发生异常",e);//
+            return false;
         }
         //response.setHeader("Access-Control-Allow-Origin", "*");
         return true;

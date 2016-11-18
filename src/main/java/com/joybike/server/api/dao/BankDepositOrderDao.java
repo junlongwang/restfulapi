@@ -69,5 +69,5 @@ public interface BankDepositOrderDao extends IRepository<bankDepositOrder> {
      * @return
      * @throws Exception
      */
-    public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status);
+    int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status);
 }

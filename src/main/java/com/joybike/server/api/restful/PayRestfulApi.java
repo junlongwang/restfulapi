@@ -67,7 +67,7 @@ public class PayRestfulApi {
             //押金充值
             if (payBean.getRechargeType() == 1) {
                 try {
-                    logger.info("微信公众号支付请求信息：" + payBean.toString());
+                    logger.info("微信公众号支付请求信息押金：" + payBean.toString());
                     String rechargeResult = forRecharge(payBean, userId);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
@@ -77,7 +77,7 @@ public class PayRestfulApi {
                 //余额充值
                 try {
                     String rechargeResult = recharge(payBean, userId);
-                    logger.info("微信公众号支付请求信息：" + payBean.toString());
+                    logger.info("微信公众号支付请求信息余额：" + payBean.toString());
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -456,7 +456,7 @@ public class PayRestfulApi {
     public String Alirecharge(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = createRechargeOrder(payBean, userId);
         try {
-            long orderId = payRestfulService.depositRecharge(order);
+            long orderId = payRestfulService.recharge(order);
             if (orderId > 0) {
                 payBean.setId(orderId);
                 return payRestfulService.payBeanToAliPay(payBean, orderId);
@@ -504,7 +504,7 @@ public class PayRestfulApi {
     public String recharge(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = createRechargeOrder(payBean, userId);
         try {
-            long orderId = payRestfulService.depositRecharge(order);
+            long orderId  = payRestfulService.recharge(order);
             if (orderId > 0) {
                 payBean.setId(orderId);
                 return ThirdPayService.execute(payBean);

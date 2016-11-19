@@ -85,7 +85,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
-    public void recharge(bankDepositOrder depositOrder) throws Exception {
+    public long recharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
         depositOrder.setCreateAt(UnixTimeUtils.now());
         depositOrder.setRechargeType(RechargeType.balance.getValue());
@@ -98,7 +98,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         //记录现金流水
         //userId,order.getPayType(),consumedId,order.getCash(),order.getAward()
         moneyFlowDao.save(flowInfo(depositOrder.getUserId(), depositOrder.getPayType(), depositId, depositOrder.getCash(), depositOrder.getAward(), 0, "", DealType.deposit, 0));
-
+        return depositId;
     }
 
     /**

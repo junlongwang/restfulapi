@@ -170,6 +170,7 @@ public class PayRestfulApi {
                     bankDepositOrder bankDepositOrder = payRestfulService.getbankDepostiOrderByid(id);
                     if (bankDepositOrder != null) {
                         if (bankDepositOrder.getRechargeType() == RechargeType.deposit.getValue()) {
+                            logger.info("weixin押金充值");
                             //通过订单Id修改微信支付凭证和支付时间以及订单支付状态
                             result = payRestfulService.updateDepositOrderById_Yajin(id, payDocumentId, pay_at, 2);
                             //同时更新用户状态
@@ -185,6 +186,7 @@ public class PayRestfulApi {
 
                         } else {
                             //余额充值成功更新充值订单信息
+                            logger.info("weixin余额充值");
                             result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
                             String attach = wxNotifyOrder.getAttach();
                             userInfo userInfo = new userInfo();
@@ -199,6 +201,7 @@ public class PayRestfulApi {
                                 vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(bankDepositOrder.getUserId());
 
                                 if (vehicleOrder != null) {
+                                    logger.info("weiixn回调时,有未支付的订单，进行扣费");
                                     int cosumeResult = payRestfulService.consume(vehicleOrder.getOrderCode(), vehicleOrder.getBeforePrice(), bankDepositOrder.getUserId(), id);
                                     if (result > 0 && cosumeResult == 0) {
                                         return responseHtml;
@@ -292,7 +295,7 @@ public class PayRestfulApi {
                             if (bankDepositOrder.getRechargeType() == RechargeType.deposit.getValue()) {
                                 //
 
-
+                                logger.info("支付宝押金充值");
                                 result = payRestfulService.updateDepositOrderById_Yajin(Long.valueOf(notify.getOut_trade_no()), notify.getTrade_no(), (int) pay_at, 2);
                                 //同时更新用户状态
                                 if (result > 0) {
@@ -305,6 +308,7 @@ public class PayRestfulApi {
                                 }
                             } else {
                                 //余额充值成功更新充值订单信息
+                                logger.info("支付宝余额充值");
                                 bankDepositOrder order = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
                                 if (order.getStatus() == 2) {
                                     return "success";
@@ -317,6 +321,7 @@ public class PayRestfulApi {
                                         Long userid = bankDepositOrder.getUserId();
                                         vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid);
                                         if (vehicleOrder != null) {
+                                            logger.info("支付宝充值时，发现有为支付的订单,进行扣费");
                                             int cosumeResult = payRestfulService.consume(vehicleOrder.getOrderCode(), vehicleOrder.getBeforePrice(), userid, Long.valueOf(notify.getOut_trade_no()));
                                             if (result > 0 && cosumeResult == 0) {
                                                 return "success";

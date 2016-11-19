@@ -208,6 +208,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
 
         int updateCount = depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
 
+        logger.info("余额充值回调:" + payType +"," + "充值信息修改:" + updateCount);
         //充值回调成功的时候修改用户的余额信息
         if (updateCount > 0) {
             bankDepositOrder depositOrder = depositOrderDao.getDepositOrderById(id);
@@ -216,19 +217,21 @@ public class PayRestfulServiceImpl implements PayRestfulService {
             //充值现金
             if (bankAcountCash != null) {
                 acountDao.updateAcount(depositOrder.getUserId(), AcountType.cash, bankAcountCash.getPrice().add(depositOrder.getCash()));
-
+                logger.info("现金充值成功");
             } else {
                 acountDao.save(depositToAcount(depositOrder, AcountType.cash));
+                logger.info("现金账户创建成功");
             }
 
             //充值优惠
             bankAcount bankAcountbalance = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
             if (bankAcountbalance != null) {
                 acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAcountCash.getPrice().add(depositOrder.getAward()));
-
+                logger.info("优惠充值成功");
             } else {
 
                 acountDao.save(depositToAcount(depositOrder, AcountType.balance));
+                logger.info("优惠账户创建成功");
 
             }
 

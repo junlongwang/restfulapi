@@ -241,7 +241,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param bicycleCode
      * @return
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public vehicle getVehicleStatusByBicycleCode(String bicycleCode) throws Exception {
         return vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
     }
@@ -655,7 +654,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param userId
      * @return
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception {
 
@@ -670,7 +668,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param userId
      * @return
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public VehicleOrderDto getLastSuccessOrder(long userId) throws Exception {
 
@@ -687,6 +684,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param vehicleEnableType
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateVehicleStatus(String vehicleId, VehicleEnableType vehicleEnableType) throws Exception {
         return vehicleDao.updateVehicleStatus(vehicleId, vehicleEnableType);

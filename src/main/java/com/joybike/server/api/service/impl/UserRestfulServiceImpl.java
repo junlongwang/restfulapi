@@ -67,7 +67,7 @@ public class UserRestfulServiceImpl implements UserRestfulService {
      * @param phone
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public userInfo getUserInfoByMobile(String phone) throws Exception {
 

@@ -65,7 +65,6 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userId
      * @return
      */
-    @Transactional
     @Override
     public List<bankConsumedOrder> getBankConsumedOrderList(long userId) throws Exception {
         try {
@@ -200,7 +199,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param payAt
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception {
 
@@ -241,7 +240,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userId
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int consume(String orderCode, BigDecimal payPrice, long userId, long consumedDepositId) throws Exception {
 
@@ -442,6 +441,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param bankRefundOrder
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public Long creatRefundOrder(bankRefundOrder bankRefundOrder) {
         return bankRefundOrderDao.save(bankRefundOrder);
@@ -453,6 +453,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param Id
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateRefundOrderStatusById(Long Id) {
         return bankRefundOrderDao.updateRefundOrderStatusById(Id);
@@ -464,6 +465,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param bean
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public String payBeanToAliPay(ThirdPayBean bean,long orderId) throws Exception{
         AlipayDto dto = new AlipayDto();
@@ -491,6 +493,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @return
      * @throws Exception
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception{
         return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);

@@ -11,6 +11,7 @@ import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.ToHashMap;
 import com.joybike.server.api.util.UnixTimeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -30,6 +31,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class PayRestfulServiceImpl implements PayRestfulService {
+
+    private final Logger logger = Logger.getLogger(PayRestfulServiceImpl.class);
 
 
     @Autowired
@@ -204,6 +207,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception {
 
         int updateCount = depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
+
         //充值回调成功的时候修改用户的余额信息
         if (updateCount > 0) {
             bankDepositOrder depositOrder = depositOrderDao.getDepositOrderById(id);

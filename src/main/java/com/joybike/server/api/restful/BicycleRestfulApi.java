@@ -73,7 +73,7 @@ public class BicycleRestfulApi {
                 return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
                 if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
-                    return ResponseEntity.ok(new Message<subscribeInfo>(false, 0, ReturnEnum.PayZero.getErrorDesc(), null));
+                    return ResponseEntity.ok(new Message<subscribeInfo>(false,  ReturnEnum.PayZero.getErrorCode(), ReturnEnum.PayZero.getErrorDesc(), null));
                 }else{
                     try {
                         subscribeInfo info = bicycleRestfulService.vehicleSubscribe(subscribeDto.getUserId(), subscribeDto.getBicycleCode(), subscribeDto.getBeginAt());
@@ -164,7 +164,7 @@ public class BicycleRestfulApi {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
                 if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
-                    return ResponseEntity.ok(new Message<VehicleOrderDto>(false, 0, ReturnEnum.PayZero.getErrorDesc(), null));
+                    return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.PayZero.getErrorCode(), ReturnEnum.PayZero.getErrorDesc(), null));
                 }else{
                     dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
                 }

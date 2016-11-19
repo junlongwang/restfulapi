@@ -236,8 +236,7 @@ public class joyTest {
     @Test
     public void aTest() {
         try {
-            UserDto dto = userRestfulService.getUserInfoById(11);
-            System.out.println(dto);
+            payRestfulService.updateDepositOrderById(21,PayType.weixin,"weixin","weixin",1479546894);
         } catch (Exception e) {
             e.printStackTrace();
         }

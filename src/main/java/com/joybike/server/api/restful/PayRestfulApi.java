@@ -191,15 +191,18 @@ public class PayRestfulApi {
                             userInfo.setId(bankDepositOrder.getUserId());
                             userInfo.setGuid(wxNotifyOrder.getOpenid());
                             userRestfulService.updateUserInfo(userInfo);
+
                             if (attach != null && attach != "") {
+
                                 Long consumeid = Long.valueOf(attach);
-                                Long userid = bankDepositOrder.getUserId();
-                                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid);
-                                String ordercode = vehicleOrder.getOrderCode();
-                                BigDecimal payPrice = vehicleOrder.getBeforePrice();
-                                int cosumeResult = payRestfulService.consume(ordercode, payPrice, userid, id);
-                                if (result > 0 && cosumeResult == 0) {
-                                    return responseHtml;
+
+                                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(bankDepositOrder.getUserId());
+
+                                if (vehicleOrder != null) {
+                                    int cosumeResult = payRestfulService.consume(vehicleOrder.getOrderCode(), vehicleOrder.getBeforePrice(), bankDepositOrder.getUserId(), id);
+                                    if (result > 0 && cosumeResult == 0) {
+                                        return responseHtml;
+                                    }
                                 }
                             }
                         }
@@ -300,24 +303,24 @@ public class PayRestfulApi {
                                     if (userResult > 0)
                                         return "success";
                                 }
-                            }
-                            //余额充值成功更新充值订单信息
-                            else {
+                            } else {
+                                //余额充值成功更新充值订单信息
                                 bankDepositOrder order = payRestfulService.getbankDepostiOrderByid(Long.valueOf(notify.getOut_trade_no()));
                                 if (order.getStatus() == 2) {
                                     return "success";
                                 } else {
                                     payRestfulService.updateDepositOrderById(Long.valueOf(notify.getOut_trade_no()), PayType.Alipay, notify.getTrade_no(), "", (int) pay_at);
+
                                     String attach = re.getParameter("attach");
                                     if (attach != null && attach != "") {
                                         Long consumeid = Long.valueOf(attach);
                                         Long userid = bankDepositOrder.getUserId();
                                         vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid);
-                                        String ordercode = vehicleOrder.getOrderCode();
-                                        BigDecimal payPrice = vehicleOrder.getBeforePrice();
-                                        int cosumeResult = payRestfulService.consume(ordercode, payPrice, userid, Long.valueOf(notify.getOut_trade_no()));
-                                        if (result > 0 && cosumeResult == 0) {
-                                            return "success";
+                                        if (vehicleOrder != null) {
+                                            int cosumeResult = payRestfulService.consume(vehicleOrder.getOrderCode(), vehicleOrder.getBeforePrice(), userid, Long.valueOf(notify.getOut_trade_no()));
+                                            if (result > 0 && cosumeResult == 0) {
+                                                return "success";
+                                            }
                                         }
                                     }
                                     return "success";

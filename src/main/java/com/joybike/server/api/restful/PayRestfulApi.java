@@ -536,6 +536,7 @@ public class PayRestfulApi {
         order.setCreateAt(UnixTimeUtils.now());
         order.setRechargeType(payBean.getRechargeType());
         order.setMerchantId(String.valueOf(payBean.getCosumeid()));
+        order.setRemark("余额充值:" + payBean.getOrderMoney() + "赠送:" + payBean.getOrderMoneyFree());
         order.setStatus(1);
         return order;
     }

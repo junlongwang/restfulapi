@@ -36,7 +36,8 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
             logger.info("+++++++++++++++++++++++++++");
             logger.info("====================="+request.getRequestURI());
             //获取TOKEN，不添加入权限
-            if("/restful/platform/getToken".equals(request.getRequestURI()))
+            if("/restful/platform/getToken".equals(request.getRequestURI())
+                    || "/restful/pay/paynotifyAli".equals(request.getRequestURI()) || "/restful/pay/paynotify".equals(request.getRequestURI()))
             {
                 return true;
             }
@@ -45,6 +46,13 @@ public class MyHandlerInterceptor extends HandlerInterceptorAdapter {
             {
                 return true;
             }
+
+            if(request.getRequestURI().contains("/wechat"))
+            {
+                return true;
+            }
+
+
 
         if(token==null || "".equals(token)) {
             response.setContentType("application/json;charset=UTF-8");

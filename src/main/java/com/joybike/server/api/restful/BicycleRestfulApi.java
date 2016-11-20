@@ -7,9 +7,11 @@ import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
+import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Created by 58 on 2016/10/16.
  */
@@ -50,6 +54,8 @@ public class BicycleRestfulApi {
     @Autowired
     private OrderRestfulService orderRestfulService;
 
+    @Autowired
+    private UserRestfulService userRestfulService;
 
     /**
      * 预约车辆
@@ -64,16 +70,22 @@ public class BicycleRestfulApi {
 
         try {
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(subscribeDto.getUserId());
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(subscribeDto.getUserId());
 
             if (order != null) {
                 return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
-                try {
-                    subscribeInfo info = bicycleRestfulService.vehicleSubscribe(subscribeDto.getUserId(), subscribeDto.getBicycleCode(), subscribeDto.getBeginAt());
-                    return ResponseEntity.ok(new Message<subscribeInfo>(true, 0, ReturnEnum.Appointment_Success.getErrorDesc(), info));
-                } catch (Exception e) {
-                    return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.UNKNOWN.getErrorCode(), ReturnEnum.UNKNOWN.getErrorDesc() + "-" + e.getMessage(), null));
+                if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
+                    return ResponseEntity.ok(new Message<subscribeInfo>(false,  ReturnEnum.PayZero.getErrorCode(), ReturnEnum.PayZero.getErrorDesc(), null));
+                }else{
+                    try {
+                        subscribeInfo info = bicycleRestfulService.vehicleSubscribe(subscribeDto.getUserId(), subscribeDto.getBicycleCode(), subscribeDto.getBeginAt());
+                        return ResponseEntity.ok(new Message<subscribeInfo>(true, 0, ReturnEnum.Appointment_Success.getErrorDesc(), info));
+                    } catch (Exception e) {
+                        return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.UNKNOWN.getErrorCode(), ReturnEnum.UNKNOWN.getErrorDesc() + "-" + e.getMessage(), null));
+                    }
                 }
+
             }
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<subscribeInfo>(false, ReturnEnum.Appointment_Error.getErrorCode(), ReturnEnum.Appointment_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -106,7 +118,13 @@ public class BicycleRestfulApi {
      */
     @RequestMapping(value = "lookup", method = RequestMethod.GET)
     public ResponseEntity<Message<String>> lookup(@RequestParam("userId") long userId, @RequestParam("bicycleCode") String bicycleCode) {
-        VehicleComHelper.find(bicycleCode);
+        vehicle vehicle= null;
+        try {
+            vehicle = bicycleRestfulService.getVehicleStatusByBicycleCode(bicycleCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        VehicleComHelper.find(vehicle.getBundlingPhone());
         return ResponseEntity.ok(new Message<String>(true, 0, null, "寻车成功！"));
     }
 
@@ -142,14 +160,31 @@ public class BicycleRestfulApi {
 
             //获取是否有未支付订单
             vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(unlockDto.getUserId());
+            double acountMoney = userRestfulService.getUserAcountMoneyByuserId(unlockDto.getUserId());
+
             VehicleOrderDto dto = new VehicleOrderDto();
             if (order != null) {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
-                 dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
+                if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
+                    return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.PayZero.getErrorCode(), ReturnEnum.PayZero.getErrorDesc(), null));
+                }else{
+                    dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
+                }
             }
 
             if (dto != null) {
+                vehicle vehicle=bicycleRestfulService.getVehicleStatusByBicycleCode(unlockDto.getBicycleCode());
+                VehicleComHelper.openLock(vehicle.getBundlingPhone());
+                //Thread.sleep(10*1000);
+                //锁的状态是锁车状态
+                while (!"1".equals(RedixUtil.getString(vehicle.getLockId().toString())))
+                {
+                    logger.info(vehicle.getLockId()+"等待车辆开锁...............");
+                    Thread.sleep(1000);
+                    continue;
+                }
+                logger.info(vehicle.getLockId()+"收到车辆开锁状态:"+RedixUtil.getString(vehicle.getLockId().toString()));
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(true, 0, ReturnEnum.Unlock_Success.getErrorDesc(), dto));
             } else {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));

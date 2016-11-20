@@ -31,7 +31,7 @@ public interface PayRestfulService {
      *
      * @param depositOrder
      */
-    void recharge(bankDepositOrder depositOrder) throws Exception;
+    long recharge(bankDepositOrder depositOrder) throws Exception;
 
     /**
      * 押金充值

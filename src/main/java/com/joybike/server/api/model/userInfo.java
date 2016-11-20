@@ -16,6 +16,9 @@ public class userInfo implements Serializable {
      */
     private String iphone;
 
+    /**
+     * IOS和安卓的设备号，用户消息推送
+     */
     private String guid;
 
     public String getGuid() {
@@ -89,13 +92,25 @@ public class userInfo implements Serializable {
     private Integer authenStatus;
 
 
+    /**
+     * 微信openid
+     */
+    private String openId;
+
+
+    /**
+     * IOS和安卓的设备区分，ISO:iso ,安卓:android
+     */
+    private String targetType;
+
     public userInfo(){
 
     }
 
-    public userInfo(Long id, String iphone, String realName, String guid, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
+    public userInfo(Long id, String iphone, String guid, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, String openId, String targetType) {
         this.id = id;
         this.iphone = iphone;
+        this.guid = guid;
         this.realName = realName;
         this.idNumber = idNumber;
         this.nationality = nationality;
@@ -106,7 +121,8 @@ public class userInfo implements Serializable {
         this.userImg = userImg;
         this.securityStatus = securityStatus;
         this.authenStatus = authenStatus;
-        this.guid = guid;
+        this.openId = openId;
+        this.targetType = targetType;
     }
 
     @Override
@@ -114,6 +130,7 @@ public class userInfo implements Serializable {
         return "userInfo{" +
                 "id=" + id +
                 ", iphone='" + iphone + '\'' +
+                ", guid='" + guid + '\'' +
                 ", realName='" + realName + '\'' +
                 ", idNumber='" + idNumber + '\'' +
                 ", nationality='" + nationality + '\'' +
@@ -124,9 +141,18 @@ public class userInfo implements Serializable {
                 ", userImg='" + userImg + '\'' +
                 ", securityStatus=" + securityStatus +
                 ", authenStatus=" + authenStatus +
+                ", openId='" + openId + '\'' +
+                ", targetType='" + targetType + '\'' +
                 '}';
     }
 
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
 
     public void setPhoto(String photo) {
         this.photo = photo;
@@ -223,5 +249,13 @@ public class userInfo implements Serializable {
 
     public void setAuthenStatus(Integer authenStatus) {
         this.authenStatus = authenStatus;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }

@@ -11,6 +11,7 @@ import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.ToHashMap;
 import com.joybike.server.api.util.UnixTimeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -30,6 +31,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class PayRestfulServiceImpl implements PayRestfulService {
+
+    private final Logger logger = Logger.getLogger(PayRestfulServiceImpl.class);
 
 
     @Autowired
@@ -65,7 +68,6 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userId
      * @return
      */
-    @Transactional
     @Override
     public List<bankConsumedOrder> getBankConsumedOrderList(long userId) throws Exception {
         try {
@@ -83,7 +85,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
-    public void recharge(bankDepositOrder depositOrder) throws Exception {
+    public long recharge(bankDepositOrder depositOrder) throws Exception {
         //先记录充值记录
         depositOrder.setCreateAt(UnixTimeUtils.now());
         depositOrder.setRechargeType(RechargeType.balance.getValue());
@@ -96,7 +98,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         //记录现金流水
         //userId,order.getPayType(),consumedId,order.getCash(),order.getAward()
         moneyFlowDao.save(flowInfo(depositOrder.getUserId(), depositOrder.getPayType(), depositId, depositOrder.getCash(), depositOrder.getAward(), 0, "", DealType.deposit, 0));
-
+        return depositId;
     }
 
     /**
@@ -200,11 +202,13 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param payAt
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateDepositOrderById(long id, PayType payType, String payDocumentId, String merchantId, int payAt) throws Exception {
 
         int updateCount = depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
+
+        logger.info("余额充值回调:" + payType +"," + "充值信息修改:" + updateCount);
         //充值回调成功的时候修改用户的余额信息
         if (updateCount > 0) {
             bankDepositOrder depositOrder = depositOrderDao.getDepositOrderById(id);
@@ -213,19 +217,21 @@ public class PayRestfulServiceImpl implements PayRestfulService {
             //充值现金
             if (bankAcountCash != null) {
                 acountDao.updateAcount(depositOrder.getUserId(), AcountType.cash, bankAcountCash.getPrice().add(depositOrder.getCash()));
-
+                logger.info("现金充值成功");
             } else {
                 acountDao.save(depositToAcount(depositOrder, AcountType.cash));
+                logger.info("现金账户创建成功");
             }
 
             //充值优惠
-            bankAcount bankAcountbalance = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
-            if (bankAcountbalance != null) {
-                acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAcountCash.getPrice().add(depositOrder.getAward()));
-
+            bankAcount bankAward = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
+            if (bankAward != null) {
+                acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAward.getPrice().add(depositOrder.getAward()));
+                logger.info("优惠充值成功");
             } else {
 
                 acountDao.save(depositToAcount(depositOrder, AcountType.balance));
+                logger.info("优惠账户创建成功");
 
             }
 
@@ -241,7 +247,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param userId
      * @return
      */
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int consume(String orderCode, BigDecimal payPrice, long userId, long consumedDepositId) throws Exception {
 
@@ -252,10 +258,14 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         }else{
             double amount = acountDao.getUserAmount(userId);
 
+            logger.info("剩余金额为:" + amount);
+            logger.info("支付金额:" + payPrice);
             bankDepositOrder bankDepositOrder = depositOrderDao.getDepositOrderById(consumedDepositId);
 
             //可用余额不足,返回支付
             if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
+                logger.info("余额不足请支付:" + amount);
+
 //            throw new RestfulException(ReturnEnum.Pay_Low);
                 return -1;
                 //可用余额充足,扣费
@@ -442,6 +452,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param bankRefundOrder
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public Long creatRefundOrder(bankRefundOrder bankRefundOrder) {
         return bankRefundOrderDao.save(bankRefundOrder);
@@ -453,6 +464,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param Id
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateRefundOrderStatusById(Long Id) {
         return bankRefundOrderDao.updateRefundOrderStatusById(Id);
@@ -464,6 +476,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @param bean
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public String payBeanToAliPay(ThirdPayBean bean,long orderId) throws Exception{
         AlipayDto dto = new AlipayDto();
@@ -491,6 +504,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
      * @return
      * @throws Exception
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception{
         return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);

@@ -71,6 +71,18 @@ public class userInfoDto implements Serializable {
     @JSONField(ordinal = 9)
     private String guid;
 
+    /**
+     * 微信openid
+     */
+    @JSONField(ordinal = 10)
+    private String openId;
+
+    /**
+     * IOS和安卓的设备区分，ISO:iso ,安卓:android
+     */
+    @JSONField(ordinal = 11)
+    private String targetType;
+
     public Long getUserId() {
         return userId;
     }
@@ -143,10 +155,25 @@ public class userInfoDto implements Serializable {
         this.guid = guid;
     }
 
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
+    }
+
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
+
     public userInfoDto(){}
 
-
-    public userInfoDto(Long userId, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, String userImg, String guid) {
+    public userInfoDto(Long userId, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, String userImg, String guid, String openId, String targetType) {
         this.userId = userId;
         this.iphone = iphone;
         this.realName = realName;
@@ -156,6 +183,8 @@ public class userInfoDto implements Serializable {
         this.identityCardphoto = identityCardphoto;
         this.userImg = userImg;
         this.guid = guid;
+        this.openId = openId;
+        this.targetType = targetType;
     }
 
     @Override
@@ -170,6 +199,8 @@ public class userInfoDto implements Serializable {
                 ", identityCardphoto='" + identityCardphoto + '\'' +
                 ", userImg='" + userImg + '\'' +
                 ", guid='" + guid + '\'' +
+                ", openId='" + openId + '\'' +
+                ", targetType='" + targetType + '\'' +
                 '}';
     }
 }

@@ -14,6 +14,7 @@ import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -31,6 +32,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class BicycleRestfulServiceImpl implements BicycleRestfulService {
+
+    private final Logger logger = Logger.getLogger(BicycleRestfulServiceImpl.class);
 
     @Autowired
     SubscribeInfoDao subscribeInfoDao;
@@ -63,6 +66,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public subscribeInfo vehicleSubscribe(long userId, String bicycleCode, int startAt) throws Exception {
+
 
         subscribeInfo bscribeInfo = new subscribeInfo();
 
@@ -240,7 +244,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param bicycleCode
      * @return
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public vehicle getVehicleStatusByBicycleCode(String bicycleCode) throws Exception {
         return vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
     }
@@ -612,19 +615,21 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         if (subscribeInfo != null){
 
             orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
-
+            logger.info("锁车的时候" + bicycleCode + ":" + endAt + ":" + endLongitude + ":" + endDimension);
             int cyclingTime = endAt - item.getBeginAt();
             //计算金额
             BigDecimal payPrice = payPrice(cyclingTime);
 
-            int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
-            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
+            logger.info("消费金额:" + payPrice);
 
+            int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+            logger.info("修改订单的状态:" + v1);
+            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
+            logger.info("修改ITEM的状态:" + o1);
 //        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
             int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
-
+            logger.info("修改车的状态:" + v3);
             if (v1 * o1 * v3 > 0){
-                System.out.println(v1 * o1 * v3);
                 return vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
             }else{
                 return null;
@@ -632,8 +637,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         }else{
             throw new RestfulException(ReturnEnum.NoPay);
         }
-
-
     }
 
     /**
@@ -654,7 +657,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param userId
      * @return
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception {
 
@@ -669,7 +671,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param userId
      * @return
      */
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public VehicleOrderDto getLastSuccessOrder(long userId) throws Exception {
 
@@ -686,6 +687,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * @param vehicleEnableType
      * @return
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateVehicleStatus(String vehicleId, VehicleEnableType vehicleEnableType) throws Exception {
         return vehicleDao.updateVehicleStatus(vehicleId, vehicleEnableType);
@@ -754,13 +756,19 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * ===================
      ********************/
     public static BigDecimal payPrice(int cyclingTime) {
-        int time = cyclingTime / 60;
-        double t = (cyclingTime / 60) / 30;
-        if (t > 0) {
-            time = time + 1;
+
+        if (cyclingTime < 120){
+            return BigDecimal.valueOf(0);
+        }else{
+            int time = cyclingTime / 60;
+            double t = time / 30;
+            if (t >= 0) {
+                t = t + 1;
+            }
+            BigDecimal price = BigDecimal.valueOf(t);
+            return price;
         }
-        BigDecimal price = BigDecimal.valueOf(time);
-        return price;
+
     }
 
     public int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception

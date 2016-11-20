@@ -228,8 +228,13 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @return
      * @throws Exception
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public UserPayIngDto userPayOrder(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception,RestfulException {
+
+
+
+
         UserPayIngDto userPayIngDto = new UserPayIngDto();
         VehicleOrderDto dto = bicycleRestfulService.lock(bicycleCode,endAt,endLongitude,endDimension);
 

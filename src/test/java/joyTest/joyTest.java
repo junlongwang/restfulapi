@@ -236,8 +236,7 @@ public class joyTest {
     @Test
     public void aTest() {
         try {
-            UserDto dto = userRestfulService.getUserInfoById(11);
-            System.out.println(dto);
+            payRestfulService.updateDepositOrderById(21, PayType.weixin, "weixin", "weixin", 1479546894);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -274,6 +273,22 @@ public class joyTest {
                 orderRestfulService.userPayOrder("BIKE007",1479057275,116.444, 40.076);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void ADtEST(){
+        if (270 < 120){
+            System.out.println(0);
+        }else{
+            int time = 270 / 60;
+            double t = time / 30;
+            if (t >= 0) {
+                t = t + 1;
+            }
+            BigDecimal price = BigDecimal.valueOf(t);
+            System.out.println(price);
         }
     }
 }

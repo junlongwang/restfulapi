@@ -76,6 +76,8 @@ public class UserRestfulApi {
 
             user.setNationality(userInfoDto.getNationality());
             user.setGuid(userInfoDto.getGuid());
+            user.setOpenId(userInfoDto.getOpenId());
+            user.setTargetType(userInfoDto.getTargetType());
             userRestfulService.updateUserInfo(user);
             userInfo u = userRestfulService.getUserInfoByMobile(user.getIphone());
             UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
@@ -406,8 +408,10 @@ public class UserRestfulApi {
 
 
     @RequestMapping(value = "upload")
-    public ResponseEntity<Message<String>> upload(@RequestBody byte[] file) {
-        String imageName = OSSClientUtil.uploadUserImg(file);
+    public ResponseEntity<Message<String>> upload(@RequestBody FileUploadDataDto dto) {
+        logger.info("==================upload===============");
+        logger.info(dto);
+        String imageName = OSSClientUtil.uploadUserImg(dto.getFile());
         return ResponseEntity.ok(new Message<String>(true, 0, null, imageName));
     }
 }

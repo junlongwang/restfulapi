@@ -641,6 +641,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 //            throw new RestfulException(ReturnEnum.NoPay);
 //        }
 //
+        logger.info("开始锁车！");
         //修改车状态
         List<subscribeInfo> list = subscribeInfoDao.getSubscribeInfoByBicycleCodeList(bicycleCode, SubscribeStatus.use);
         VehicleOrderDto dto = new VehicleOrderDto();
@@ -649,7 +650,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             for (int i = 0; i < list.size()-1; i++) {
                 subscribeInfo subscribeInfo = list.get(i);
                 if (subscribeInfo != null) {
-
                     try {
                         vehicleOrder order = orderRestfulService.getOrderByVehicleId(subscribeInfo.getVehicleId());
                         if (order != null){

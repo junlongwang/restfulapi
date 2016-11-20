@@ -414,7 +414,8 @@ public class PayRestfulApi {
                     logger.info("退款订单信息为:" + payBean.toString());
                     String result = ThirdPayService.executeRefund(payBean);
                     logger.info("退款订单id为：" + payBean.getRefundid() + "的退款状态：" + result);
-                    if ("success".equals(result)) {
+
+                    if ("success".equals(result) || "true".equals(result)) {
                         int res_uprefund = payRestfulService.updateRefundOrderStatusById(payBean.getRefundid());
                         logger.info("退款订单信息为:" + payBean.getRefundid() + "的退款状态:" + res_uprefund);
                         userInfo user = new userInfo();

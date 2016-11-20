@@ -127,7 +127,8 @@ public class BikeDataUploadRestfulApi {
                     Long count= Long.valueOf(lockCount)+1;
                     RedixUtil.setString(heartbeat.getLockId() + "_lockCount",count.toString());
                 }
-                if(lockCount.equals("1") || lockCount=="1") {
+                String temp = RedixUtil.getString(heartbeat.getLockId() + "_lockCount");
+                if(temp.equals("1") || temp=="1") {
                     vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
                     //使用中
                     if(vehicle.getUseStatus()==2) {

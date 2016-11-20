@@ -183,6 +183,7 @@ public class BicycleRestfulApi {
                     Thread.sleep(1000);
                     continue;
                 }
+                logger.info(vehicle.getLockId()+"收到车辆开锁状态:"+RedixUtil.getString(vehicle.getLockId().toString()));
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(true, 0, ReturnEnum.Unlock_Success.getErrorDesc(), dto));
             } else {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));

@@ -101,6 +101,7 @@ public class PayRestfulApi {
             if (payBean.getRechargeType() == 1) {
                 try {
                     String rechargeResult = AliforRecharge(payBean, userId);
+                    logger.info("支付宝押金：" + payBean.toString());
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -109,6 +110,7 @@ public class PayRestfulApi {
                 //余额充值
                 try {
                     String rechargeResult = Alirecharge(payBean, userId);
+                    logger.info("支付宝余额：" + payBean.toString());
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -139,7 +141,7 @@ public class PayRestfulApi {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        logger.info("支付回调通知：" + wxNotifyXml.toString());
+        logger.info("weixin回调通知：" + wxNotifyXml.toString());
         WxNotifyOrder wxNotifyOrder = XStreamUtils.toBean(wxNotifyXml, WxNotifyOrder.class);
         String responseHtml = "success";
         String returncode = "";
@@ -453,6 +455,7 @@ public class PayRestfulApi {
         }
     }
 
+    //支付宝余额充值
     public String Alirecharge(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = createRechargeOrder(payBean, userId);
         try {
@@ -486,6 +489,22 @@ public class PayRestfulApi {
         }
     }
 
+    //weiixn余额充值
+    public String recharge(ThirdPayBean payBean, long userId) {
+        bankDepositOrder order = createRechargeOrder(payBean, userId);
+        try {
+            long orderId  = payRestfulService.recharge(order);
+            if (orderId > 0) {
+                payBean.setId(orderId);
+                return ThirdPayService.execute(payBean);
+            } else {
+                return "";
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.Recharge_Error);
+        }
+    }
+
     Long refund(bankDepositOrder order) {
         bankRefundOrder bankRefundOrder = new bankRefundOrder();
         bankRefundOrder.setUserId(order.getUserId());
@@ -501,20 +520,7 @@ public class PayRestfulApi {
     }
 
 
-    public String recharge(ThirdPayBean payBean, long userId) {
-        bankDepositOrder order = createRechargeOrder(payBean, userId);
-        try {
-            long orderId  = payRestfulService.recharge(order);
-            if (orderId > 0) {
-                payBean.setId(orderId);
-                return ThirdPayService.execute(payBean);
-            } else {
-                return "";
-            }
-        } catch (Exception e) {
-            throw new RestfulException(ReturnEnum.Recharge_Error);
-        }
-    }
+
 
     public bankDepositOrder createRechargeOrder(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = new bankDepositOrder();

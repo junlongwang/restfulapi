@@ -224,9 +224,9 @@ public class PayRestfulServiceImpl implements PayRestfulService {
             }
 
             //充值优惠
-            bankAcount bankAcountbalance = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
-            if (bankAcountbalance != null) {
-                acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAcountCash.getPrice().add(depositOrder.getAward()));
+            bankAcount bankAward = acountDao.getAcount(depositOrder.getUserId(), AcountType.balance);
+            if (bankAward != null) {
+                acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAward.getPrice().add(depositOrder.getAward()));
                 logger.info("优惠充值成功");
             } else {
 

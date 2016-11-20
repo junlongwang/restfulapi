@@ -56,6 +56,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Autowired
     private OrderItemDao orderItemDao;
 
+    @Autowired
+    private BankAcountDao bankAcountDao;
+
     /**
      * 添加预约信息,如果返回的id>0则为该用户的预约ID
      *
@@ -80,7 +83,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //删除原订单
                 subscribeInfoDao.delete(uInfo.getId());
                 vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
-                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode, vehicle.getLastDimension(), vehicle.getLastLongitude());
                 //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
                 //返回预约信息
@@ -99,7 +102,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //删除原订单
                 subscribeInfoDao.delete(uInfo.getId());
                 vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
-                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode, vehicle.getLastDimension(), vehicle.getLastLongitude());
 
                 //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
@@ -116,7 +119,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         if (uInfo == null && vInfo != null) {
             if (vInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                 vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
-                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
+                subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode, vehicle.getLastDimension(), vehicle.getLastLongitude());
 
                 //保存预约信息
                 long subscribeId = subscribeInfoDao.save(info);
@@ -132,7 +135,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
         if (uInfo == null && vInfo == null) {
             vehicle vehicle = vehicleDao.getVehicleByCode(bicycleCode);
-            subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode,vehicle.getLastDimension(),vehicle.getLastLongitude());
+            subscribeInfo info = insertSubscribeInfo(userId, bicycleCode, startAt, SubscribeStatus.subscribe, subcribeCode, vehicle.getLastDimension(), vehicle.getLastLongitude());
 
             //保存预约信息
             long subscribeId = subscribeInfoDao.save(info);
@@ -146,7 +149,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     }
 
     //保存预约信息
-    public static subscribeInfo insertSubscribeInfo(long userId, String bicycleCode, int startAt, SubscribeStatus subscribeStatus, String subcribeCode,BigDecimal dimension,BigDecimal longitude) {
+    public static subscribeInfo insertSubscribeInfo(long userId, String bicycleCode, int startAt, SubscribeStatus subscribeStatus, String subcribeCode, BigDecimal dimension, BigDecimal longitude) {
         subscribeInfo info = new subscribeInfo();
         info.setUserId(userId);
         info.setVehicleId(bicycleCode);
@@ -170,7 +173,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int deleteSubscribeInfo(long userId, String vehicleId) throws Exception {
-        return vehicleDao.updateVehicleUseStatus(vehicleId,UseStatus.free) * subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
+        return vehicleDao.updateVehicleUseStatus(vehicleId, UseStatus.free) * subscribeInfoDao.deleteSubscribeInfo(userId, vehicleId);
 
     }
 
@@ -611,32 +614,51 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public VehicleOrderDto lock(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception {
 
         //修改车状态
-        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
-        if (subscribeInfo != null){
+        List<subscribeInfo> list = subscribeInfoDao.getSubscribeInfoByBicycleCodeList(bicycleCode, SubscribeStatus.use);
+        VehicleOrderDto dto = new VehicleOrderDto();
 
-            orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
-            logger.info("锁车的时候" + bicycleCode + ":" + endAt + ":" + endLongitude + ":" + endDimension);
-            int cyclingTime = endAt - item.getBeginAt();
-            //计算金额
-            BigDecimal payPrice = payPrice(cyclingTime);
+        if (list != null && list.size() > 0) {
+            for (int i = 0; i < list.size()-1; i++) {
+                subscribeInfo subscribeInfo = list.get(i);
+                if (subscribeInfo != null) {
+                    
+                    try {
+                        vehicleOrder order = orderRestfulService.getOrderByVehicleId(subscribeInfo.getVehicleId());
+                        if (order != null){
+                            if (order.getOrderCode().equals(subscribeInfo.getSubscribeCode())) {
+                                orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
+                                logger.info("锁车的时候" + bicycleCode + ":" + endAt + ":" + endLongitude + ":" + endDimension);
+                                int cyclingTime = endAt - item.getBeginAt();
+                                //计算金额
+                                BigDecimal payPrice = payPrice(cyclingTime);
 
-            logger.info("消费金额:" + payPrice);
+                                logger.info("消费金额:" + payPrice);
 
-            int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
-            logger.info("修改订单的状态:" + v1);
-            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
-            logger.info("修改ITEM的状态:" + o1);
-//        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
-            int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
-            logger.info("修改车的状态:" + v3);
-            if (v1 * o1 * v3 > 0){
-                return vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
-            }else{
-                return null;
+                                int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+                                logger.info("修改订单的状态:" + v1);
+                                int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
+                                logger.info("修改ITEM的状态:" + o1);
+                                int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
+                                logger.info("修改车的状态:" + v3);
+
+                                if (v1 * o1 * v3 > 0) {
+                                    dto = vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
+                                } else {
+                                    return null;
+                                }
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    throw new RestfulException(ReturnEnum.NoPay);
+                }
             }
-        }else{
-            throw new RestfulException(ReturnEnum.NoPay);
         }
+        return dto;
     }
 
     /**
@@ -647,7 +669,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      */
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
-    public int updateVehicleStatausByCode(String orderCode,long payId) throws Exception{
+    public int updateVehicleStatausByCode(String orderCode, long payId) throws Exception {
         return vehicleOrderDao.updateStatausByCode(orderCode, payId);
     }
 
@@ -661,7 +683,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception {
 
         List<VehicleOrderDto> list = vehicleOrderDao.getOrderPaySuccess(userId);
-        if (list != null && list.size() >0){
+        if (list != null && list.size() > 0) {
             list.stream().sorted((p, p2) -> (p2.getEndAt().compareTo(p.getEndAt()))).collect(toList());
         }
         return list;
@@ -677,6 +699,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public VehicleOrderDto getLastSuccessOrder(long userId) throws Exception {
 
         VehicleOrderDto dto = vehicleOrderDao.getLastOrderPaySuccess(userId);
+        dto.setAmount(BigDecimal.valueOf(bankAcountDao.getUserAmount(userId)));
 
         return dto;
     }
@@ -707,10 +730,10 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         VehicleOrderDto dto = vehicleOrderDao.getOrderById(id);
 
         if (dto != null) {
-            if (dto.getStatus() == 1){
+            if (dto.getStatus() == 1) {
                 dto.setEndAt(UnixTimeUtils.now());
                 List<vehicleHeartbeat> list = getVehicleHeartbeatList(dto.getVehicleId(), dto.getBeginAt(), dto.getEndAt());
-                if (list.size() > 0){
+                if (list.size() > 0) {
                     dto.setVehicleHeartbeatList(list);
                 }
             }
@@ -743,10 +766,10 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
         VehicleOrderSubscribeDto dto = new VehicleOrderSubscribeDto();
 
-        if (vehicleOrderDto != null){
+        if (vehicleOrderDto != null) {
             dto.setVehicleOrderDto(vehicleOrderDto);
-        }else if(subscribeInfo != null){
-            if (subscribeInfo.getEndAt() - UnixTimeUtils.now() >0){
+        } else if (subscribeInfo != null) {
+            if (subscribeInfo.getEndAt() - UnixTimeUtils.now() > 0) {
                 dto.setInfo(subscribeInfo);
             }
         }
@@ -759,9 +782,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      ********************/
     public static BigDecimal payPrice(int cyclingTime) {
 
-        if (cyclingTime < 120){
+        if (cyclingTime < 120) {
             return BigDecimal.valueOf(0);
-        }else{
+        } else {
             int time = cyclingTime / 60;
             double t = time / 30;
             if (t >= 0) {
@@ -773,9 +796,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
     }
 
-    public int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception
-    {
-        return  vehicleDao.updateVehicleImg(vehicleId,vehicleImg,remark);
+    public int updateVehicleImg(String vehicleId, String vehicleImg, String remark) throws Exception {
+        return vehicleDao.updateVehicleImg(vehicleId, vehicleImg, remark);
     }
 
 }

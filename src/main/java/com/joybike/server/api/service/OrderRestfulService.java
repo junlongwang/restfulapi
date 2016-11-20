@@ -2,6 +2,7 @@ package com.joybike.server.api.service;
 
 
 import com.joybike.server.api.dto.UserPayIngDto;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.product;

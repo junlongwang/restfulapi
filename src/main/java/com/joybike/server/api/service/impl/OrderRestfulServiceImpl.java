@@ -127,22 +127,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      */
     @Override
     public vehicleOrder getOrderByVehicleId(String vehicleId) throws Exception {
-//        subscribeInfo subscribeInfo = subscribeInfoService.getSubscribeInfoByVehicleId(vehicleId, SubscribeStatus.use);
-//        vehicleOrder vehicleOrder = vehicleOrderDao.getOrderByVehicleId(vehicleId);
-//
-//        if (vehicleOrder != null && subscribeInfo != null) {
-//            //判断未完成的订单与预约中执行的订单是不是同一个,双向保证
-//            if (subscribeInfo.getUserId().equals(vehicleOrder.getUserId())) {
-//                return vehicleOrder;
-//            } else {
-//                return null;
-//            }
-//        } else {
-//            return null;
-//        }
-//
-//    }
-        return null;
+        return vehicleOrderDao.getOrderByVehicleId(vehicleId);
     }
 
     /**

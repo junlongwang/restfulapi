@@ -108,4 +108,6 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
     VehicleOrderDto getLastOrderPaySuccess(long userId) throws Exception;
 
     Integer getTimes(long userId) throws Exception;
+
+    vehicleOrder getOrderByVehicleId(String vehicleId) throws Exception;
 }

@@ -279,16 +279,11 @@ public class joyTest {
 
     @Test
     public void ADtEST(){
-        if (270 < 120){
-            System.out.println(0);
-        }else{
-            int time = 270 / 60;
-            double t = time / 30;
-            if (t >= 0) {
-                t = t + 1;
-            }
-            BigDecimal price = BigDecimal.valueOf(t);
-            System.out.println(price);
+        try {
+            VehicleOrderDto dto = bicycleRestfulService.lock("123", 1479662066, 116.287, 40.043);
+            System.out.println(dto);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

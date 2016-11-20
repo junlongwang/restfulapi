@@ -176,9 +176,7 @@ public class BicycleRestfulApi {
             if (dto != null) {
                 vehicle vehicle=bicycleRestfulService.getVehicleStatusByBicycleCode(unlockDto.getBicycleCode());
                 VehicleComHelper.openLock(vehicle.getBundlingPhone());
-                logger.info("OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK");
-                logger.info(RedixUtil.getString(vehicle.getLockId().toString()));
-                logger.info("OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK");
+                //Thread.sleep(10*1000);
                 //锁的状态是锁车状态
                 while ("0".equals(RedixUtil.getString(vehicle.getLockId().toString())))
                 {

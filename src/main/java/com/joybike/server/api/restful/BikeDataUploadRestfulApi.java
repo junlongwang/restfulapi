@@ -102,10 +102,19 @@ public class BikeDataUploadRestfulApi {
             {
                 //放入REDIS ，车锁状态，便于开锁真正获取
                 RedixUtil.setString(heartbeat.getLockId().toString(),"1");
+                //锁车，重置锁车量
+                RedixUtil.setString(heartbeat.getLockId() + "_lockCount","0");
+            }
+            else//锁车状态
+            {
+                RedixUtil.setString(heartbeat.getLockId().toString(),"0");
             }
 
+            logger.info("车辆现在状态（0：锁车；1：开锁。）：" + heartbeat.getLockStatus());
+            logger.info("车辆锁车状态次数：" + RedixUtil.getString(heartbeat.getLockId() + "_lockCount"));
+
             //车辆锁车 0:锁车， 1 ： 开锁
-            if(heartbeat.getLockStatus()==0) //锁是锁车状态
+            if(heartbeat.getLockStatus()==0 || heartbeat.getLockStatus().equals(0)) //锁是锁车状态
             {
                 //设置车锁车状态计数，如果多次，仅结束行程一次
                 String lockCount=RedixUtil.getString(heartbeat.getLockId() + "_lockCount");

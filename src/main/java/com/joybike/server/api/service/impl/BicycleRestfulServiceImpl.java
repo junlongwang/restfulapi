@@ -615,7 +615,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         if (subscribeInfo != null){
 
             orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
-
+            logger.info("锁车的时候" + bicycleCode + ":" + endAt + ":" + endLongitude + ":" + endDimension);
             int cyclingTime = endAt - item.getBeginAt();
             //计算金额
             BigDecimal payPrice = payPrice(cyclingTime);
@@ -762,7 +762,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         }else{
             int time = cyclingTime / 60;
             double t = time / 30;
-            if (t > 0) {
+            if (t >= 0) {
                 t = t + 1;
             }
             BigDecimal price = BigDecimal.valueOf(t);

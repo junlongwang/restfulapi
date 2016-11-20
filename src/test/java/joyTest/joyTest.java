@@ -279,15 +279,16 @@ public class joyTest {
 
     @Test
     public void ADtEST(){
-        int time = 60*31 / 60;
-
-
-        double t = time / 30;
-
-        if (t >= 0) {
-            t = t + 1;
+        if (270 < 120){
+            System.out.println(0);
+        }else{
+            int time = 270 / 60;
+            double t = time / 30;
+            if (t >= 0) {
+                t = t + 1;
+            }
+            BigDecimal price = BigDecimal.valueOf(t);
+            System.out.println(price);
         }
-        BigDecimal price = BigDecimal.valueOf(t);
-        System.out.println(price);
     }
 }

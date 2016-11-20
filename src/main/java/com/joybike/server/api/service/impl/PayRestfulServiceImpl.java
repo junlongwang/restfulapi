@@ -259,10 +259,13 @@ public class PayRestfulServiceImpl implements PayRestfulService {
             double amount = acountDao.getUserAmount(userId);
 
             logger.info("剩余金额为:" + amount);
+            logger.info("支付金额:" + payPrice);
             bankDepositOrder bankDepositOrder = depositOrderDao.getDepositOrderById(consumedDepositId);
 
             //可用余额不足,返回支付
             if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
+                logger.info("余额不足请支付:" + amount);
+
 //            throw new RestfulException(ReturnEnum.Pay_Low);
                 return -1;
                 //可用余额充足,扣费

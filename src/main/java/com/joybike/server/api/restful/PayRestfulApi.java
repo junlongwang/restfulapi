@@ -523,8 +523,7 @@ public class PayRestfulApi {
     }
 
 
-
-
+    //充值信息
     public bankDepositOrder createRechargeOrder(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = new bankDepositOrder();
         order.setUserId(userId);
@@ -539,7 +538,7 @@ public class PayRestfulApi {
         return order;
     }
 
-    //组合充值信息
+    //押金充值
     public bankDepositOrder createDepositRechargeOrder(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = new bankDepositOrder();
         order.setUserId(userId);

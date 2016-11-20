@@ -61,6 +61,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Autowired
     AliPayConstructUrlInter aliPayConstructUrlInter;
 
+    @Autowired
+    BankMoneyFlowDao bankMoneyFlowDao;
 
     /**
      * 获取用户消费明细
@@ -117,7 +119,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         //记录现金流水
         //        //userId,order.getPayType(),consumedId,order.getCash(),order.getAward()
 
-        moneyFlowDao.save(flowInfo(depositOrder.getUserId(), depositOrder.getPayType(), depositId, depositOrder.getCash(), depositOrder.getAward(), 0, "", DealType.deposit, 0));
+        moneyFlowDao.save(flowInfo(depositOrder.getUserId(), depositOrder.getPayType(), depositId, depositOrder.getCash(), depositOrder.getAward(), 0, "", DealType.deposit, 1));
         return depositId;
     }
 
@@ -208,6 +210,9 @@ public class PayRestfulServiceImpl implements PayRestfulService {
 
         int updateCount = depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
 
+        //修改流水信息
+        bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong(payDocumentId));
+
         logger.info("余额充值回调:" + payType +"," + "充值信息修改:" + updateCount);
         //充值回调成功的时候修改用户的余额信息
         if (updateCount > 0) {
@@ -229,7 +234,6 @@ public class PayRestfulServiceImpl implements PayRestfulService {
                 acountDao.updateAcount(depositOrder.getUserId(), AcountType.balance, bankAward.getPrice().add(depositOrder.getAward()));
                 logger.info("优惠充值成功");
             } else {
-
                 acountDao.save(depositToAcount(depositOrder, AcountType.balance));
                 logger.info("优惠账户创建成功");
 
@@ -508,6 +512,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception{
+        //修改流水信息
+        bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong(transactionId));
         return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);
     }
 }

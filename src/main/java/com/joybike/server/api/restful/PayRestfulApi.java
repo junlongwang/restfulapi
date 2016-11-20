@@ -302,6 +302,7 @@ public class PayRestfulApi {
 
                                 logger.info("支付宝押金充值");
                                 result = payRestfulService.updateDepositOrderById_Yajin(Long.valueOf(notify.getOut_trade_no()), notify.getTrade_no(), (int) pay_at, 2);
+                                logger.info("支付宝押金充值返回信息:" + result);
                                 //同时更新用户状态
                                 if (result > 0) {
                                     userInfo userInfo = new userInfo();

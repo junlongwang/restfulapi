@@ -28,10 +28,6 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      */
     final String getBankDepositOrderListSql = "select * from bankDepositOrder where userId = ? and status = ? ";
 
-    /**
-     * 押金充值成功时根据id更新充值订单状态
-     */
-    final String UpdateDepositOrderByIdSql_Yajin = "update bankdepositorder set status =:status,payDocumentId =:payDocumentId,payAt =:payAt where id =:id";
 
     @Override
     public List<bankDepositOrder> getBankDepositOrderList(long userId, DepositStatus depositStatus) throws Exception {
@@ -147,6 +143,11 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      * @return
      * @throws Exception
      */
+    /**
+     * 押金充值成功时根据id更新充值订单状态
+     */
+    final String UpdateDepositOrderByIdSql_Yajin = "update bankdepositorder set status =:status,payDocumentId =:payDocumentId,payAt =:payAt where id =:id";
+
     @Override
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status){
         try {

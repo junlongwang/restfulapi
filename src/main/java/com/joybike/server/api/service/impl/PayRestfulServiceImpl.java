@@ -513,7 +513,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     @Override
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception{
         //修改流水信息
-        bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong(transactionId));
+        int flowId = bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong(transactionId));
+        logger.info("现金流修改信息:" + flowId);
         return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);
     }
 }

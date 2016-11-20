@@ -99,7 +99,7 @@ public class userInfo implements Serializable {
 
 
     /**
-     * IOS和安卓的设备区分，ISO:iso ,安卓:android
+     * IOS和安卓的设备区分，IOS:ios ,安卓:android
      */
     private String targetType;
 

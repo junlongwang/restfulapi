@@ -138,7 +138,12 @@ public class BikeDataUploadRestfulApi {
                         logger.info(JSON.toJSONString(dto));
                         logger.info("--------------------消息推送--------------------");
                         UserDto userDto = userRestfulService.getUserInfoById(dto.getVehicleOrderDto().getUserId());
-                        pushHelper.testPushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
+                        if(userDto.getTargetType().equals("ios")) {
+                            pushHelper.PushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
+                        }
+                        else if(userDto.getTargetType().equals("android")){
+                            pushHelper.PushMessageToAndroid(JSON.toJSONString(dto), userDto.getGuid());
+                        }
                     }
                 }
             }

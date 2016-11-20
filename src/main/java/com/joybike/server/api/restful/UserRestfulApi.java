@@ -156,7 +156,6 @@ public class UserRestfulApi {
      */
     //@SystemControllerLog(description = "验证码验证登录")
     @RequestMapping(value = "validate", method = RequestMethod.POST)
-
     public ResponseEntity<Message<UserDto>> validate(@RequestBody userValidateDto dto) {
         try {
 
@@ -169,9 +168,15 @@ public class UserRestfulApi {
 //            }
             //logger.info("===========================================");
 
-            String redisValue = RedixUtil.getString(dto.getMobile());
-            //logger.info(redisValue + "=" + validateCode);
+            //IOS上线验证，上线通过后，代码移除
+            if("15802488696".equals(dto.getMobile()) && "1234".equals(dto.getValidateCode()))
+            {
+                userInfo u = userRestfulService.getUserInfoByMobile(dto.getMobile());
+                UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
+                return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
+            }
 
+            String redisValue = RedixUtil.getString(dto.getMobile());
             //获取VALUE,进行验证
             if (dto.getValidateCode().equals(redisValue)) {
                 //根据用户号码，进行查询，存在返回信息；不存在创建

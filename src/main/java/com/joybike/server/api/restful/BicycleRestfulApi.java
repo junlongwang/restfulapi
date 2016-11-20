@@ -11,6 +11,7 @@ import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSConsts;
+import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,8 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by 58 on 2016/10/16.
@@ -173,6 +176,15 @@ public class BicycleRestfulApi {
             if (dto != null) {
                 vehicle vehicle=bicycleRestfulService.getVehicleStatusByBicycleCode(unlockDto.getBicycleCode());
                 VehicleComHelper.openLock(vehicle.getBundlingPhone());
+                logger.info("OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK");
+                logger.info(RedixUtil.getString(vehicle.getLockId().toString()));
+                logger.info("OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK_OPEN_LOCK");
+                //锁的状态是锁车状态
+                while ("0".equals(RedixUtil.getString(vehicle.getLockId().toString())))
+                {
+                    Thread.sleep(1000);
+                    continue;
+                }
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(true, 0, ReturnEnum.Unlock_Success.getErrorDesc(), dto));
             } else {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));

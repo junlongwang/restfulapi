@@ -16,6 +16,9 @@ public class userInfo implements Serializable {
      */
     private String iphone;
 
+    /**
+     * IOS和安卓的设备号，用户消息推送
+     */
     private String guid;
 
     public String getGuid() {
@@ -89,13 +92,20 @@ public class userInfo implements Serializable {
     private Integer authenStatus;
 
 
+    /**
+     * 微信openid
+     */
+    private String openId;
+
+
     public userInfo(){
 
     }
 
-    public userInfo(Long id, String iphone, String realName, String guid, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus) {
+    public userInfo(Long id, String iphone, String guid, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, String openId) {
         this.id = id;
         this.iphone = iphone;
+        this.guid = guid;
         this.realName = realName;
         this.idNumber = idNumber;
         this.nationality = nationality;
@@ -106,7 +116,7 @@ public class userInfo implements Serializable {
         this.userImg = userImg;
         this.securityStatus = securityStatus;
         this.authenStatus = authenStatus;
-        this.guid = guid;
+        this.openId = openId;
     }
 
     @Override
@@ -223,5 +233,13 @@ public class userInfo implements Serializable {
 
     public void setAuthenStatus(Integer authenStatus) {
         this.authenStatus = authenStatus;
+    }
+
+    public String getOpenId() {
+        return openId;
+    }
+
+    public void setOpenId(String openId) {
+        this.openId = openId;
     }
 }

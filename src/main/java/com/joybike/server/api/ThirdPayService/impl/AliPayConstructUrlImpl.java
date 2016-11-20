@@ -178,12 +178,12 @@ public class AliPayConstructUrlImpl implements AliPayConstructUrlInter{
      */
     @Override
     public String getRefundUrl(ThirdPayBean payBean){
-        String service = "refund_fastpay_by_platform_pwd";
+        String service = "refund_fastpay_by_platform_nopwd";
         String notify_url = null;
         String _input_charset = "utf-8";
         String sign_type = "MD5";
         String refund_date = DateUtil.parse(new Date(), "yyyy-MM-dd hh:mm:ss");
-        String batch_no =DateUtil.parse(new Date(), "yyyyMMddhhmmss")+payBean.getCosumeid();//DateUtil.parse(new Date(), "yyyyMMddhhmmss")  + draw.getApplySourceId();
+        String batch_no =DateUtil.parse(new Date(), "yyyyMMddhhmmss")+payBean.getId();//DateUtil.parse(new Date(), "yyyyMMddhhmmss")  + draw.getApplySourceId();
         String batch_num = "1";
         String detail_data = payBean.getTransaction_id() + "^" + payBean.getOrderMoney()
                 + "^";

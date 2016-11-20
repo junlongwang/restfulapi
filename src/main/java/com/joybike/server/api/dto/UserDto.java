@@ -124,35 +124,21 @@ public class UserDto implements Serializable {
     /**
      * 微信openid
      */
+    @JSONField(ordinal = 17)
     private String openId;
 
-    @Override
-    public String toString() {
-        return "UserDto{" +
-                "id=" + id +
-                ", iphone='" + iphone + '\'' +
-                ", realName='" + realName + '\'' +
-                ", idNumber='" + idNumber + '\'' +
-                ", nationality='" + nationality + '\'' +
-                ", photo='" + photo + '\'' +
-                ", identityCardphoto='" + identityCardphoto + '\'' +
-                ", createAt=" + createAt +
-                ", updateAt=" + updateAt +
-                ", userImg='" + userImg + '\'' +
-                ", securityStatus=" + securityStatus +
-                ", authenStatus=" + authenStatus +
-                ", totalMileage=" + totalMileage +
-                ", amount=" + amount +
-                ", totalcyclingTime=" + totalcyclingTime +
-                ", guid='" + guid + '\'' +
-                ", openId='" + openId + '\'' +
-                '}';
-    }
+    /**
+     * IOS和安卓的设备区分，ISO:iso ,安卓:android
+     */
+    @JSONField(ordinal = 18)
+    private String targetType;
+
+
 
     public UserDto(){
     }
 
-    public UserDto(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, BigDecimal totalMileage, BigDecimal amount, Integer totalcyclingTime, String guid, String openId) {
+    public UserDto(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, BigDecimal totalMileage, BigDecimal amount, Integer totalcyclingTime, String guid, String openId, String targetType) {
         this.id = id;
         this.iphone = iphone;
         this.realName = realName;
@@ -170,6 +156,7 @@ public class UserDto implements Serializable {
         this.totalcyclingTime = totalcyclingTime;
         this.guid = guid;
         this.openId = openId;
+        this.targetType = targetType;
     }
 
     public Integer getTotalcyclingTime() {
@@ -306,5 +293,37 @@ public class UserDto implements Serializable {
 
     public void setOpenId(String openId) {
         this.openId = openId;
+    }
+
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", iphone='" + iphone + '\'' +
+                ", realName='" + realName + '\'' +
+                ", idNumber='" + idNumber + '\'' +
+                ", nationality='" + nationality + '\'' +
+                ", photo='" + photo + '\'' +
+                ", identityCardphoto='" + identityCardphoto + '\'' +
+                ", createAt=" + createAt +
+                ", updateAt=" + updateAt +
+                ", userImg='" + userImg + '\'' +
+                ", securityStatus=" + securityStatus +
+                ", authenStatus=" + authenStatus +
+                ", totalMileage=" + totalMileage +
+                ", amount=" + amount +
+                ", totalcyclingTime=" + totalcyclingTime +
+                ", guid='" + guid + '\'' +
+                ", openId='" + openId + '\'' +
+                ", targetType='" + targetType + '\'' +
+                '}';
     }
 }

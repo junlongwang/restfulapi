@@ -100,25 +100,25 @@ private PayRestfulService payRestfulService;
 //        refundDto.setUserId(Long.valueOf(1));
 //        bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
 //        System.out.print(order);
-//        ThirdPayBean payBean = new ThirdPayBean();
-//        payBean.setOrderMoney(BigDecimal.valueOf(0.01));
-//        payBean.setChannelId(2);
-//        payBean.setTransaction_id("4008342001201611169904095238");
-//        payBean.setCosumeid(Long.valueOf(446));
-//        payBean.setRefundid(123L);
-//        //调用第三方支付退款操作
-//        String result = ThirdPayService.executeRefund(payBean);
-//        System.out.print(result);
+        ThirdPayBean payBean = new ThirdPayBean();
+        payBean.setOrderMoney(BigDecimal.valueOf(0.1));
+        payBean.setChannelId(1);
+        payBean.setTransaction_id("2016111921001004640202377164");
+        payBean.setId(Long.valueOf(573));
+        payBean.setRefundid(123L);
+        //调用第三方支付退款操作
+        String result = ThirdPayService.executeRefund(payBean);
+        System.out.print(result);
 
-        userInfo user = new userInfo();
-        user.setId(1L);
-        user.setSecurityStatus(0);
-        int res_upUser = 0;
-        try {
-            res_upUser = userRestfulService.updateUserInfo(user);
-            System.out.print(res_upUser);
-        }catch (Exception e){
-
-        }
+//        userInfo user = new userInfo();
+//        user.setId(1L);
+//        user.setSecurityStatus(0);
+//        int res_upUser = 0;
+//        try {
+//            res_upUser = userRestfulService.updateUserInfo(user);
+//            System.out.print(res_upUser);
+//        }catch (Exception e){
+//
+//        }
     }
 }

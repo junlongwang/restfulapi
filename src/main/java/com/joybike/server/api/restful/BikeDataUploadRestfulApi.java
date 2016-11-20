@@ -91,7 +91,7 @@ public class BikeDataUploadRestfulApi {
             vehicleHeartbeatDao.save(heartbeat);
 
             //车辆锁车
-            if(Integer.valueOf(values[11])==1)
+            if(Integer.valueOf(values[11])==0)
             {
                 vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
                 UserPayIngDto dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf(heartbeat.getLongitude().toString()), Double.valueOf(heartbeat.getDimension().toString()));
@@ -115,6 +115,9 @@ public class BikeDataUploadRestfulApi {
     @RequestMapping(value = "send", method = RequestMethod.POST)
     public void send(@RequestBody vehicleGpsDataDto data) {
 
+        logger.info("$$$$$$$$$$$$$$$$$$$send$$$$$$$$$$$$$$$$$$$$$$$$4");
+        logger.info(data);
+        logger.info("$$$$$$$$$$$$$$$$$$$$send$$$$$$$$$$$$$$$$$$$$$$$4");
         try {
             Long lockId = null;
             try {

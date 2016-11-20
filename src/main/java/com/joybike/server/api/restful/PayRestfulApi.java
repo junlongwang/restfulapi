@@ -7,10 +7,8 @@ import com.joybike.server.api.Enum.SecurityStatus;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
-import com.joybike.server.api.dto.AliPayOfNotify;
-import com.joybike.server.api.dto.RefundDto;
-import com.joybike.server.api.dto.UserPayIngDto;
-import com.joybike.server.api.dto.UserPayOrderDto;
+import com.joybike.server.api.dao.VehicleOrderDao;
+import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
@@ -52,6 +50,9 @@ public class PayRestfulApi {
     private OrderRestfulService orderRestfulService;
     @Autowired
     private UserRestfulService userRestfulService;
+
+    @Autowired
+    private VehicleOrderDao vehicleOrderDao;
 
     private String wxAppmch_id = "1407599302";
     private String wxPubmch_id = "1401808502";
@@ -572,12 +573,43 @@ public class PayRestfulApi {
     @RequestMapping(value = "userPayOrder", method = RequestMethod.POST)
     public ResponseEntity<Message<UserPayIngDto>> userPayOrder(@RequestBody UserPayOrderDto dto) {
         try {
-            UserPayIngDto userPayIngDto = orderRestfulService.userPayOrder(dto.getBicycleCode(),dto.getEndAt(),dto.getEndLongitude(),dto.getEndDimension());
+            UserPayIngDto userPayIngDto = orderRestfulService.userPayOrder(dto.getBicycleCode(), dto.getEndAt(), dto.getEndLongitude(), dto.getEndDimension());
             return ResponseEntity.ok(new Message<UserPayIngDto>(true, 0, null, userPayIngDto));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<UserPayIngDto>(false, ReturnEnum.Pay_Low.getErrorCode(), ReturnEnum.Pay_Low.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 
+//    /**
+//     * 自助支付
+//     *
+//     * @return
+//     */
+//    @RequestMapping(value = "payOrder", method = RequestMethod.POST)
+//    public ResponseEntity<Message<UserPayIngDto>> payOrder(@RequestBody VehicleOrderDto dto) {
+//        try {
+//            UserPayIngDto userPayIngDto = new UserPayIngDto();
+////            vehicleOrderDao.getOrderByOrderCode(dto.getOrderCode());
+//
+//            int payValue = payRestfulService.consume(dto.getOrderCode(),dto.getBeforePrice(),dto.getUserId(),0);
+//
+//            if (payValue == 0){
+//                userPayIngDto.setRestType(1);
+//                VehicleOrderDto vehicleOrderDto = vehicleOrderDao.getOrderByOrderCode(dto.getOrderCode());
+//                vehicleOrderDto.setAmount(BigDecimal.valueOf(userRestfulService.getUserAcountMoneyByuserId(dto.getUserId())));
+//
+//                userPayIngDto.setVehicleOrderDto(vehicleOrderDto);
+//            }else{
+//                userPayIngDto.setRestType(0);
+//                VehicleOrderDto vehicleOrderDto = vehicleOrderDao.getOrderByOrderCode(dto.getOrderCode());
+//                vehicleOrderDto.setAmount(BigDecimal.valueOf(userRestfulService.getUserAcountMoneyByuserId(dto.getUserId())));
+//                dto.setAmount(BigDecimal.valueOf(userRestfulService.getUserAcountMoneyByuserId(dto.getUserId())));
+//                userPayIngDto.setVehicleOrderDto(dto);
+//            }
+//            return ResponseEntity.ok(new Message<UserPayIngDto>(true, 0, null, userPayIngDto));
+//        } catch (Exception e) {
+//            return ResponseEntity.ok(new Message<UserPayIngDto>(false, ReturnEnum.PayError.getErrorCode(), ReturnEnum.PayError.getErrorDesc(), null));
+//        }
+//    }
 
 }

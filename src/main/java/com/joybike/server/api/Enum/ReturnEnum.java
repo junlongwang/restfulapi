@@ -53,6 +53,7 @@ public enum ReturnEnum {
 
     refund_Error(2008, "退款失败"),
     PayZero(2009,"余额为零"),
+    PayError(2010,"支付失败"),
     /**
      * 订单 3
      */

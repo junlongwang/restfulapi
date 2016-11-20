@@ -9,6 +9,8 @@ import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.dto.AliPayOfNotify;
 import com.joybike.server.api.dto.RefundDto;
+import com.joybike.server.api.dto.UserPayIngDto;
+import com.joybike.server.api.dto.UserPayOrderDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.PayRestfulService;
@@ -559,6 +561,21 @@ public class PayRestfulApi {
             return ResponseEntity.ok(new Message<List<product>>(true, 0, null, list));
         } catch (Exception e) {
             return ResponseEntity.ok(new Message<List<product>>(false, ReturnEnum.Product_Error.getErrorCode(), ReturnEnum.Product_Error.getErrorDesc() + "-" + e.getMessage(), null));
+        }
+    }
+
+    /**
+     * 不对外公开,手动结束信息
+     *
+     * @return
+     */
+    @RequestMapping(value = "userPayOrder", method = RequestMethod.POST)
+    public ResponseEntity<Message<UserPayIngDto>> userPayOrder(@RequestBody UserPayOrderDto dto) {
+        try {
+            UserPayIngDto userPayIngDto = orderRestfulService.userPayOrder(dto.getBicycleCode(),dto.getEndAt(),dto.getEndLongitude(),dto.getEndDimension());
+            return ResponseEntity.ok(new Message<UserPayIngDto>(true, 0, null, userPayIngDto));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new Message<UserPayIngDto>(false, ReturnEnum.Pay_Low.getErrorCode(), ReturnEnum.Pay_Low.getErrorDesc() + "-" + e.getMessage(), null));
         }
     }
 

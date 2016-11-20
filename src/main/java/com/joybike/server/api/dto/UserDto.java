@@ -115,6 +115,12 @@ public class UserDto implements Serializable {
     @JSONField(ordinal = 15)
     private Integer totalcyclingTime;
 
+    /**
+     * 目标设备ID或者OPENID
+     */
+    @JSONField(ordinal = 16)
+    private String guid;
+
     @Override
     public String toString() {
         return "UserDto{" +
@@ -133,13 +139,14 @@ public class UserDto implements Serializable {
                 ", totalMileage=" + totalMileage +
                 ", amount=" + amount +
                 ", totalcyclingTime=" + totalcyclingTime +
+                ", guid='" + guid + '\'' +
                 '}';
     }
 
     public UserDto(){
     }
 
-    public UserDto(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, BigDecimal totalMileage, BigDecimal amount, Integer totalcyclingTime) {
+    public UserDto(Long id, String iphone, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, BigDecimal totalMileage, BigDecimal amount, Integer totalcyclingTime, String guid) {
         this.id = id;
         this.iphone = iphone;
         this.realName = realName;
@@ -155,6 +162,7 @@ public class UserDto implements Serializable {
         this.totalMileage = totalMileage;
         this.amount = amount;
         this.totalcyclingTime = totalcyclingTime;
+        this.guid = guid;
     }
 
     public Integer getTotalcyclingTime() {
@@ -275,5 +283,13 @@ public class UserDto implements Serializable {
 
     public void setTotalMileage(BigDecimal totalMileage) {
         this.totalMileage = totalMileage;
+    }
+
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
     }
 }

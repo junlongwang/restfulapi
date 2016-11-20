@@ -78,7 +78,7 @@ public class userInfoDto implements Serializable {
     private String openId;
 
     /**
-     * IOS和安卓的设备区分，ISO:iso ,安卓:android
+     * IOS和安卓的设备区分，IOS和安卓的设备区分，IOS:ios ,安卓:android
      */
     @JSONField(ordinal = 11)
     private String targetType;

@@ -3,12 +3,15 @@ package com.joybike.server.api.thirdparty.aliyun;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.aliyuncs.push.model.v20150827.PushMessageToAndroidRequest;
+import com.aliyuncs.push.model.v20150827.PushMessageToAndroidResponse;
 import com.aliyuncs.push.model.v20150827.PushMessageToiOSRequest;
 import com.aliyuncs.push.model.v20150827.PushMessageToiOSResponse;
 import com.joybike.server.api.restful.BicycleRestfulApi;
 import com.sun.org.apache.xpath.internal.SourceTree;
 import org.apache.log4j.Logger;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,7 +68,7 @@ public class pushHelper {
         client = new DefaultAcsClient(profile);
     }
 
-    public static void testPushMessageToIOS(String content,String target) throws Exception {
+    public static void PushMessageToIOS(String content,String target) throws Exception {
         PushMessageToiOSRequest iOSRequest = new PushMessageToiOSRequest();
         iOSRequest.setAppKey(appKey);
         iOSRequest.setTarget("device");
@@ -82,5 +85,20 @@ public class pushHelper {
         PushMessageToiOSResponse pushMessageToiOSResponse = client.getAcsResponse(iOSRequest);
         System.out.println("RequestId: " + pushMessageToiOSResponse.getRequestId() + "ResponseId:" + pushMessageToiOSResponse.getResponseId());
         logger.info("RequestId: " + pushMessageToiOSResponse.getRequestId() + "ResponseId:" + pushMessageToiOSResponse.getResponseId());
+    }
+
+    /**
+     * 推送消息给android
+     * <p>
+     * 参见文档 https://help.aliyun.com/document_detail/mobilepush/api-reference/message-to-android.html
+     */
+    public static void PushMessageToAndroid(String content,String target) throws Exception {
+        PushMessageToAndroidRequest androidRequest = new PushMessageToAndroidRequest();
+        androidRequest.setAppKey(appKey);
+        androidRequest.setTarget("device");
+        androidRequest.setTargetValue(target);
+        androidRequest.setMessage(content);
+        PushMessageToAndroidResponse pushMessageToAndroidResponse = client.getAcsResponse(androidRequest);
+        logger.info("RequestId: " + pushMessageToAndroidResponse.getRequestId() + "ResponseId:" + pushMessageToAndroidResponse.getResponseId());
     }
 }

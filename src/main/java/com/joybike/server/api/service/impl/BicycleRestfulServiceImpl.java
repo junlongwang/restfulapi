@@ -613,6 +613,34 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public VehicleOrderDto lock(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception {
 
+//        //修改车状态
+//        subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
+//        if (subscribeInfo != null){
+//
+//            orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
+//            logger.info("锁车的时候" + bicycleCode + ":" + endAt + ":" + endLongitude + ":" + endDimension);
+//            int cyclingTime = endAt - item.getBeginAt();
+//            //计算金额
+//            BigDecimal payPrice = payPrice(cyclingTime);
+//
+//            logger.info("消费金额:" + payPrice);
+//
+//            int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+//            logger.info("修改订单的状态:" + v1);
+//            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
+//            logger.info("修改ITEM的状态:" + o1);
+////        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
+//            int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
+//            logger.info("修改车的状态:" + v3);
+//            if (v1 * o1 * v3 > 0){
+//                return vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
+//            }else{
+//                return null;
+//            }
+//        }else{
+//            throw new RestfulException(ReturnEnum.NoPay);
+//        }
+//
         //修改车状态
         List<subscribeInfo> list = subscribeInfoDao.getSubscribeInfoByBicycleCodeList(bicycleCode, SubscribeStatus.use);
         VehicleOrderDto dto = new VehicleOrderDto();

@@ -14,6 +14,7 @@ import com.joybike.server.api.thirdparty.VehicleComHelper;
 import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -31,6 +32,8 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class BicycleRestfulServiceImpl implements BicycleRestfulService {
+
+    private final Logger logger = Logger.getLogger(BicycleRestfulServiceImpl.class);
 
     @Autowired
     SubscribeInfoDao subscribeInfoDao;
@@ -617,14 +620,16 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             //计算金额
             BigDecimal payPrice = payPrice(cyclingTime);
 
-            int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
-            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
+            logger.info("消费金额:" + payPrice);
 
+            int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+            logger.info("修改订单的状态:" + v1);
+            int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
+            logger.info("修改ITEM的状态:" + o1);
 //        int o2 = subscribeInfoDao.deleteSubscribeInfo(userId, bicycleCode);
             int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
-
+            logger.info("修改车的状态:" + v3);
             if (v1 * o1 * v3 > 0){
-                System.out.println(v1 * o1 * v3);
                 return vehicleOrderDao.getOrderByOrderCode(subscribeInfo.getSubscribeCode());
             }else{
                 return null;

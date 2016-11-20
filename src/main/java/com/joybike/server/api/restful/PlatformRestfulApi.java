@@ -51,9 +51,9 @@ public class PlatformRestfulApi {
             else
             {
                 access_token = UUID.randomUUID().toString();
-                RedixUtil.setString(appKey,access_token,90);
+                RedixUtil.setString(appKey,access_token,7200);
             }
-            token = new Token(access_token,90);
+            token = new Token(access_token,7200);
         }
         catch (Exception e)
         {

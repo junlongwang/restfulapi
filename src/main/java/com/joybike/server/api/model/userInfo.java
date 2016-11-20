@@ -98,11 +98,16 @@ public class userInfo implements Serializable {
     private String openId;
 
 
+    /**
+     * IOS和安卓的设备区分，ISO:iso ,安卓:android
+     */
+    private String targetType;
+
     public userInfo(){
 
     }
 
-    public userInfo(Long id, String iphone, String guid, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, String openId) {
+    public userInfo(Long id, String iphone, String guid, String realName, String idNumber, String nationality, String photo, String identityCardphoto, Integer createAt, Integer updateAt, String userImg, Integer securityStatus, Integer authenStatus, String openId, String targetType) {
         this.id = id;
         this.iphone = iphone;
         this.guid = guid;
@@ -117,6 +122,7 @@ public class userInfo implements Serializable {
         this.securityStatus = securityStatus;
         this.authenStatus = authenStatus;
         this.openId = openId;
+        this.targetType = targetType;
     }
 
     @Override
@@ -124,6 +130,7 @@ public class userInfo implements Serializable {
         return "userInfo{" +
                 "id=" + id +
                 ", iphone='" + iphone + '\'' +
+                ", guid='" + guid + '\'' +
                 ", realName='" + realName + '\'' +
                 ", idNumber='" + idNumber + '\'' +
                 ", nationality='" + nationality + '\'' +
@@ -134,9 +141,18 @@ public class userInfo implements Serializable {
                 ", userImg='" + userImg + '\'' +
                 ", securityStatus=" + securityStatus +
                 ", authenStatus=" + authenStatus +
+                ", openId='" + openId + '\'' +
+                ", targetType='" + targetType + '\'' +
                 '}';
     }
 
+    public String getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(String targetType) {
+        this.targetType = targetType;
+    }
 
     public void setPhoto(String photo) {
         this.photo = photo;

@@ -1,19 +1,21 @@
 package com.joybike.server.api.restful;
 
 import com.alibaba.fastjson.JSON;
+import com.aliyuncs.push.model.v20150827.PushMessageToiOSRequest;
+import com.aliyuncs.push.model.v20150827.PushMessageToiOSResponse;
 import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleDao;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.UserPayIngDto;
 import com.joybike.server.api.dto.vehicleGpsDataDto;
 import com.joybike.server.api.dto.vehicleRepairDto;
-import com.joybike.server.api.model.Message;
-import com.joybike.server.api.model.vehicle;
-import com.joybike.server.api.model.vehicleHeartbeat;
-import com.joybike.server.api.model.vehicleRepair;
+import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
+import com.joybike.server.api.thirdparty.aliyun.pushHelper;
 import com.joybike.server.api.thirdparty.wxtenpay.util.DateUtil;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.apache.log4j.Logger;
@@ -47,6 +49,10 @@ public class BikeDataUploadRestfulApi {
 
     @Autowired
     private OrderRestfulService orderRestfulService;
+
+
+    @Autowired
+    private UserRestfulService userRestfulService;
 
     /**
      * 车辆，车锁GPS,每隔15秒上报数据，回调地址服务端回调地址
@@ -94,13 +100,13 @@ public class BikeDataUploadRestfulApi {
             if(Integer.valueOf(values[11])==0)
             {
                 vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
-                UserPayIngDto dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf(heartbeat.getLongitude().toString()), Double.valueOf(heartbeat.getDimension().toString()));
+                UserPayIngDto dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf("116.287"), Double.valueOf("40.043"));
                 //消息推送
                 logger.info("--------------------消息推送--------------------");
-                logger.info(dto);
+                logger.info(JSON.toJSONString(dto));
                 logger.info("--------------------消息推送--------------------");
-                logger.info(JSON.toJSON(dto));
-                logger.info("--------------------消息推送--------------------");
+                UserDto userDto= userRestfulService.getUserInfoById(dto.getVehicleOrderDto().getUserId());
+                pushHelper.testPushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
             }
         } catch (Exception e) {
             logger.error("车锁GPS,每隔15秒上报数据发生异常：" + e.getMessage(), e);

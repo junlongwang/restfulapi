@@ -2,12 +2,15 @@ package restfulUnitTest;
 
 import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.dao.VehicleDao;
+import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.UserPayIngDto;
 import com.joybike.server.api.model.Message;
 import com.joybike.server.api.model.vehicle;
 import com.joybike.server.api.model.vehicleHeartbeat;
 import com.joybike.server.api.restful.BicycleRestfulApi;
 import com.joybike.server.api.service.OrderRestfulService;
+import com.joybike.server.api.service.UserRestfulService;
+import com.joybike.server.api.thirdparty.aliyun.pushHelper;
 import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.apache.log4j.Logger;
@@ -120,6 +123,26 @@ public class BicycleRestfulApiUnitTest {
             }
         } catch (Exception e) {
             logger.error("车锁GPS,每隔15秒上报数据发生异常：" + e.getMessage(), e);
+        }
+    }
+
+    @Autowired
+    private UserRestfulService userRestfulService;
+
+    @Test
+    public void tesss()
+    {
+//        try {
+//            pushHelper.testPushMessageToIOS("{\"data\":{\"restType\":1,\"vehicleOrderDto\":{\"amount\":0.1,\"beforePrice\":0.00,\"beginAt\":1479629472,\"cyclingTime\":1782,\"beginDimension\":40.044,\"startAddress\":\"北京市海淀区上地街道尚东·数字山谷A区2号楼中关村软件园(软件园三号路)\",\"endAt\":1479631254,\"userId\":29,\"endDimension\":40.043,\"afterPrice\":0.00,\"beginLongitude\":116.289,\"endLongitude\":40.043,\"orderCode\":\"2147948356798\",\"id\":80,\"payId\":13,\"vehicleId\":\"10780121494\",\"status\":15}},\"success\":true,\"errorCode\":0}","37d25e14bc724c21bbb03179fb02dea1");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        try {
+            UserDto userDto=userRestfulService.getUserInfoById(29);
+            System.out.println(userDto);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

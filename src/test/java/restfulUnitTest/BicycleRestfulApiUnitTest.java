@@ -45,7 +45,7 @@ public class BicycleRestfulApiUnitTest {
         }
         UserPayIngDto dto = null;
         try {
-            dto = orderRestfulService.userPayOrder("BIKE004", UnixTimeUtils.now(), Double.valueOf("40.043"), Double.valueOf("40.043"));
+            dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf("40.043"), Double.valueOf("40.043"));
         } catch (Exception e) {
             e.printStackTrace();
         }

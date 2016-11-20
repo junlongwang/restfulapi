@@ -751,13 +751,19 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
      * ===================
      ********************/
     public static BigDecimal payPrice(int cyclingTime) {
-        int time = cyclingTime / 60;
-        double t = (cyclingTime / 60) / 30;
-        if (t > 0) {
-            time = time + 1;
+
+        if (cyclingTime < 120){
+            return BigDecimal.valueOf(0);
+        }else{
+            int time = cyclingTime / 60;
+            double t = time / 30;
+            if (t > 0) {
+                t = t + 1;
+            }
+            BigDecimal price = BigDecimal.valueOf(t);
+            return price;
         }
-        BigDecimal price = BigDecimal.valueOf(time);
-        return price;
+
     }
 
     public int updateVehicleImg(String vehicleId, String vehicleImg,String remark) throws Exception

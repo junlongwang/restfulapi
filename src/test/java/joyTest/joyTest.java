@@ -236,7 +236,7 @@ public class joyTest {
     @Test
     public void aTest() {
         try {
-            payRestfulService.updateDepositOrderById(21,PayType.weixin,"weixin","weixin",1479546894);
+            payRestfulService.updateDepositOrderById(21, PayType.weixin, "weixin", "weixin", 1479546894);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -274,5 +274,20 @@ public class joyTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    @Test
+    public void ADtEST(){
+        int time = 60*31 / 60;
+
+
+        double t = time / 30;
+
+        if (t >= 0) {
+            t = t + 1;
+        }
+        BigDecimal price = BigDecimal.valueOf(t);
+        System.out.println(price);
     }
 }

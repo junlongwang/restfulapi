@@ -182,7 +182,7 @@ public class PayRestfulApi {
                             if (result > 0) {
                                 userInfo userInfo = new userInfo();
                                 userInfo.setId(bankDepositOrder.getUserId());
-                                //userInfo.setGuid(wxNotifyOrder.getOpenid());
+                                userInfo.setOpenId(wxNotifyOrder.getOpenid());
                                 userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
                                 int userResult = userRestfulService.updateUserInfo(userInfo);
                                 if (userResult > 0)
@@ -194,10 +194,10 @@ public class PayRestfulApi {
                             logger.info("weixin余额充值");
                             result = payRestfulService.updateDepositOrderById(id, PayType.weixin, payDocumentId, merchantId, pay_at);
                             String attach = wxNotifyOrder.getAttach();
-//                            userInfo userInfo = new userInfo();
-//                            userInfo.setId(bankDepositOrder.getUserId());
-//                            userInfo.setGuid(wxNotifyOrder.getOpenid());
-//                            userRestfulService.updateUserInfo(userInfo);
+                            userInfo userInfo = new userInfo();
+                            userInfo.setId(bankDepositOrder.getUserId());
+                            userInfo.setOpenId(wxNotifyOrder.getOpenid());
+                            userRestfulService.updateUserInfo(userInfo);
 
                             if (attach != null && attach != "") {
 

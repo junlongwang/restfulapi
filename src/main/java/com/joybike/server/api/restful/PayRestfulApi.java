@@ -307,9 +307,11 @@ public class PayRestfulApi {
                                 if (result > 0) {
                                     userInfo userInfo = new userInfo();
                                     userInfo.setId(bankDepositOrder.getUserId());
+                                    logger.info("支付宝押金充值更新用户SecurityStatus为1，用户id为：" + bankDepositOrder.getUserId());
                                     userInfo.setSecurityStatus(SecurityStatus.normal.getValue());
                                     int userResult = userRestfulService.updateUserInfo(userInfo);
                                     if (userResult > 0)
+                                        logger.info("支付宝押金充值更新用户SecurityStatus字段成功，用户id为：" + bankDepositOrder.getUserId());
                                         return "success";
                                 }
                             } else {

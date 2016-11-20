@@ -103,9 +103,9 @@ private PayRestfulService payRestfulService;
         ThirdPayBean payBean = new ThirdPayBean();
         payBean.setOrderMoney(BigDecimal.valueOf(0.1));
         payBean.setChannelId(1);
-        payBean.setTransaction_id("2016111921001004640202377164");
-        payBean.setId(Long.valueOf(573));
-        payBean.setRefundid(123L);
+        payBean.setTransaction_id("2016112021001004810235067269");
+        payBean.setId(Long.valueOf(622));
+        payBean.setRefundid(199L);
         //调用第三方支付退款操作
         String result = ThirdPayService.executeRefund(payBean);
         System.out.print(result);

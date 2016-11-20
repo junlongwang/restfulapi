@@ -132,7 +132,19 @@ public class BikeDataUploadRestfulApi {
                     vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
                     //使用中
                     if(vehicle.getUseStatus()==2) {
-                        UserPayIngDto dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf("116.287"), Double.valueOf("40.043"));
+                        UserPayIngDto dto = null;
+                        //推送业务 锁车逻辑
+                        int i=1;
+                        while (i<=3) {
+                            try {
+                                dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf("116.287"), Double.valueOf("40.043"));
+                                break;
+                            } catch (Exception e) {
+                                logger.error("锁车执行业务失败：" + e.getMessage(), e);
+                                i++;
+                                Thread.sleep(2000);
+                            }
+                        }
                         //消息推送
                         logger.info("--------------------消息推送--------------------");
                         logger.info(JSON.toJSONString(dto));

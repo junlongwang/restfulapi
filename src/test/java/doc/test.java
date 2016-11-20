@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Created by lishaoyong on 16/10/26.
@@ -82,6 +83,17 @@ public class test {
     public void  ty(){
         long a = UnixTimeUtils.getUnixTime("2015-4-27 15:45:58");
         System.out.println(a);
+        try {
+            List<VehicleOrderDto> list = bicycleRestfulService.getOrderPaySuccess(30);
+            list.forEach(new Consumer<VehicleOrderDto>() {
+                @Override
+                public void accept(VehicleOrderDto dto) {
+                    System.out.println(dto);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 

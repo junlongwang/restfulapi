@@ -260,6 +260,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
 
             logger.info("剩余金额为:" + amount);
             logger.info("支付金额:" + payPrice);
+
             bankDepositOrder bankDepositOrder = depositOrderDao.getDepositOrderById(consumedDepositId);
 
             //可用余额不足,返回支付

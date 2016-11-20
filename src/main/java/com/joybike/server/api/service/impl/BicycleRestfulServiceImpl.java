@@ -648,7 +648,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Override
     public int updateVehicleStatausByCode(String orderCode,long payId) throws Exception{
-        return vehicleOrderDao.updateStatausByCode(orderCode,payId);
+        return vehicleOrderDao.updateStatausByCode(orderCode, payId);
     }
 
     /**
@@ -661,7 +661,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception {
 
         List<VehicleOrderDto> list = vehicleOrderDao.getOrderPaySuccess(userId);
-        list.stream().sorted((p, p2) -> (p2.getEndAt().compareTo(p.getEndAt()))).collect(toList());
+        if (list != null && list.size() >0){
+            list.stream().sorted((p, p2) -> (p2.getEndAt().compareTo(p.getEndAt()))).collect(toList());
+        }
         return list;
     }
 

@@ -632,8 +632,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         }else{
             throw new RestfulException(ReturnEnum.NoPay);
         }
-
-
     }
 
     /**

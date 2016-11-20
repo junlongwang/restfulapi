@@ -89,8 +89,8 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         //先记录充值记录
         depositOrder.setCreateAt(UnixTimeUtils.now());
         depositOrder.setRechargeType(RechargeType.balance.getValue());
-        depositOrder.setResidualCash(depositOrder.getCash());
-        depositOrder.setResidualAward(depositOrder.getAward());
+//        depositOrder.setResidualCash(depositOrder.getCash());
+//        depositOrder.setResidualAward(depositOrder.getAward());
         depositOrder.setStatus(DepositStatus.initial.getValue());
         depositOrder.setDiscountAt(0);
         long depositId = depositOrderDao.save(depositOrder);

@@ -70,7 +70,7 @@ public class PayRestfulApi {
             //押金充值
             if (payBean.getRechargeType() == 1) {
                 try {
-                    logger.info("微信公众号支付请求信息押金：" + payBean.toString());
+                    logger.info("支付请求信息押金：" + payBean.getChannelId() +":"+ payBean.toString());
                     String rechargeResult = forRecharge(payBean, userId);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
@@ -80,7 +80,7 @@ public class PayRestfulApi {
                 //余额充值
                 try {
                     String rechargeResult = recharge(payBean, userId);
-                    logger.info("微信公众号支付请求信息余额：" + payBean.toString());
+                    logger.info("支付请求信息余额："  + payBean.getChannelId() +":"+ payBean.toString());
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -492,7 +492,7 @@ public class PayRestfulApi {
         }
     }
 
-    //weiixn余额充值
+    //余额充值
     public String recharge(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = createRechargeOrder(payBean, userId);
         try {
@@ -530,6 +530,8 @@ public class PayRestfulApi {
         order.setUserId(userId);
         order.setCash(payBean.getOrderMoney());
         order.setAward(payBean.getOrderMoneyFree());
+        order.setResidualCash(payBean.getOrderMoney());
+        order.setResidualAward(payBean.getOrderMoneyFree());
         order.setPayType(payBean.getChannelId());
         order.setCreateAt(UnixTimeUtils.now());
         order.setRechargeType(payBean.getRechargeType());

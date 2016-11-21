@@ -1,6 +1,7 @@
 package joyTest;
 
 import com.joybike.server.api.Enum.ReturnEnum;
+import com.joybike.server.api.dao.BankMoneyFlowDao;
 import com.joybike.server.api.dto.UnlockDto;
 import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.VehicleOrderDto;
@@ -37,6 +38,10 @@ public class ActionTest {
     OrderRestfulService orderRestfulService;
     @Autowired
     BicycleRestfulService bicycleRestfulService;
+
+    @Autowired
+    BankMoneyFlowDao bankMoneyFlowDao;
+
 
     @Test
     public void subscribeTest(){
@@ -248,11 +253,7 @@ public class ActionTest {
 
     @Test
     public void dtoTest(){
-        try {
-            bicycleRestfulService.getOrderPaySuccess(1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong("625"));
     }
 
 

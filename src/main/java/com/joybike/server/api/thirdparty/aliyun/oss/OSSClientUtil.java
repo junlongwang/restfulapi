@@ -89,6 +89,27 @@ public class OSSClientUtil {
         return OSSConsts.PRE_IMG_URL+"RepairImg/"+name;
     }
 
+    public static String uploadGPSImag(String pic_path)
+    {
+        FileInputStream fileInputStream = null;
+        try {
+            fileInputStream = new FileInputStream(pic_path);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            OSSClientUtil util=new OSSClientUtil();
+            String name = UUID.randomUUID().toString()+".jpg";
+            util.uploadFile2OSS(fileInputStream, "GPSImage/", name);
+            fileInputStream.close();
+            util.destory();
+            return OSSConsts.PRE_IMG_URL+"GPSImage/"+name;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     /**
      * 获得图片路径

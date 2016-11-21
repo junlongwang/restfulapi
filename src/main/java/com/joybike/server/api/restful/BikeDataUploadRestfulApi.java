@@ -17,6 +17,7 @@ import com.joybike.server.api.service.UserRestfulService;
 import com.joybike.server.api.thirdparty.aliyun.oss.OSSClientUtil;
 import com.joybike.server.api.thirdparty.aliyun.pushHelper;
 import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
+import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.thirdparty.wxtenpay.util.DateUtil;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.apache.log4j.Logger;
@@ -28,7 +29,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.DoubleSummaryStatistics;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by 58 on 2016/10/31.
@@ -132,17 +136,66 @@ public class BikeDataUploadRestfulApi {
                     vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
                     //使用中
                     if(vehicle.getUseStatus()==2) {
-                        UserPayIngDto dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf("116.287"), Double.valueOf("40.043"));
-                        //消息推送
-                        logger.info("--------------------消息推送--------------------");
-                        logger.info(JSON.toJSONString(dto));
-                        logger.info("--------------------消息推送--------------------");
-                        UserDto userDto = userRestfulService.getUserInfoById(dto.getVehicleOrderDto().getUserId());
-                        if(userDto.getTargetType().equals("ios")) {
-                            pushHelper.PushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
+                        UserPayIngDto dto = null;
+                        //推送业务 锁车逻辑
+                        int i=1;
+                        while (i<=3) {
+                            try {
+                                dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf("116.287"), Double.valueOf("40.043"));
+                                break;
+                            } catch (Exception e) {
+                                logger.error("锁车执行业务失败：" + e.getMessage(), e);
+                                i++;
+                                Thread.sleep(2000);
+                            }
                         }
-                        else if(userDto.getTargetType().equals("android")){
-                            pushHelper.PushMessageToAndroid(JSON.toJSONString(dto), userDto.getGuid());
+                        //消息推送
+                        if(dto!=null) {
+                            logger.info("--------------------消息推送--------------------");
+                            logger.info(JSON.toJSONString(dto));
+                            logger.info("--------------------消息推送--------------------");
+                            UserDto userDto = userRestfulService.getUserInfoById(dto.getVehicleOrderDto().getUserId());
+                            if ("ios".equals(userDto.getTargetType())) {
+                                logger.info("--------------------ios消息推送--------------------");
+                                pushHelper.PushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
+                            } else if ("android".equals(userDto.getTargetType())) {
+                                logger.info("--------------------android消息推送--------------------");
+                                pushHelper.PushMessageToAndroid(JSON.toJSONString(dto), userDto.getGuid());
+                            } else {
+                                logger.info("--------------------ios消息推送--------------------");
+                                pushHelper.PushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
+                                logger.info("--------------------android消息推送--------------------");
+                                pushHelper.PushMessageToAndroid(JSON.toJSONString(dto), userDto.getGuid());
+                            }
+
+                            //更新行程距离和轨迹图片
+                            orderItem orderItem = orderRestfulService.getOrderItemByOrderCode(dto.getVehicleOrderDto().getOrderCode());
+                            if(orderItem!=null) {
+                                Long lockId = null;
+                                try {
+                                    lockId = vehicleDao.getLockByBicycleCode(dto.getVehicleOrderDto().getOrderCode());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                //获取行程GPS数据
+                                List<vehicleHeartbeat> list= vehicleHeartbeatDao.getVehicleHeartbeatList(lockId, dto.getVehicleOrderDto().getBeginAt(), dto.getVehicleOrderDto().getEndAt());
+                                List<String> data= new ArrayList<>();
+                                for (vehicleHeartbeat item : list)
+                                {
+                                    data.add(item.getLongitude()+","+item.getDimension());
+                                }
+
+                                //行程轨迹
+                                String localImage=AMapUtil.getLocalImage(data);
+                                String imageUrl=OSSClientUtil.uploadGPSImag(localImage);
+                                //行程距离
+                                Integer distance = AMapUtil.distances(data);
+                                orderItem.setCyclingImg(imageUrl);
+                                orderItem.setTripDist(BigDecimal.valueOf(distance));
+
+                                //更新行程距离和轨迹图片
+                                orderRestfulService.updateOrderItem(orderItem);
+                            }
                         }
                     }
                 }
@@ -177,6 +230,7 @@ public class BikeDataUploadRestfulApi {
             //GPS的纬度
             vehicleHeartbeat.setDimension(data.getDimension());
             vehicleHeartbeat.setCreateAt(UnixTimeUtils.now());
+            vehicleHeartbeat.setLockStatus(1);
             vehicleHeartbeatDao.save(vehicleHeartbeat);
         }
         catch (Exception e)

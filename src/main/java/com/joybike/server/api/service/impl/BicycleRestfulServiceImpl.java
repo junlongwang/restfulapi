@@ -645,13 +645,16 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         //修改车状态
         List<subscribeInfo> list = subscribeInfoDao.getSubscribeInfoByBicycleCodeList(bicycleCode, SubscribeStatus.use);
         VehicleOrderDto dto = new VehicleOrderDto();
-
+        logger.info("获取信息条数" + list.size());
         if (list != null && list.size() > 0) {
-            for (int i = 0; i < list.size()-1; i++) {
+            for (int i = 0; i <= list.size()-1; i++) {
                 subscribeInfo subscribeInfo = list.get(i);
+                logger.info(subscribeInfo);
                 if (subscribeInfo != null) {
                     try {
                         vehicleOrder order = orderRestfulService.getOrderByVehicleId(subscribeInfo.getVehicleId());
+                        logger.info(order);
+
                         if (order != null){
                             if (order.getOrderCode().equals(subscribeInfo.getSubscribeCode())) {
                                 orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
@@ -674,6 +677,8 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                                 } else {
                                     return null;
                                 }
+                            }else {
+                                continue;
                             }
                         }
 

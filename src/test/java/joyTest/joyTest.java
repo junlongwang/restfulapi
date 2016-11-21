@@ -280,7 +280,7 @@ public class joyTest {
     @Test
     public void ADtEST(){
         try {
-            VehicleOrderDto dto = bicycleRestfulService.lock("107801214941", 1479666656, 116.287, 40.043);
+            VehicleOrderDto dto = bicycleRestfulService.lock("10780121494", 1479721564, 116.287, 40.043);
             System.out.println(dto);
         } catch (Exception e) {
             e.printStackTrace();

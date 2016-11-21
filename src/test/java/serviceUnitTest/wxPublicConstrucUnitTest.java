@@ -101,11 +101,11 @@ private PayRestfulService payRestfulService;
 //        bankDepositOrder order = payRestfulService.getDepositOrderId(refundDto.getUserId());
 //        System.out.print(order);
         ThirdPayBean payBean = new ThirdPayBean();
-        payBean.setOrderMoney(BigDecimal.valueOf(0.1));
+        payBean.setOrderMoney(BigDecimal.valueOf(99));
         payBean.setChannelId(1);
-        payBean.setTransaction_id("2016112021001004810235067269");
-        payBean.setId(Long.valueOf(622));
-        payBean.setRefundid(199L);
+        payBean.setTransaction_id("2016112121001004640222418853");
+        payBean.setId(Long.valueOf(629));
+        payBean.setRefundid(220L);
         //调用第三方支付退款操作
         String result = ThirdPayService.executeRefund(payBean);
         System.out.print(result);

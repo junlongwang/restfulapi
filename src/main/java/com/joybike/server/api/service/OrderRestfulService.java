@@ -110,4 +110,6 @@ public interface OrderRestfulService {
      * @throws Exception
      */
     UserPayIngDto userPayOrder(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception;
+
+    int updateOrderItem(orderItem orderItem);
 }

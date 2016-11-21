@@ -302,4 +302,27 @@ public class BicycleRestfulApi {
         }
         return ResponseEntity.ok(new Message<String>(false, 111, null, "上传车辆停放位置图片失败！"));
     }
+
+
+    /**
+     *支持H5 上传车辆停放位置图片
+     * @param dto
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "h5UploadParkingImg",method =RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<Message<String>> uploadParkingImg(@RequestBody uploadParkingImgDto dto) throws Exception {
+
+        try {
+            String imageName =dto.getParkingImg();
+            bicycleRestfulService.updateVehicleImg(dto.getBicycleCode(),imageName,dto.getRemark());
+            return ResponseEntity.ok(new Message<String>(true, 0, null, "上传成功"));
+        }
+        catch (Exception e)
+        {
+            logger.error("上传车辆停放位置图片报错：",e);
+        }
+        return ResponseEntity.ok(new Message<String>(false, 111, null, "上传车辆停放位置图片失败！"));
+    }
 }

@@ -432,7 +432,13 @@ public class PayRestfulApi {
                         } catch (Exception e) {
                             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(), ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
                         }
-                        if (res_uprefund > 0 && res_upUser > 0) {
+                        int res_upDeposite = 0;
+                        try{
+                            res_upDeposite = payRestfulService.updateDepositOrderStatusToRefundById(order.getId());
+                        }catch (Exception e){
+                            return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(), ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
+                        }
+                        if (res_uprefund > 0 && res_upUser > 0 && res_upDeposite > 0) {
                             return ResponseEntity.ok(new Message<String>(true, 0, null, "押金退款已经受理，后续状态在48小时内注意查看系统消息！"));
                         }
                     }

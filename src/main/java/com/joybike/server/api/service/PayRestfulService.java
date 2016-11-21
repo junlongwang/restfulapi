@@ -109,6 +109,15 @@ public interface PayRestfulService {
      */
     int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception;
 
+
+    /**
+     * 退款时更新用户押金充值订单为退款状态
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    int updateDepositOrderStatusToRefundById(long id) throws Exception;
+
     /**
      * 获取用户充值订单ID（有且只有唯一一条支付成功的充值订单ID）
      *

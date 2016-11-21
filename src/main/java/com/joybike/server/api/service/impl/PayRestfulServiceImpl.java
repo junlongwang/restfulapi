@@ -516,6 +516,18 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         logger.info("现金流修改信息修改:" + transactionId);
 //        int flowId = bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong(transactionId));
 //        logger.info("现金流修改信息:" + flowId);
-        return depositOrderDao.updateDepositOrderById_Yajin(id,transactionId,pay_at,status);
+        return depositOrderDao.updateDepositOrderById_Yajin(id, transactionId, pay_at, status);
+    }
+
+    /**
+     * 退款时更新用户押金充值订单为退款状态
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public int updateDepositOrderStatusToRefundById(long id) throws Exception{
+        logger.info("修改押金充值id为:" + id + "的充值订单状态为退款");
+        return depositOrderDao.updateDepositOrderStatusToRefundById(id);
     }
 }

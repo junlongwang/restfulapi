@@ -24,7 +24,7 @@ public class VehicleHeartbeatDaoImpl extends Reository<vehicleHeartbeat> impleme
      * @param endAt
      * @return
      */
-    final String getVehicleHeartbeatListSql = "select * from vehicleHeartbeat where lockId = ? and createAt between ? and ?";
+    final String getVehicleHeartbeatListSql = "select * from vehicleHeartbeat where lockId = ? and createAt between ? and ? and lockStatus=1 AND longitude IS NOT NULL AND DIMENSION IS NOT NULL";
     @Override
     public List<vehicleHeartbeat> getVehicleHeartbeatList(long lockId, int beginAt, int endAt)  throws Exception{
         try {

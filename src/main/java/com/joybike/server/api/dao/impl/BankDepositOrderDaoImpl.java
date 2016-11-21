@@ -147,6 +147,8 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
      * 押金充值成功时根据id更新充值订单状态
      */
     final String UpdateDepositOrderByIdSql_Yajin = "update bankdepositorder set status =:status,payDocumentId =:payDocumentId,payAt =:payAt where id =:id";
+    final String updateDepositOrderStatusToRefundById = "update bankdepositorder set status =3 where id =:id";
+
 
     @Override
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status){
@@ -157,6 +159,16 @@ public class BankDepositOrderDaoImpl extends Reository<bankDepositOrder> impleme
             map.put("payDocumentId", transactionId);
             map.put("payAt", pay_at);
             return execSQL(UpdateDepositOrderByIdSql_Yajin, map);
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+    @Override
+    public  int updateDepositOrderStatusToRefundById(long id){
+        try {
+            Map map = new HashMap();
+            map.put("id", id);
+            return execSQL(updateDepositOrderStatusToRefundById, map);
         } catch (Exception e) {
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }

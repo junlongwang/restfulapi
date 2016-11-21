@@ -70,4 +70,11 @@ public interface BankDepositOrderDao extends IRepository<bankDepositOrder> {
      * @throws Exception
      */
     int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status);
+
+
+    /**
+     * 更新充值订单为退款状态
+     * @return
+     */
+    int updateDepositOrderStatusToRefundById(long id);
 }

@@ -246,5 +246,10 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
         return userPayIngDto;
     }
 
+    public int updateOrderItem(orderItem orderItem)
+    {
+        return orderItemDao.update(orderItem);
+    }
+
 
 }

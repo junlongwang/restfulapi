@@ -399,8 +399,9 @@ public class PayRestfulApi {
         if (refundDto.getUserId() > 0) {
             logger.info("userID为：" + refundDto.getUserId() + "的用户开始请求押金退款");
             try{
-                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(refundDto.getUserId());
-                if (vehicleOrder != null) {
+                vehicleOrder vehicleOrder_new = orderRestfulService.getNoPayOrderByUserId(refundDto.getUserId(),OrderStatus.newly);
+                vehicleOrder vehicleOrder_ing = orderRestfulService.getNoPayOrderByUserId(refundDto.getUserId(),OrderStatus.end);
+                if (vehicleOrder_new != null && vehicleOrder_ing != null) {
                     logger.info("请求退款时,有未支付的订单，拒绝退款");
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Refused.getErrorCode(), ReturnEnum.refund_Refused.getErrorDesc(), "该用户存在未支付的骑行订单"));
                 }

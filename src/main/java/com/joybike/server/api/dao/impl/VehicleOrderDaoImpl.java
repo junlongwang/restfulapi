@@ -52,11 +52,11 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
     final String getNoPayByUserIdSql = "select * from vehicleOrder where userId = :userId and status = :status";
 
     @Override
-    public vehicleOrder getNoPayByUserId(long userId) throws Exception {
+    public vehicleOrder getNoPayByUserId(long userId,OrderStatus orderStatus) throws Exception {
         try {
             Map map = new HashMap();
             map.put("userId", userId);
-            map.put("status", OrderStatus.end.getValue());
+            map.put("status", orderStatus.getValue());
 
             try {
                 return (vehicleOrder) this.jdbcTemplate.queryForObject(getNoPayByUserIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));

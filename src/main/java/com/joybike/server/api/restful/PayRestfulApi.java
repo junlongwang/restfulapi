@@ -1,9 +1,6 @@
 package com.joybike.server.api.restful;
 
-import com.joybike.server.api.Enum.RechargeType;
-import com.joybike.server.api.Enum.ReturnEnum;
-import com.joybike.server.api.Enum.PayType;
-import com.joybike.server.api.Enum.SecurityStatus;
+import com.joybike.server.api.Enum.*;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
@@ -203,7 +200,7 @@ public class PayRestfulApi {
 
                                 Long consumeid = Long.valueOf(attach);
 
-                                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(bankDepositOrder.getUserId());
+                                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(bankDepositOrder.getUserId(), OrderStatus.end);
                                 logger.info("未支付订单信息:" + vehicleOrder);
                                 if (vehicleOrder != null) {
                                     logger.info("weiixn回调时,有未支付的订单，进行扣费");
@@ -328,7 +325,7 @@ public class PayRestfulApi {
                                     if (attach != null && attach != "") {
                                         Long consumeid = Long.valueOf(attach);
                                         Long userid = bankDepositOrder.getUserId();
-                                        vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid);
+                                        vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid, OrderStatus.end);
                                         logger.info("未支付订单信息:" + vehicleOrder);
                                         if (vehicleOrder != null) {
                                             logger.info("支付宝充值时，发现有为支付的订单,进行扣费");

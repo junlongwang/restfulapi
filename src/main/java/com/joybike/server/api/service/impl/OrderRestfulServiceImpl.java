@@ -115,9 +115,10 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
      * @return
      */
     @Override
-    public vehicleOrder getNoPayOrderByUserId(long userId) throws Exception {
-        return vehicleOrderDao.getNoPayByUserId(userId);
+    public vehicleOrder getNoPayOrderByUserId(long userId,OrderStatus orderStatus) throws Exception {
+        return vehicleOrderDao.getNoPayByUserId(userId,orderStatus);
     }
+
 
     /**
      * 根据车辆ID获取使用该车的订单信息

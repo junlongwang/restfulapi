@@ -278,12 +278,14 @@ public class joyTest {
 
 
     @Test
-    public void ADtEST(){
-        try {
-            VehicleOrderDto dto = bicycleRestfulService.lock("10780121494", 1479721564, 116.287, 40.043);
-            System.out.println(dto);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void ADtEST() throws Exception {
+        VehicleOrderSubscribeDto dto = bicycleRestfulService.getUseInfo(35);
+        if (dto != null){
+            if (dto.getInfo() !=null){
+                System.out.println(dto.getInfo().getId() + "*********************");
+            }
+        }else {
+            System.out.println("8989898");
         }
     }
 }

@@ -865,7 +865,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         if (vehicleOrderDto != null) {
             dto.setVehicleOrderDto(vehicleOrderDto);
         } else if (subscribeInfo != null) {
-            if (subscribeInfo.getEndAt() - UnixTimeUtils.now() > 0) {
+            if (subscribeInfo.getEndAt() - UnixTimeUtils.now() >= 0) {
                 dto.setInfo(subscribeInfo);
             }
         }

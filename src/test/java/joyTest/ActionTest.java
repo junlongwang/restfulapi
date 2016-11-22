@@ -1,5 +1,6 @@
 package joyTest;
 
+import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.BankMoneyFlowDao;
 import com.joybike.server.api.dto.UnlockDto;
@@ -49,7 +50,7 @@ public class ActionTest {
         String bicycleCode = "yj05";
         int beginAt = UnixTimeUtils.now();
         try {
-            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
+            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId, OrderStatus.end);
 
             if (order != null) {
                 System.out.println("有未支付的订单");
@@ -118,7 +119,7 @@ public class ActionTest {
 
         try {
             //获取是否有未支付订单
-            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId);
+            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(userId, OrderStatus.end);
 
             if (order != null) {
 //                return ResponseEntity.ok(new Message<String>(false, ReturnEnum.NoPay_Error.toString(), null));
@@ -273,7 +274,7 @@ public class ActionTest {
             VehicleOrderDto dto1 = new VehicleOrderDto();
             if (dto != null){
                 //获取是否有未支付订单
-                vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(dto.getUserId());
+                vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(dto.getUserId(), OrderStatus.end);
 
                 if (order != null) {
 

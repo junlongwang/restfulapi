@@ -1,5 +1,6 @@
 package com.joybike.server.api.dao;
 
+import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Infrustructure.IRepository;
 import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.vehicleOrder;
@@ -25,7 +26,7 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
     /**
      * 根据用户ID获取未完成订单
      */
-    vehicleOrder getNoPayByUserId(long userId) throws Exception;
+    vehicleOrder getNoPayByUserId(long userId,OrderStatus orderStatus) throws Exception;
 
     /**
      * 锁车时修改订单
@@ -108,4 +109,6 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
     VehicleOrderDto getLastOrderPaySuccess(long userId) throws Exception;
 
     Integer getTimes(long userId) throws Exception;
+
+    vehicleOrder getOrderByVehicleId(String vehicleId) throws Exception;
 }

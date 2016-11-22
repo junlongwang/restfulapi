@@ -4,6 +4,8 @@ import com.joybike.server.api.Enum.SubscribeStatus;
 import com.joybike.server.api.Infrustructure.IRepository;
 import com.joybike.server.api.model.subscribeInfo;
 
+import java.util.List;
+
 /**
  * Created by lishaoyong on 16/10/20.
  */
@@ -60,4 +62,5 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
 
     int deleteByOrderCode(String orderCode);
 
+    List<subscribeInfo> getSubscribeInfoByBicycleCodeList(String vehicleId,SubscribeStatus status) throws Exception;
 }

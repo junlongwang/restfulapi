@@ -257,19 +257,20 @@ public class PayRestfulServiceImpl implements PayRestfulService {
 
         VehicleOrderDto dto =  vehicleOrderDao.getOrderByOrderCode(orderCode);
 
+        logger.info("现在是否充值消费,取决于充值订单是否大于0:" + consumedDepositId);
         if (dto.getStatus() == 15){
             throw new RestfulException(ReturnEnum.NoPay);
         }else{
             double amount = acountDao.getUserAmount(userId);
 
-            logger.info("剩余金额为:" + amount);
-            logger.info("支付金额:" + payPrice);
+            logger.info("用户剩余金额为:" + amount);
+            logger.info("用户需要支付金额:" + payPrice);
 
             bankDepositOrder bankDepositOrder = depositOrderDao.getDepositOrderById(consumedDepositId);
 
             //可用余额不足,返回支付
             if (BigDecimal.valueOf(amount).compareTo(payPrice) < 0) {
-                logger.info("余额不足请支付:" + amount);
+                logger.info("用户余额不足，请支付:" + amount);
 
 //            throw new RestfulException(ReturnEnum.Pay_Low);
                 return -1;

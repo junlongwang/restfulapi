@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
      * @param vehicleId
      * @return
      */
-    final String getSubscribeInfoByBicycleCode = "select * from subscribeInfo where vehicleId = :vehicleId and status = :status";
+    final String getSubscribeInfoByBicycleCode = "select * from subscribeInfo where vehicleId = :vehicleId and status = :status order by createAt desc limit 1";
 
     @Override
     public subscribeInfo getSubscribeInfoByBicycleCode(String vehicleId,SubscribeStatus status) throws Exception {
@@ -36,6 +37,29 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
             map.put("status",status.getValue());
             try {
                 return (subscribeInfo) this.jdbcTemplate.queryForObject(getSubscribeInfoByBicycleCode, map, new BeanPropertyRowMapper(subscribeInfo.class));
+            } catch (Exception e) {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
+    }
+
+    /**
+     * 根据车辆ID获取预约信息
+     *
+     * @param vehicleId
+     * @return
+     */
+    final String getSubscribeInfoByBicycleCodeList = "select * from subscribeInfo where vehicleId = ? and status = ?";
+
+    @Override
+    public List<subscribeInfo> getSubscribeInfoByBicycleCodeList(String vehicleId,SubscribeStatus status) throws Exception {
+        try {
+
+            Object[] object = new Object[]{vehicleId,status.getValue()};
+            try {
+                return this.jdbcTemplate.getJdbcOperations().query(getSubscribeInfoByBicycleCodeList, object, new BeanPropertyRowMapper(subscribeInfo.class));
             } catch (Exception e) {
                 return null;
             }

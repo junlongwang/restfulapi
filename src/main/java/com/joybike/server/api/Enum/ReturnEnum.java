@@ -95,6 +95,7 @@ public enum ReturnEnum {
     Submit_Error(5013, "故障申报失败"),
     Appointment_Error(5014, "预约失败"),
     Use_Self_Vehicle(5015, "您正在使用车辆中"),
+    UseNoTwo(5016,"请勿重复解锁"),
 
 
 

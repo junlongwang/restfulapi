@@ -52,11 +52,11 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
     final String getNoPayByUserIdSql = "select * from vehicleOrder where userId = :userId and status = :status";
 
     @Override
-    public vehicleOrder getNoPayByUserId(long userId) throws Exception {
+    public vehicleOrder getNoPayByUserId(long userId,OrderStatus orderStatus) throws Exception {
         try {
             Map map = new HashMap();
             map.put("userId", userId);
-            map.put("status", OrderStatus.end.getValue());
+            map.put("status", orderStatus.getValue());
 
             try {
                 return (vehicleOrder) this.jdbcTemplate.queryForObject(getNoPayByUserIdSql, map, new BeanPropertyRowMapper(vehicleOrder.class));
@@ -337,5 +337,30 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
             throw new RestfulException(ReturnEnum.DATABASE_ERROR);
         }
 
+    }
+
+
+    /**
+     * 根据订单code获取订单信息
+     *
+     * @param userId
+     * @return
+     */
+    final String getOrderByVehicleId = "select * from vehicleorder where vehicleId = :vehicleId and status = 1 order by id desc limit 1";
+
+    @Override
+    public vehicleOrder getOrderByVehicleId(String vehicleId) throws Exception{
+        try {
+            Map map = new HashMap<>();
+            map.put("vehicleId",vehicleId);
+            try {
+                return (vehicleOrder) this.jdbcTemplate.queryForObject(getOrderByVehicleId, map, new BeanPropertyRowMapper(vehicleOrder.class));
+            } catch (Exception e) {
+                return null;
+            }
+
+        } catch (Exception e) {
+            throw new RestfulException(ReturnEnum.DATABASE_ERROR);
+        }
     }
 }

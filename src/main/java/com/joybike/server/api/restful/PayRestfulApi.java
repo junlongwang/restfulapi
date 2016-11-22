@@ -1,9 +1,6 @@
 package com.joybike.server.api.restful;
 
-import com.joybike.server.api.Enum.RechargeType;
-import com.joybike.server.api.Enum.ReturnEnum;
-import com.joybike.server.api.Enum.PayType;
-import com.joybike.server.api.Enum.SecurityStatus;
+import com.joybike.server.api.Enum.*;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
@@ -70,7 +67,7 @@ public class PayRestfulApi {
             //押金充值
             if (payBean.getRechargeType() == 1) {
                 try {
-                    logger.info("支付请求信息押金：" + payBean.getChannelId() +":"+ payBean.toString());
+                    logger.info("支付请求信息押金：" + payBean.getChannelId() + ":" + payBean.toString());
                     String rechargeResult = forRecharge(payBean, userId);
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
@@ -80,7 +77,7 @@ public class PayRestfulApi {
                 //余额充值
                 try {
                     String rechargeResult = recharge(payBean, userId);
-                    logger.info("支付请求信息余额："  + payBean.getChannelId() +":"+ payBean.toString());
+                    logger.info("支付请求信息余额：" + payBean.getChannelId() + ":" + payBean.toString());
                     return ResponseEntity.ok(new Message<String>(true, 0, null, rechargeResult));
                 } catch (Exception e) {
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.Recharge_Error.getErrorCode(), ReturnEnum.BankDepositOrderList_Error.getErrorDesc() + "-" + e.getMessage(), null));
@@ -203,11 +200,12 @@ public class PayRestfulApi {
 
                                 Long consumeid = Long.valueOf(attach);
 
-                                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(bankDepositOrder.getUserId());
-
+                                vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(bankDepositOrder.getUserId(), OrderStatus.end);
+                                logger.info("未支付订单信息:" + vehicleOrder);
                                 if (vehicleOrder != null) {
                                     logger.info("weiixn回调时,有未支付的订单，进行扣费");
                                     int cosumeResult = payRestfulService.consume(vehicleOrder.getOrderCode(), vehicleOrder.getBeforePrice(), bankDepositOrder.getUserId(), id);
+                                    logger.info("微信回调消费状态：" + cosumeResult);
                                     if (result > 0 && cosumeResult == 0) {
                                         return responseHtml;
                                     }
@@ -312,7 +310,7 @@ public class PayRestfulApi {
                                     int userResult = userRestfulService.updateUserInfo(userInfo);
                                     if (userResult > 0)
                                         logger.info("支付宝押金充值更新用户SecurityStatus字段成功，用户id为：" + bankDepositOrder.getUserId());
-                                        return "success";
+                                    return "success";
                                 }
                             } else {
                                 //余额充值成功更新充值订单信息
@@ -327,10 +325,12 @@ public class PayRestfulApi {
                                     if (attach != null && attach != "") {
                                         Long consumeid = Long.valueOf(attach);
                                         Long userid = bankDepositOrder.getUserId();
-                                        vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid);
+                                        vehicleOrder vehicleOrder = orderRestfulService.getNoPayOrderByUserId(userid, OrderStatus.end);
+                                        logger.info("未支付订单信息:" + vehicleOrder);
                                         if (vehicleOrder != null) {
                                             logger.info("支付宝充值时，发现有为支付的订单,进行扣费");
                                             int cosumeResult = payRestfulService.consume(vehicleOrder.getOrderCode(), vehicleOrder.getBeforePrice(), userid, Long.valueOf(notify.getOut_trade_no()));
+                                            logger.info("支付宝回调消费状态：" + cosumeResult);
                                             if (result > 0 && cosumeResult == 0) {
                                                 return "success";
                                             }
@@ -442,9 +442,9 @@ public class PayRestfulApi {
                             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(), ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
                         }
                         int res_upDeposite = 0;
-                        try{
+                        try {
                             res_upDeposite = payRestfulService.updateDepositOrderStatusToRefundById(order.getId());
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Error.getErrorCode(), ReturnEnum.refund_Error.getErrorDesc(), "退款失败"));
                         }
                         if (res_uprefund > 0 && res_upUser > 0 && res_upDeposite > 0) {
@@ -515,7 +515,7 @@ public class PayRestfulApi {
     public String recharge(ThirdPayBean payBean, long userId) {
         bankDepositOrder order = createRechargeOrder(payBean, userId);
         try {
-            long orderId  = payRestfulService.recharge(order);
+            long orderId = payRestfulService.recharge(order);
             if (orderId > 0) {
                 payBean.setId(orderId);
                 return ThirdPayService.execute(payBean);

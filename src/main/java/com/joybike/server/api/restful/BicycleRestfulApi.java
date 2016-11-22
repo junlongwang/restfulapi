@@ -1,6 +1,7 @@
 package com.joybike.server.api.restful;
 
 import com.joybike.server.api.Enum.DisposeStatus;
+import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
 import com.joybike.server.api.dto.*;
@@ -69,7 +70,7 @@ public class BicycleRestfulApi {
         logger.info(subscribeDto.getUserId() + ":" + subscribeDto.getBicycleCode() + ":" + subscribeDto.getBeginAt());
 
         try {
-            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(subscribeDto.getUserId());
+            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(subscribeDto.getUserId(), OrderStatus.end);
             double acountMoney = userRestfulService.getUserAcountMoneyByuserId(subscribeDto.getUserId());
 
             if (order != null) {
@@ -159,18 +160,26 @@ public class BicycleRestfulApi {
             long orderId = 0;
 
             //获取是否有未支付订单
-            vehicleOrder order = orderRestfulService.getNoPayOrderByUserId(unlockDto.getUserId());
+            vehicleOrder noPayorder = orderRestfulService.getNoPayOrderByUserId(unlockDto.getUserId(), OrderStatus.end);
+
+            vehicleOrder useOrder = orderRestfulService.getNoPayOrderByUserId(unlockDto.getUserId(), OrderStatus.newly);
+
             double acountMoney = userRestfulService.getUserAcountMoneyByuserId(unlockDto.getUserId());
 
             VehicleOrderDto dto = new VehicleOrderDto();
-            if (order != null) {
+            if (noPayorder != null) {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.NoPay_Error.getErrorCode(), ReturnEnum.NoPay_Error.getErrorDesc(), null));
             } else {
-                if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
-                    return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.PayZero.getErrorCode(), ReturnEnum.PayZero.getErrorDesc(), null));
+                if (useOrder != null){
+                    return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.UseNoTwo.getErrorCode(), ReturnEnum.UseNoTwo.getErrorDesc(), null));
                 }else{
-                    dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
+                    if (new BigDecimal(acountMoney).compareTo(BigDecimal.ZERO) == 0){
+                        return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.PayZero.getErrorCode(), ReturnEnum.PayZero.getErrorDesc(), null));
+                    }else{
+                        dto = bicycleRestfulService.unlock(unlockDto.getUserId(), unlockDto.getBicycleCode(), unlockDto.getBeginAt(), unlockDto.getBeginLongitude(), unlockDto.getBeginDimension());
+                    }
                 }
+
             }
 
             if (dto != null) {

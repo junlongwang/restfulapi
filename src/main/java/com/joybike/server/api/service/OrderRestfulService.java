@@ -1,7 +1,9 @@
 package com.joybike.server.api.service;
 
 
+import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.dto.UserPayIngDto;
+import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.model.bankDepositOrder;
 import com.joybike.server.api.model.orderItem;
 import com.joybike.server.api.model.product;
@@ -35,7 +37,7 @@ public interface OrderRestfulService {
      * @param userId
      * @return
      */
-    vehicleOrder getNoPayOrderByUserId(long userId) throws Exception;
+    vehicleOrder getNoPayOrderByUserId(long userId,OrderStatus orderStatus) throws Exception;
 
     /**
      *  据车辆ID获取 户 完成订单
@@ -112,4 +114,5 @@ public interface OrderRestfulService {
     UserPayIngDto userPayOrder(String bicycleCode, int endAt, double endLongitude, double endDimension) throws Exception;
 
     int updateOrderItem(orderItem orderItem);
+
 }

@@ -133,15 +133,55 @@ public class BikeDataUploadRestfulApi {
                 }
                 String temp = RedixUtil.getString(heartbeat.getLockId() + "_lockCount");
                 if(temp.equals("1") || temp=="1") {
+                    logger.info(heartbeat.getLockId()+"车辆锁车.......");
+
                     vehicle vehicle = vehicleDao.getVehicleBylockId(heartbeat.getLockId().toString());
                     //使用中
                     if(vehicle.getUseStatus()==2) {
+
+                        logger.info(heartbeat.getLockId()+"车辆锁车,更新行程距离和轨迹图片......");
+                        //更新行程距离和轨迹图片
+                        orderItem orderItem = orderRestfulService.getOrderItemByOrderCode(vehicle.getVehicleId());
+                        if(orderItem!=null) {
+                            Long lockId = vehicle.getLockId();
+                            //获取行程GPS数据
+                            List<vehicleHeartbeat> list= vehicleHeartbeatDao.getVehicleHeartbeatList(lockId, orderItem.getBeginAt(), UnixTimeUtils.now());
+                            List<String> data= new ArrayList<>();
+                            for (vehicleHeartbeat item : list)
+                            {
+                                data.add(item.getLongitude()+","+item.getDimension());
+                            }
+
+                            //行程轨迹
+                            String localImage=AMapUtil.getLocalImage(data);
+                            String imageUrl=OSSClientUtil.uploadGPSImag(localImage);
+                            //行程距离
+                            Integer distance = AMapUtil.distances(data);
+                            orderItem.setCyclingImg(imageUrl);
+                            orderItem.setTripDist(BigDecimal.valueOf(distance));
+
+                            logger.info("行程距离:"+distance+",行程轨迹图片URL:"+imageUrl);
+
+                            //更新行程距离和轨迹图片
+                            orderRestfulService.updateOrderItem(orderItem);
+                        }
+
                         UserPayIngDto dto = null;
                         //推送业务 锁车逻辑
                         int i=1;
                         while (i<=3) {
                             try {
-                                dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Double.valueOf("116.287"), Double.valueOf("40.043"));
+
+                                //如果车辆没有上传GPS数据，比如GPS信号不好或者在屋里等,设置一个默认
+                                Double Dimension=Double.valueOf("40.043");
+                                Double Longitude=Double.valueOf("116.287");
+                                //有GPS数据
+                                if (values[3].equals("0")) {
+                                    Dimension=Double.valueOf(values[5]);
+                                    Longitude=Double.valueOf(values[6]);
+                                }
+                                dto = orderRestfulService.userPayOrder(vehicle.getVehicleId(), UnixTimeUtils.now(), Longitude, Dimension);
+                                logger.info("--------------------锁车逻辑执行中orderRestfulService.userPayOrder锁车成功--------------------，执行次数："+i);
                                 break;
                             } catch (Exception e) {
                                 logger.error("锁车执行业务失败：" + e.getMessage(), e);
@@ -166,35 +206,6 @@ public class BikeDataUploadRestfulApi {
                                 pushHelper.PushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
                                 logger.info("--------------------android消息推送--------------------");
                                 pushHelper.PushMessageToAndroid(JSON.toJSONString(dto), userDto.getGuid());
-                            }
-
-                            //更新行程距离和轨迹图片
-                            orderItem orderItem = orderRestfulService.getOrderItemByOrderCode(dto.getVehicleOrderDto().getOrderCode());
-                            if(orderItem!=null) {
-                                Long lockId = null;
-                                try {
-                                    lockId = vehicleDao.getLockByBicycleCode(dto.getVehicleOrderDto().getOrderCode());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                //获取行程GPS数据
-                                List<vehicleHeartbeat> list= vehicleHeartbeatDao.getVehicleHeartbeatList(lockId, dto.getVehicleOrderDto().getBeginAt(), dto.getVehicleOrderDto().getEndAt());
-                                List<String> data= new ArrayList<>();
-                                for (vehicleHeartbeat item : list)
-                                {
-                                    data.add(item.getLongitude()+","+item.getDimension());
-                                }
-
-                                //行程轨迹
-                                String localImage=AMapUtil.getLocalImage(data);
-                                String imageUrl=OSSClientUtil.uploadGPSImag(localImage);
-                                //行程距离
-                                Integer distance = AMapUtil.distances(data);
-                                orderItem.setCyclingImg(imageUrl);
-                                orderItem.setTripDist(BigDecimal.valueOf(distance));
-
-                                //更新行程距离和轨迹图片
-                                orderRestfulService.updateOrderItem(orderItem);
                             }
                         }
                     }

@@ -211,7 +211,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
         int updateCount = depositOrderDao.updateDepositOrderById(id, payType, payDocumentId, merchantId, payAt);
 
         //修改流水信息
-//        bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong(payDocumentId));
+        bankMoneyFlowDao.updateBakMoneyFlow(id);
 
         logger.info("余额充值回调:" + payType +"," + "充值信息修改:" + updateCount);
         //充值回调成功的时候修改用户的余额信息
@@ -515,7 +515,7 @@ public class PayRestfulServiceImpl implements PayRestfulService {
     public int updateDepositOrderById_Yajin(long id, String transactionId, int pay_at, int status) throws Exception{
         //修改流水信息
         logger.info("现金流修改信息修改:" + transactionId);
-//        int flowId = bankMoneyFlowDao.updateBakMoneyFlow(Long.parseLong(transactionId));
+        bankMoneyFlowDao.updateBakMoneyFlow(id);
 //        logger.info("现金流修改信息:" + flowId);
         return depositOrderDao.updateDepositOrderById_Yajin(id, transactionId, pay_at, status);
     }

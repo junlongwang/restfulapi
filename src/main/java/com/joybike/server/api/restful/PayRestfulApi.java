@@ -4,6 +4,7 @@ import com.joybike.server.api.Enum.*;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
 import com.joybike.server.api.ThirdPayService.impl.ThirdPayServiceImpl;
 import com.joybike.server.api.ThirdPayService.ThirdPayService;
+import com.joybike.server.api.dao.SubscribeInfoDao;
 import com.joybike.server.api.dao.VehicleOrderDao;
 import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
@@ -47,9 +48,8 @@ public class PayRestfulApi {
     private OrderRestfulService orderRestfulService;
     @Autowired
     private UserRestfulService userRestfulService;
-
     @Autowired
-    private VehicleOrderDao vehicleOrderDao;
+    SubscribeInfoDao subscribeInfoDao;
 
     private String wxAppmch_id = "1407599302";
     private String wxPubmch_id = "1401808502";
@@ -401,7 +401,8 @@ public class PayRestfulApi {
             try{
                 vehicleOrder vehicleOrder_new = orderRestfulService.getNoPayOrderByUserId(refundDto.getUserId(),OrderStatus.newly);
                 vehicleOrder vehicleOrder_ing = orderRestfulService.getNoPayOrderByUserId(refundDto.getUserId(),OrderStatus.end);
-                if (vehicleOrder_new != null && vehicleOrder_ing != null) {
+                subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(refundDto.getUserId(), SubscribeStatus.subscribe);
+                if (vehicleOrder_new != null || vehicleOrder_ing != null || subscribeInfo != null) {
                     logger.info("请求退款时,有未支付的订单，拒绝退款");
                     return ResponseEntity.ok(new Message<String>(false, ReturnEnum.refund_Refused.getErrorCode(), ReturnEnum.refund_Refused.getErrorDesc(), "该用户存在未支付的骑行订单"));
                 }

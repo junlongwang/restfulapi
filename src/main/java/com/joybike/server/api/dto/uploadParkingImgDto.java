@@ -5,9 +5,21 @@ package com.joybike.server.api.dto;
  */
 public class uploadParkingImgDto {
 
+    /**
+     * 用户ID
+     */
     private long userId;
+    /**
+     * 车辆编码
+     */
     private String bicycleCode;
+    /**
+     * 车辆停放位置图片URL
+     */
     private String ParkingImg;
+    /**
+     * 车辆停放位置备注文字信息
+     */
     private String remark;
 
     public long getUserId() {

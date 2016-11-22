@@ -32,11 +32,11 @@ public interface VehicleOrderDao extends IRepository<vehicleOrder> {
      * 锁车时修改订单
      *
      * @param userId
-     * @param bicycleCode
+     * @param orderCode
      * @return
      * @throws Exception
      */
-    int updateOrderByLock(long userId, String bicycleCode, BigDecimal beforePrice) throws Exception;
+    int updateOrderByLock(long userId, BigDecimal beforePrice,String orderCode) throws Exception;
 
 
     /**

@@ -19,7 +19,7 @@ public interface OrderItemDao extends IRepository<orderItem> {
      * 修改资源信息
      *
      * @param userId
-     * @param bicycleCode
+     * @param orderCode
      * @param endAt
      * @param endLongitude
      * @param endDimension
@@ -27,7 +27,7 @@ public interface OrderItemDao extends IRepository<orderItem> {
      * @return
      * @throws Exception
      */
-    int updateOrderByLock(long userId, String bicycleCode, int endAt, double endLongitude, double endDimension, int cyclingTime,String endAddress) throws Exception;
+    int updateOrderByLock(long userId, int endAt, double endLongitude, double endDimension, int cyclingTime,String endAddress,String orderCode,String bicycleCode) throws Exception;
 
 
 }

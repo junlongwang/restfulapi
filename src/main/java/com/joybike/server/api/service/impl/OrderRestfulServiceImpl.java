@@ -221,6 +221,7 @@ public class OrderRestfulServiceImpl implements OrderRestfulService {
 
 
 
+
         UserPayIngDto userPayIngDto = new UserPayIngDto();
         VehicleOrderDto dto = bicycleRestfulService.lock(bicycleCode,endAt,endLongitude,endDimension);
 

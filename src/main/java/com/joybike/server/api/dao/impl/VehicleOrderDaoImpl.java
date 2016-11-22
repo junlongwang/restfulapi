@@ -81,16 +81,16 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @return
      * @throws Exception
      */
-    final String updateOrderByLockSql = "update vehicleOrder set beforePrice = :beforePrice,afterPrice = :afterPrice,status = :status where userId = :userId and vehicleId = :vehicleId";
+    final String updateOrderByLockSql = "update vehicleOrder set beforePrice = :beforePrice,afterPrice = :afterPrice,status = :status where userId = :userId and orderCode = :orderCode and status = 1";
 
     @Override
-    public int updateOrderByLock(long userId, String bicycleCode, BigDecimal beforePrice) throws Exception {
+    public int updateOrderByLock(long userId, BigDecimal beforePrice,String orderCode) throws Exception {
         Map orderMap = new HashMap();
         orderMap.put("beforePrice", beforePrice);
         orderMap.put("status", OrderStatus.end.getValue());
         orderMap.put("userId", userId);
         orderMap.put("afterPrice", beforePrice);
-        orderMap.put("vehicleId", bicycleCode);
+        orderMap.put("orderCode", orderCode);
         return execSQL(updateOrderByLockSql, orderMap);
     }
 

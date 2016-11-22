@@ -1,9 +1,6 @@
 package com.joybike.server.api.service.impl;
 
-import com.joybike.server.api.Enum.ReturnEnum;
-import com.joybike.server.api.Enum.SubscribeStatus;
-import com.joybike.server.api.Enum.UseStatus;
-import com.joybike.server.api.Enum.VehicleEnableType;
+import com.joybike.server.api.Enum.*;
 import com.joybike.server.api.dao.*;
 import com.joybike.server.api.dto.VehicleOrderDto;
 import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
@@ -11,11 +8,13 @@ import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.BicycleRestfulService;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.thirdparty.VehicleComHelper;
+import com.joybike.server.api.thirdparty.aliyun.redix.RedixUtil;
 import com.joybike.server.api.thirdparty.amap.AMapUtil;
 import com.joybike.server.api.util.RestfulException;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -277,173 +276,95 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public VehicleOrderDto unlock(long userId, String bicycleCode, int beginAt, double beginLongitude, double beginDimension) throws Exception {
 
-        //获取车的状态
-        vehicle vehicle = vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
         VehicleOrderDto dto = new VehicleOrderDto();
 
-        if (vehicle.getStatus() == 0) {
-
-            //判断车没有被预约时
-            if (vehicle.getUseStatus() == 0) {
-
-
-                subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
-                subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
-
-                //车辆跟人的预约但都存在的时候
-                if (vinfo != null && uInfo != null) {
-                    //判断是不是该用户的预约
-                    if (vinfo.getUserId().equals(uInfo.getUserId())) {
-                        //时间过期,删除重新创建
-                        if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                            vehicleSubscribe(userId, bicycleCode, beginAt);
-                            updateSubscribeInfo(userId, bicycleCode);
-                            //创建订单
-                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-                            //修改车的使用状态
-                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                            //开锁,通知硬件接口
-//                            VehicleComHelper.openLock(bicycleCode);
-
-                            //订单信息
-
-                            dto = getOrderInfo(orderId);
-
-                        } else {
-
-                            //时间没有过期,直接修改
-                            updateSubscribeInfo(userId, bicycleCode);
-                            //创建订单
-                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-                            //修改车的使用状态
-                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                            //开锁,通知硬件接口
-//                            VehicleComHelper.openLock(bicycleCode);
-
-                            //订单信息
-
-                            dto = getOrderInfo(orderId);
-                        }
-                    }
-                    //用户扫码的车辆不是预约车辆，且这辆车已经被预约，判断是该车是不是预约过期
-                    if (!vinfo.getUserId().equals(uInfo.getUserId())) {
-                        if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                            deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                            vehicleSubscribe(userId, bicycleCode, beginAt);
-                            updateSubscribeInfo(userId, bicycleCode);
-                            //创建订单
-                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-                            //修改车的使用状态
-                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                            //开锁,通知硬件接口
-//                            VehicleComHelper.openLock(bicycleCode);
-
-                            //订单信息
-
-                            dto = getOrderInfo(orderId);
-                        } else {
-                            throw new RestfulException(ReturnEnum.BicycleUse_Error);
-                        }
-                    }
-                }
-
-                //用户有预约,但车没有预约
-                if (uInfo != null && vinfo == null) {
-                    if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                        vehicleSubscribe(userId, bicycleCode, beginAt);
-                        updateSubscribeInfo(userId, bicycleCode);
-                        //创建订单
-                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-                        //修改车的使用状态
-                        vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                        //开锁,通知硬件接口
-//                        VehicleComHelper.openLock(bicycleCode);
-
-                        //订单信息
-
-                        dto = getOrderInfo(orderId);
-                    } else {
-
-                        //时间没有过期,直接修改
-                        updateSubscribeInfo(userId, bicycleCode);
-                        //创建订单
-                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-
-                        //修改车的使用状态
-                        vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                        //开锁,通知硬件接口
-//                        VehicleComHelper.openLock(bicycleCode);
-
-                        //订单信息
-
-                        dto = getOrderInfo(orderId);
-                    }
-                }
-
-                //用户没有预约,但是车被预约了
-                if (uInfo == null && vinfo != null) {
-                    //如果过期
-                    if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                        vehicleSubscribe(userId, bicycleCode, beginAt);
-                        updateSubscribeInfo(userId, bicycleCode);
-                        //创建订单
-                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-                        //修改车的使用状态
-                        vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                        //开锁,通知硬件接口
-//                        VehicleComHelper.openLock(bicycleCode);
-
-                        //订单信息
-
-                        dto = getOrderInfo(orderId);
-                    } else {
-                        throw new RestfulException(ReturnEnum.BicycleUse_Error);
-                    }
-                }
-
-                //车与人都没有预约
-                if (uInfo == null && vinfo == null) {
-
-                    vehicleSubscribe(userId, bicycleCode, beginAt);
-                    updateSubscribeInfo(userId, bicycleCode);
-                    //创建订单
-                    long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-
-                    //修改车的使用状态
-                    vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                    //开锁,通知硬件接口
-//                        VehicleComHelper.openLock(bicycleCode);
-
-                    //订单信息
-
-                    dto = getOrderInfo(orderId);
-                }
+        Boolean isLock = isUnLock(userId, bicycleCode);
+        if (isLock) {
+            vehicle vehicle = getVehicleStatusByBicycleCode(bicycleCode);
+            VehicleComHelper.openLock(vehicle.getBundlingPhone());
+            //Thread.sleep(10*1000);
+            //锁的状态是锁车状态
+            while (!"1".equals(RedixUtil.getString(vehicle.getLockId().toString()))) {
+                logger.info(vehicle.getLockId() + "等待车辆开锁...............");
+                Thread.sleep(1000);
+                continue;
             }
+            logger.info(vehicle.getLockId() + "收到车辆开锁状态:" + RedixUtil.getString(vehicle.getLockId().toString()));
 
-            //车辆被预约时
-            if (vehicle.getUseStatus() == 1) {
+            if (vehicle.getStatus() == 0) {
 
-                subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
-                subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+                //判断车没有被预约时
+                if (vehicle.getUseStatus() == 0) {
 
-                //车辆跟人的预约但都存在的时候
-                if (vinfo != null && uInfo != null) {
-                    //判断是不是该用户的预约
-                    if (vinfo.getUserId().equals(uInfo.getUserId())) {
-                        //时间过期,删除重新创建
-                        if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+
+                    subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
+                    subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+
+                    //车辆跟人的预约但都存在的时候
+                    if (vinfo != null && uInfo != null) {
+                        //判断是不是该用户的预约
+                        if (vinfo.getUserId().equals(uInfo.getUserId())) {
+                            //时间过期,删除重新创建
+                            if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                                deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                                vehicleSubscribe(userId, bicycleCode, beginAt);
+                                updateSubscribeInfo(userId, bicycleCode);
+                                //创建订单
+                                long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+                                //修改车的使用状态
+                                vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                                //开锁,通知硬件接口
+//                            VehicleComHelper.openLock(bicycleCode);
+
+                                //订单信息
+
+                                dto = getOrderInfo(orderId);
+
+                            } else {
+
+                                //时间没有过期,直接修改
+                                updateSubscribeInfo(userId, bicycleCode);
+                                //创建订单
+                                long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+                                //修改车的使用状态
+                                vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                                //开锁,通知硬件接口
+//                            VehicleComHelper.openLock(bicycleCode);
+
+                                //订单信息
+
+                                dto = getOrderInfo(orderId);
+                            }
+                        }
+                        //用户扫码的车辆不是预约车辆，且这辆车已经被预约，判断是该车是不是预约过期
+                        if (!vinfo.getUserId().equals(uInfo.getUserId())) {
+                            if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                                deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                                deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                                vehicleSubscribe(userId, bicycleCode, beginAt);
+                                updateSubscribeInfo(userId, bicycleCode);
+                                //创建订单
+                                long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+                                //修改车的使用状态
+                                vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                                //开锁,通知硬件接口
+//                            VehicleComHelper.openLock(bicycleCode);
+
+                                //订单信息
+
+                                dto = getOrderInfo(orderId);
+                            } else {
+                                throw new RestfulException(ReturnEnum.BicycleUse_Error);
+                            }
+                        }
+                    }
+
+                    //用户有预约,但车没有预约
+                    if (uInfo != null && vinfo == null) {
+                        if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                             deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
                             vehicleSubscribe(userId, bicycleCode, beginAt);
                             updateSubscribeInfo(userId, bicycleCode);
@@ -453,7 +374,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
                             //开锁,通知硬件接口
-//                            VehicleComHelper.openLock(bicycleCode);
+//                        VehicleComHelper.openLock(bicycleCode);
 
                             //订单信息
 
@@ -465,10 +386,11 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
 
+
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
                             //开锁,通知硬件接口
-//                            VehicleComHelper.openLock(bicycleCode);
+//                        VehicleComHelper.openLock(bicycleCode);
 
                             //订单信息
 
@@ -476,10 +398,121 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         }
                     }
 
-                    //用户扫码的车辆不是预约车辆，且这辆车已经被预约，判断是该车是不是预约过期
-                    if (!vinfo.getUserId().equals(uInfo.getUserId())) {
+                    //用户没有预约,但是车被预约了
+                    if (uInfo == null && vinfo != null) {
+                        //如果过期
                         if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
                             deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                            vehicleSubscribe(userId, bicycleCode, beginAt);
+                            updateSubscribeInfo(userId, bicycleCode);
+                            //创建订单
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+                            //修改车的使用状态
+                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                            //开锁,通知硬件接口
+//                        VehicleComHelper.openLock(bicycleCode);
+
+                            //订单信息
+
+                            dto = getOrderInfo(orderId);
+                        } else {
+                            throw new RestfulException(ReturnEnum.BicycleUse_Error);
+                        }
+                    }
+
+                    //车与人都没有预约
+                    if (uInfo == null && vinfo == null) {
+
+                        vehicleSubscribe(userId, bicycleCode, beginAt);
+                        updateSubscribeInfo(userId, bicycleCode);
+                        //创建订单
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+
+                        //修改车的使用状态
+                        vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                        //开锁,通知硬件接口
+//                        VehicleComHelper.openLock(bicycleCode);
+
+                        //订单信息
+
+                        dto = getOrderInfo(orderId);
+                    }
+                }
+
+                //车辆被预约时
+                if (vehicle.getUseStatus() == 1) {
+
+                    subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
+                    subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+
+                    //车辆跟人的预约但都存在的时候
+                    if (vinfo != null && uInfo != null) {
+                        //判断是不是该用户的预约
+                        if (vinfo.getUserId().equals(uInfo.getUserId())) {
+                            //时间过期,删除重新创建
+                            if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                                deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                                deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                                vehicleSubscribe(userId, bicycleCode, beginAt);
+                                updateSubscribeInfo(userId, bicycleCode);
+                                //创建订单
+                                long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+                                //修改车的使用状态
+                                vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                                //开锁,通知硬件接口
+//                            VehicleComHelper.openLock(bicycleCode);
+
+                                //订单信息
+
+                                dto = getOrderInfo(orderId);
+                            } else {
+
+                                //时间没有过期,直接修改
+                                updateSubscribeInfo(userId, bicycleCode);
+                                //创建订单
+                                long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+                                //修改车的使用状态
+                                vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                                //开锁,通知硬件接口
+//                            VehicleComHelper.openLock(bicycleCode);
+
+                                //订单信息
+
+                                dto = getOrderInfo(orderId);
+                            }
+                        }
+
+                        //用户扫码的车辆不是预约车辆，且这辆车已经被预约，判断是该车是不是预约过期
+                        if (!vinfo.getUserId().equals(uInfo.getUserId())) {
+                            if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                                deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                                deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                                vehicleSubscribe(userId, bicycleCode, beginAt);
+                                updateSubscribeInfo(userId, bicycleCode);
+                                //创建订单
+                                long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+                                //修改车的使用状态
+                                vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                                //开锁,通知硬件接口
+//                            VehicleComHelper.openLock(bicycleCode);
+
+                                //订单信息
+
+                                dto = getOrderInfo(orderId);
+                            } else {
+                                throw new RestfulException(ReturnEnum.BicycleUse_Error);
+                            }
+                        }
+                    }
+
+                    //用户有预约,但车没有预约
+                    if (uInfo != null && vinfo == null) {
+                        if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
                             deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
                             vehicleSubscribe(userId, bicycleCode, beginAt);
                             updateSubscribeInfo(userId, bicycleCode);
@@ -489,7 +522,43 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             //修改车的使用状态
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
                             //开锁,通知硬件接口
-//                            VehicleComHelper.openLock(bicycleCode);
+//                        VehicleComHelper.openLock(bicycleCode);
+
+                            //订单信息
+
+                            dto = getOrderInfo(orderId);
+                        } else {
+                            //时间没有过期,直接修改
+                            updateSubscribeInfo(userId, bicycleCode);
+                            //创建订单
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+
+
+                            //修改车的使用状态
+                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                            //开锁,通知硬件接口
+//                        VehicleComHelper.openLock(bicycleCode);
+
+                            //订单信息
+
+                            dto = getOrderInfo(orderId);
+                        }
+                    }
+
+                    //用户没有预约,但是车被预约了
+                    if (uInfo == null && vinfo != null) {
+                        //如果过期
+                        if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
+                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
+                            vehicleSubscribe(userId, bicycleCode, beginAt);
+                            updateSubscribeInfo(userId, bicycleCode);
+                            //创建订单
+                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                            //修改车的使用状态
+                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+
+                            //开锁,通知硬件接口
+//                        VehicleComHelper.openLock(bicycleCode);
 
                             //订单信息
 
@@ -498,27 +567,11 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             throw new RestfulException(ReturnEnum.BicycleUse_Error);
                         }
                     }
-                }
 
-                //用户有预约,但车没有预约
-                if (uInfo != null && vinfo == null) {
-                    if (uInfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                    //车与人都没有预约
+                    if (uInfo == null && vinfo == null) {
+
                         vehicleSubscribe(userId, bicycleCode, beginAt);
-                        updateSubscribeInfo(userId, bicycleCode);
-                        //创建订单
-                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-                        //修改车的使用状态
-                        vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                        //开锁,通知硬件接口
-//                        VehicleComHelper.openLock(bicycleCode);
-
-                        //订单信息
-
-                        dto = getOrderInfo(orderId);
-                    } else {
-                        //时间没有过期,直接修改
                         updateSubscribeInfo(userId, bicycleCode);
                         //创建订单
                         long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
@@ -535,67 +588,29 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                     }
                 }
 
-                //用户没有预约,但是车被预约了
-                if (uInfo == null && vinfo != null) {
-                    //如果过期
-                    if (vinfo.getEndAt() - UnixTimeUtils.now() < 0) {
-                        deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-                        vehicleSubscribe(userId, bicycleCode, beginAt);
-                        updateSubscribeInfo(userId, bicycleCode);
-                        //创建订单
-                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-                        //修改车的使用状态
-                        vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                //当车辆状态为使用中,去找他有没有对应的单
+                if (vehicle.getUseStatus() == 2) {
+                    subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
+                    subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.use);
 
-                        //开锁,通知硬件接口
-//                        VehicleComHelper.openLock(bicycleCode);
-
-                        //订单信息
-
-                        dto = getOrderInfo(orderId);
+                    if (vinfo.getUserId().equals(uInfo.getUserId())) {
+                        throw new RestfulException(ReturnEnum.Use_Self_Vehicle);
                     } else {
-                        throw new RestfulException(ReturnEnum.BicycleUse_Error);
+                        throw new RestfulException(ReturnEnum.Use_Vehicle);
                     }
+
                 }
 
-                //车与人都没有预约
-                if (uInfo == null && vinfo == null) {
-
-                    vehicleSubscribe(userId, bicycleCode, beginAt);
-                    updateSubscribeInfo(userId, bicycleCode);
-                    //创建订单
-                    long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-
-
-                    //修改车的使用状态
-                    vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                    //开锁,通知硬件接口
-//                        VehicleComHelper.openLock(bicycleCode);
-
-                    //订单信息
-
-                    dto = getOrderInfo(orderId);
-                }
+                if (vehicle.getUseStatus() == -1) throw new RestfulException(ReturnEnum.FaultIng);
             }
 
-            //当车辆状态为使用中,去找他有没有对应的单
-            if (vehicle.getUseStatus() == 2) {
-                subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.use);
-                subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.use);
+            if (vehicle.getStatus() == 1) throw new RestfulException(ReturnEnum.Disable_Vehicle);
+            if (vehicle.getStatus() == 2 || vehicle.getStatus() == -1) throw new RestfulException(ReturnEnum.FaultIng);
 
-                if (vinfo.getUserId().equals(uInfo.getUserId())) {
-                    throw new RestfulException(ReturnEnum.Use_Self_Vehicle);
-                } else {
-                    throw new RestfulException(ReturnEnum.Use_Vehicle);
-                }
-
-            }
-
-            if (vehicle.getUseStatus() == -1) throw new RestfulException(ReturnEnum.FaultIng);
+        } else {
+            throw new RestfulException(ReturnEnum.Unlock_Error);
         }
 
-        if (vehicle.getStatus() == 1) throw new RestfulException(ReturnEnum.Disable_Vehicle);
-        if (vehicle.getStatus() == 2 || vehicle.getStatus() == -1) throw new RestfulException(ReturnEnum.FaultIng);
 
         return dto;
     }
@@ -647,7 +662,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         VehicleOrderDto dto = new VehicleOrderDto();
         logger.info("获取信息条数" + list.size());
         if (list != null && list.size() > 0) {
-            for (int i = 0; i <= list.size()-1; i++) {
+            for (int i = 0; i <= list.size() - 1; i++) {
                 subscribeInfo subscribeInfo = list.get(i);
                 logger.info(subscribeInfo);
                 if (subscribeInfo != null) {
@@ -655,7 +670,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                         vehicleOrder order = orderRestfulService.getOrderByVehicleId(subscribeInfo.getVehicleId());
                         logger.info(order);
 
-                        if (order != null){
+                        if (order != null) {
                             if (order.getOrderCode().equals(subscribeInfo.getSubscribeCode())) {
                                 orderItem item = orderItemDao.getOrderItemByOrderCode(subscribeInfo.getSubscribeCode());
                                 logger.info("锁车的时候" + bicycleCode + ":" + endAt + ":" + endLongitude + ":" + endDimension);
@@ -665,9 +680,9 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
                                 logger.info("消费金额:" + payPrice);
 
-                                int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, payPrice);
+                                int v1 = vehicleOrderDao.updateOrderByLock(subscribeInfo.getUserId(), payPrice, order.getOrderCode());
                                 logger.info("修改订单的状态:" + v1);
-                                int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), bicycleCode, endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension));
+                                int o1 = orderItemDao.updateOrderByLock(subscribeInfo.getUserId(), endAt, endLongitude, endDimension, cyclingTime, AMapUtil.getAddress(endLongitude + "," + endDimension), order.getOrderCode(), bicycleCode);
                                 logger.info("修改ITEM的状态:" + o1);
                                 int v3 = vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.free);
                                 logger.info("修改车的状态:" + v3);
@@ -677,7 +692,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                                 } else {
                                     return null;
                                 }
-                            }else {
+                            } else {
                                 continue;
                             }
                         }
@@ -735,6 +750,54 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
         dto.setAmount(BigDecimal.valueOf(bankAcountDao.getUserAmount(userId)));
 
         return dto;
+    }
+
+    /**
+     * 是否可以解锁
+     *
+     * @param userId
+     * @param bicycleCode
+     * @return
+     */
+    @Override
+    public Boolean isUnLock(long userId, String bicycleCode) throws Exception {
+        //逻辑优化调整,人没有未支付订单，车状态正常,解锁,其他不关注
+
+        vehicle vehicle = vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
+        vehicleOrder vehicleOrder = vehicleOrderDao.getNoPayByUserId(userId, OrderStatus.end);
+        Boolean isLock = null;
+
+        if (vehicle.getStatus() == 1 || vehicle.getStatus() == 2) {
+            return false;
+        }
+
+        if (vehicle.getStatus() == 0) {
+            if (vehicle.getUseStatus() == 0) {
+                if (vehicleOrder == null) {
+                    isLock = true;
+                }
+            }
+
+            if (vehicle.getUseStatus() == 1) {
+
+                if (vehicleOrder.getUserId().equals(userId)) {
+                    isLock = true;
+                }
+
+                if (!vehicleOrder.getUserId().equals(userId)) {
+                    subscribeInfo subscribeInfo = subscribeInfoDao.getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+                    if (subscribeInfo.getEndAt() - UnixTimeUtils.now() > 0) {
+                        isLock = true;
+                    } else {
+                        isLock = false;
+                    }
+                }
+                if (vehicle.getUseStatus() == 2) {
+                    isLock = false;
+                }
+            }
+        }
+        return isLock;
     }
 
 

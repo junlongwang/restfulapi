@@ -183,17 +183,16 @@ public class BicycleRestfulApi {
             }
 
             if (dto != null) {
-                vehicle vehicle=bicycleRestfulService.getVehicleStatusByBicycleCode(unlockDto.getBicycleCode());
-                VehicleComHelper.openLock(vehicle.getBundlingPhone());
-                //Thread.sleep(10*1000);
-                //锁的状态是锁车状态
-                while (!"1".equals(RedixUtil.getString(vehicle.getLockId().toString())))
-                {
-                    logger.info(vehicle.getLockId()+"等待车辆开锁...............");
-                    Thread.sleep(1000);
-                    continue;
-                }
-                logger.info(vehicle.getLockId()+"收到车辆开锁状态:"+RedixUtil.getString(vehicle.getLockId().toString()));
+//                vehicle vehicle=bicycleRestfulService.getVehicleStatusByBicycleCode(unlockDto.getBicycleCode());
+//                VehicleComHelper.openLock(vehicle.getBundlingPhone());
+//                //Thread.sleep(10*1000);
+//                //锁的状态是锁车状态
+//                while (!"1".equals(RedixUtil.getString(vehicle.getLockId().toString()))) {
+//                    logger.info(vehicle.getLockId()+"等待车辆开锁...............");
+//                    Thread.sleep(1000);
+//                    continue;
+//                }
+//                logger.info(vehicle.getLockId()+"收到车辆开锁状态:"+RedixUtil.getString(vehicle.getLockId().toString()));
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(true, 0, ReturnEnum.Unlock_Success.getErrorDesc(), dto));
             } else {
                 return ResponseEntity.ok(new Message<VehicleOrderDto>(false, ReturnEnum.Unlock_Error.getErrorCode(), ReturnEnum.Unlock_Error.getErrorDesc(), null));

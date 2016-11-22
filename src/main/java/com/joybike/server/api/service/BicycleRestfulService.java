@@ -178,4 +178,13 @@ public interface BicycleRestfulService {
      * @throws Exception
      */
     VehicleOrderDto getLastSuccessOrder(long userId) throws Exception;
+
+
+    /**
+     * 是否可以解锁
+     * @param userId
+     * @param bicycleCode
+     * @return
+     */
+    Boolean isUnLock(long userId, String bicycleCode) throws Exception;
 }

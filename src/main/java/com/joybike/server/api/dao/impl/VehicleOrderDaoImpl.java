@@ -147,7 +147,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @return
      */
     final String getOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.cyclingImg,b.tripDist,b.startAddress,b.endAddress from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
-            " where a.userId = ? and a.status = 15";
+            " where a.userId = ? and a.status = 15 and b.endAt > 0";
 
     @Override
     public List<VehicleOrderDto> getOrderPaySuccess(long userId) throws Exception{
@@ -170,7 +170,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @return
      */
     final String getLastOrderPaySuccessSql = " select a.id,a.orderCode,a.userId,a.beforePrice,a.afterPrice,a.payId,a.status,a.vehicleId,b.beginAt,b.endAt,b.beginDimension,b.beginLongitude,b.endDimension,b.endLongitude,b.cyclingTime,b.cyclingImg,b.tripDist,b.startAddress,b.endAddress from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
-            " where a.userId = :userId order by endAt desc limit 1";
+            " where a.userId = :userId and b.endAt > 0 order by endAt desc limit 1";
 
     @Override
     public VehicleOrderDto getLastOrderPaySuccess(long userId) throws Exception{
@@ -296,7 +296,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @throws Exception
      */
     final String getTripDistSql = "select sum(b.tripDist) tripDist from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
-            " where a.userId = :userId and a.status = 15";
+            " where a.userId = :userId and a.status = 15 and b.endAt > 0";
     @Override
     public BigDecimal getTripDist(long userId) throws Exception {
         try {
@@ -321,7 +321,7 @@ public class VehicleOrderDaoImpl extends Reository<vehicleOrder> implements Vehi
      * @throws Exception
      */
     final String getTimesSql = "select sum(b.cyclingTime) cyclingTime from vehicleorder a join orderItem b on (a.orderCode = b.orderCode) " +
-            " where a.userId = :userId and a.status = 15";
+            " where a.userId = :userId and a.status = 15 and b.endAt > 0";
     @Override
     public Integer getTimes(long userId) throws Exception {
         try {

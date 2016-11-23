@@ -45,6 +45,8 @@ public class RestfulException extends RuntimeException {
         this.errorCode = returnEnum.getErrorCode();
     }
 
+
+
     public int getErrorCode() {
         return errorCode;
     }

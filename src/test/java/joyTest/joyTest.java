@@ -2,6 +2,7 @@ package joyTest;
 
 import com.alibaba.fastjson.JSON;
 import com.joybike.server.api.Enum.DepositStatus;
+import com.joybike.server.api.Enum.OrderStatus;
 import com.joybike.server.api.Enum.PayType;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.SubscribeInfoDao;
@@ -278,14 +279,30 @@ public class joyTest {
 
 
     @Test
-    public void ADtEST() throws Exception {
-        VehicleOrderSubscribeDto dto = bicycleRestfulService.getUseInfo(35);
-        if (dto != null){
-            if (dto.getInfo() !=null){
-                System.out.println(dto.getInfo().getId() + "*********************");
+    public void ADtEST() {
+//        try {
+//            subscribeInfo subscribeInfo = bicycleRestfulService.vehicleSubscribe(100, "10780121491", 1479915886);
+//            System.out.println("*****" + subscribeInfo);
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//        }
+
+        try {
+            vehicleOrder noPayorder = orderRestfulService.getNoPayOrderByUserId(101, OrderStatus.end);
+
+            vehicleOrder useOrder = orderRestfulService.getNoPayOrderByUserId(101, OrderStatus.newly);
+            if (noPayorder != null){
+                System.out.println("有未支付订单");
             }
-        }else {
-            System.out.println("8989898");
+            if (useOrder != null){
+                System.out.println("正在骑行中");
+            }
+            if (noPayorder == null && useOrder == null){
+                bicycleRestfulService.unlock(100,"10780121494",1479912602,116.287,40.043);
+            }
+
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 }

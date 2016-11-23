@@ -187,4 +187,9 @@ public interface BicycleRestfulService {
      * @return
      */
     Boolean isUnLock(long userId, String bicycleCode) throws Exception;
+
+    /**
+     * 删除预约信息
+     */
+    void deleteByExpire() throws Exception;
 }

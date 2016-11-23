@@ -574,11 +574,14 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     public void deleteByExpire() throws Exception {
 
         List<subscribeInfo> list = subscribeInfoDao.getSqlByTime(UnixTimeUtils.now());
+
+
         if (list != null) {
             list.forEach(new Consumer<subscribeInfo>() {
                 @Override
                 public void accept(subscribeInfo subscribeInfo) {
                     try {
+                        logger.info(subscribeInfo);
                         vehicleDao.updateVehicleUseStatus(subscribeInfo.getVehicleId(), UseStatus.free);
                     } catch (Exception e) {
                         e.printStackTrace();

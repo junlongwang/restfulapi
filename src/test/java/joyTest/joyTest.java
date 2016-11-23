@@ -280,29 +280,35 @@ public class joyTest {
 
     @Test
     public void ADtEST() {
+        try {
+            subscribeInfo subscribeInfo = bicycleRestfulService.vehicleSubscribe(101, "10780121495", 1479915886);
+            System.out.println("*****" + subscribeInfo);
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+
 //        try {
-//            subscribeInfo subscribeInfo = bicycleRestfulService.vehicleSubscribe(100, "10780121491", 1479915886);
-//            System.out.println("*****" + subscribeInfo);
+//            bicycleRestfulService.deleteByExpire();
 //        } catch (Exception e) {
-//            System.out.println(e.toString());
+//            e.printStackTrace();
 //        }
 
-        try {
-            vehicleOrder noPayorder = orderRestfulService.getNoPayOrderByUserId(101, OrderStatus.end);
-
-            vehicleOrder useOrder = orderRestfulService.getNoPayOrderByUserId(101, OrderStatus.newly);
-            if (noPayorder != null){
-                System.out.println("有未支付订单");
-            }
-            if (useOrder != null){
-                System.out.println("正在骑行中");
-            }
-            if (noPayorder == null && useOrder == null){
-                bicycleRestfulService.unlock(100,"10780121494",1479912602,116.287,40.043);
-            }
-
-        } catch (Exception e) {
-            System.out.println(e);
-        }
+//        try {
+//            vehicleOrder noPayorder = orderRestfulService.getNoPayOrderByUserId(101, OrderStatus.end);
+//
+//            vehicleOrder useOrder = orderRestfulService.getNoPayOrderByUserId(101, OrderStatus.newly);
+//            if (noPayorder != null){
+//                System.out.println("有未支付订单");
+//            }
+//            if (useOrder != null){
+//                System.out.println("正在骑行中");
+//            }
+//            if (noPayorder == null && useOrder == null){
+//                bicycleRestfulService.unlock(100,"10780121494",1479912602,116.287,40.043);
+//            }
+//
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
     }
 }

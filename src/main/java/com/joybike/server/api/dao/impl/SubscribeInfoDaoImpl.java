@@ -193,12 +193,20 @@ public class SubscribeInfoDaoImpl extends Reository<subscribeInfo> implements Su
         }
     }
 
-    final String getSqlByTimeSql = "select * from subscribeinfo where ? - createAt > 900 and status <>2";
+
+    final String getSqlByTimeSql = "select * from subscribeinfo where status = ?";
+
+    /**
+     *
+     * @param
+     * @return
+     * @throws Exception
+     */
     @Override
-    public List<subscribeInfo> getSqlByTime(int endAt) throws Exception {
+    public List<subscribeInfo> getByTime() throws Exception {
         try {
 
-            Object[] object = new Object[]{endAt};
+            Object[] object = new Object[]{0};
             try {
                 return this.jdbcTemplate.getJdbcOperations().query(getSqlByTimeSql, object, new BeanPropertyRowMapper(subscribeInfo.class));
             } catch (Exception e) {

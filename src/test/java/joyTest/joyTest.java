@@ -1,11 +1,9 @@
 package joyTest;
 
 import com.alibaba.fastjson.JSON;
-import com.joybike.server.api.Enum.DepositStatus;
-import com.joybike.server.api.Enum.OrderStatus;
-import com.joybike.server.api.Enum.PayType;
-import com.joybike.server.api.Enum.ReturnEnum;
+import com.joybike.server.api.Enum.*;
 import com.joybike.server.api.dao.SubscribeInfoDao;
+import com.joybike.server.api.dao.VehicleDao;
 import com.joybike.server.api.dto.UserDto;
 import com.joybike.server.api.dto.UserPayIngDto;
 import com.joybike.server.api.dto.VehicleOrderDto;
@@ -13,6 +11,7 @@ import com.joybike.server.api.dto.VehicleOrderSubscribeDto;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.*;
 
+import com.joybike.server.api.util.MyTaskXml;
 import com.joybike.server.api.util.UnixTimeUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +43,14 @@ public class joyTest {
     @Autowired
     BicycleRestfulService bicycleRestfulService;
 
+    @Autowired
+    private SubscribeInfoDao subscribeInfoDao;
+
+    @Autowired
+    private VehicleDao vehicleDao;
+
+    @Autowired
+    MyTaskXml myTaskXml;
 
     @Test
     public void joy() {
@@ -280,12 +287,40 @@ public class joyTest {
 
     @Test
     public void ADtEST() {
-        try {
-            subscribeInfo subscribeInfo = bicycleRestfulService.vehicleSubscribe(101, "10780121495", 1479915886);
-            System.out.println("*****" + subscribeInfo);
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
+//        try {
+//            subscribeInfo subscribeInfo = bicycleRestfulService.vehicleSubscribe(101, "10780121495", 1479915886);
+//            System.out.println("*****" + subscribeInfo);
+//        } catch (Exception e) {
+//            System.out.println(e.toString());
+//        }
+
+//        try {
+//            vehicleDao.updateVehicleUseStatus("JOY002", UseStatus.free);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+        myTaskXml.show();
+
+
+//        try {
+//            List<subscribeInfo> list = subscribeInfoDao.getSqlByTime(UnixTimeUtils.now());
+//            list.forEach(new Consumer<subscribeInfo>() {
+//                @Override
+//                public void accept(subscribeInfo subscribeInfo) {
+//                    System.out.println(subscribeInfo);
+//                    try {
+//                        vehicleDao.updateVehicleUseStatus(subscribeInfo.getVehicleId(), UseStatus.free);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
 
 //        try {
 //            bicycleRestfulService.deleteByExpire();

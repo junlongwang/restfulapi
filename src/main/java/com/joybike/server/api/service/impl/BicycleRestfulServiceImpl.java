@@ -573,7 +573,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
     @Override
     public void deleteByExpire() throws Exception {
 
-        List<subscribeInfo> list = subscribeInfoDao.getSqlByTime(UnixTimeUtils.now());
+        List<subscribeInfo> list = subscribeInfoDao.getByTime();
 
 
         if (list != null) {

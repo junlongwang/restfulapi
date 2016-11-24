@@ -64,5 +64,5 @@ public interface SubscribeInfoDao extends IRepository<subscribeInfo> {
 
     List<subscribeInfo> getSubscribeInfoByBicycleCodeList(String vehicleId,SubscribeStatus status) throws Exception;
 
-    List<subscribeInfo> getSqlByTime(int endAt) throws Exception;
+    List<subscribeInfo> getByTime() throws Exception;
 }

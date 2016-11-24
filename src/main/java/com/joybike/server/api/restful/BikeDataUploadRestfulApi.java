@@ -141,7 +141,8 @@ public class BikeDataUploadRestfulApi {
 
                         logger.info(heartbeat.getLockId()+"车辆锁车,更新行程距离和轨迹图片......");
                         //更新行程距离和轨迹图片
-                        orderItem orderItem = orderRestfulService.getOrderItemByOrderCode(vehicle.getVehicleId());
+                        vehicleOrder order = orderRestfulService.getOrderByVehicleId(vehicle.getVehicleId());
+                        orderItem orderItem = orderRestfulService.getOrderItemByOrderCode(order.getOrderCode());
                         if(orderItem!=null) {
                             Long lockId = vehicle.getLockId();
                             //获取行程GPS数据

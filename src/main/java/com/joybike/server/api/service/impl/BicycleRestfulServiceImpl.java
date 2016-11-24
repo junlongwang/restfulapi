@@ -276,9 +276,14 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
             VehicleComHelper.openLock(vehicle.getBundlingPhone());
             //Thread.sleep(10*1000);
             //锁的状态是锁车状态
+
+            long timout = System.currentTimeMillis()+40*1000;
             while (!"1".equals(RedixUtil.getString(vehicle.getLockId().toString()))) {
                 logger.info(vehicle.getLockId() + "等待车辆开锁...............");
                 Thread.sleep(1000);
+                if(System.currentTimeMillis()>timout) {
+                     throw new RestfulException(ReturnEnum.Unlock_TIMEOUT_Error);
+                }
                 continue;
             }
 

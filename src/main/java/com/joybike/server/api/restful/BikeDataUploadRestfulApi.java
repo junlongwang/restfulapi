@@ -7,10 +7,7 @@ import com.joybike.server.api.Enum.DisposeStatus;
 import com.joybike.server.api.Enum.ReturnEnum;
 import com.joybike.server.api.dao.VehicleDao;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
-import com.joybike.server.api.dto.UserDto;
-import com.joybike.server.api.dto.UserPayIngDto;
-import com.joybike.server.api.dto.vehicleGpsDataDto;
-import com.joybike.server.api.dto.vehicleRepairDto;
+import com.joybike.server.api.dto.*;
 import com.joybike.server.api.model.*;
 import com.joybike.server.api.service.OrderRestfulService;
 import com.joybike.server.api.service.UserRestfulService;
@@ -202,11 +199,12 @@ public class BikeDataUploadRestfulApi {
                             } else if ("android".equals(userDto.getTargetType())) {
                                 logger.info("--------------------android消息推送--------------------");
                                 pushHelper.PushMessageToAndroid(JSON.toJSONString(dto), userDto.getGuid());
-                            } else {
-                                logger.info("--------------------ios消息推送--------------------");
-                                pushHelper.PushMessageToIOS(JSON.toJSONString(dto), userDto.getGuid());
-                                logger.info("--------------------android消息推送--------------------");
-                                pushHelper.PushMessageToAndroid(JSON.toJSONString(dto), userDto.getGuid());
+                            }
+                            //推送H5消息
+                            if(userDto.getOpenId()!=null && !"".equals(userDto.getOpenId())) {
+                                logger.info("--------------------H5消息推送--------------------");
+                                H5PostMessageDto h5PostMessageDto = new H5PostMessageDto(userDto.getOpenId(), dto.getRestType().toString(), userDto.getIphone(), dto.getVehicleOrderDto().getOrderCode(), dto.getVehicleOrderDto().getAfterPrice().toString(), dto.getVehicleOrderDto().getAmount().toString(), userDto.getId().toString());
+                                pushHelper.PushMessageToH5(h5PostMessageDto);
                             }
                         }
                     }

@@ -1,11 +1,14 @@
-/*
+
 import com.joybike.server.api.Message;
 import com.joybike.server.api.dao.VehicleHeartbeatDao;
+import com.joybike.server.api.dto.H5PostMessageDto;
 import com.joybike.server.api.dto.Token;
 import com.joybike.server.api.model.User;
 import com.joybike.server.api.model.vehicleHeartbeat;
 import com.joybike.server.api.util.UnixTimeUtils;
 
+import myTest.Amortize;
+import myTest.HttpRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +25,10 @@ import com.alibaba.fastjson.JSON;
 import java.math.BigDecimal;
 import java.util.Properties;
 
-*/
+
 /**
  * Created by 58 on 2016/10/14.
- *//*
+ */
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/spring-mvc.xml")
@@ -228,6 +231,28 @@ public class UnitTest {
 
 
 
+    @Test
+    public void postH5()
+    {
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        headers.add("MyRequestHeader","MyValue");
+        String url="http://h5.joybike.com.cn/forward/service/pushMessage";
+        H5PostMessageDto dto = new H5PostMessageDto("0210XOfx1zozqd03qQex1mpQfx10XOfy","1","15110184829","2016","1.0",null,"39");
+
+        System.out.println(JSON.toJSONString(dto));
+//        HttpEntity<H5PostMessageDto> formEntity = new HttpEntity<H5PostMessageDto>(dto,headers);
+//        String result = restTemplate.postForObject(url, formEntity, String.class);
+
+        String result = HttpRequest.sendPost(url, JSON.toJSONString(dto));
+
+        System.out.println(result+"++++++++++++++++++");
+    }
+
+
+
     @Autowired
     private VehicleHeartbeatDao vehicleHeartbeatDao;
     @Test
@@ -266,5 +291,7 @@ public class UnitTest {
         heartbeat.setCreateAt(UnixTimeUtils.now());
         vehicleHeartbeatDao.save(heartbeat);
     }
+
+
+
 }
-*/

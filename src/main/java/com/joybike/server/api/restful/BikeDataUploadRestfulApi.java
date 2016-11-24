@@ -203,7 +203,7 @@ public class BikeDataUploadRestfulApi {
                             //推送H5消息
                             if(userDto.getOpenId()!=null && !"".equals(userDto.getOpenId())) {
                                 logger.info("--------------------H5消息推送--------------------");
-                                H5PostMessageDto h5PostMessageDto = new H5PostMessageDto(userDto.getOpenId(), dto.getRestType().toString(), userDto.getIphone(), dto.getVehicleOrderDto().getOrderCode(), dto.getVehicleOrderDto().getBeforePrice().toString(), dto.getVehicleOrderDto().getAmount().toString(), userDto.getId().toString());
+                                H5PostMessageDto h5PostMessageDto = new H5PostMessageDto(userDto.getOpenId(), dto.getRestType().toString().equals("1")?"0":"1", userDto.getIphone(), dto.getVehicleOrderDto().getOrderCode(), dto.getVehicleOrderDto().getBeforePrice().toString(), dto.getVehicleOrderDto().getAmount().toString(), userDto.getId().toString());
                                 pushHelper.PushMessageToH5(h5PostMessageDto);
                             }
                         }

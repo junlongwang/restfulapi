@@ -149,19 +149,25 @@ public class BikeDataUploadRestfulApi {
                             {
                                 data.add(item.getLongitude()+","+item.getDimension());
                             }
+                            if(data.size()>0) {
 
-                            //行程轨迹
-                            String localImage=AMapUtil.getLocalImage(data);
-                            String imageUrl=OSSClientUtil.uploadGPSImag(localImage);
-                            //行程距离
-                            Integer distance = AMapUtil.distances(data);
-                            orderItem.setCyclingImg(imageUrl);
-                            orderItem.setTripDist(BigDecimal.valueOf(distance));
+                                //行程轨迹
+                                String localImage = AMapUtil.getLocalImage(data);
+                                String imageUrl = OSSClientUtil.uploadGPSImag(localImage);
+                                //行程距离
+                                Integer distance = AMapUtil.distances(data);
+                                orderItem.setCyclingImg(imageUrl);
+                                orderItem.setTripDist(BigDecimal.valueOf(distance));
 
-                            logger.info("行程距离:"+distance+",行程轨迹图片URL:"+imageUrl);
+                                logger.info("行程距离:" + distance + ",行程轨迹图片URL:" + imageUrl);
 
-                            //更新行程距离和轨迹图片
-                            orderRestfulService.updateOrderItem(orderItem);
+                                //更新行程距离和轨迹图片
+                                orderRestfulService.updateOrderItem(orderItem);
+                            }
+                            else
+                            {
+                                logger.info("行程无GPS数据，无法进行距离和轨迹图片生成");
+                            }
                         }
 
                         UserPayIngDto dto = null;

@@ -502,7 +502,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
         List<VehicleOrderDto> list = vehicleOrderDao.getOrderPaySuccess(userId);
         if (list != null && list.size() > 0) {
-            list.stream().sorted((p, p2) -> (p2.getEndAt().compareTo(p.getEndAt()))).collect(toList());
+            list.stream().sorted((p, p2) -> (p.getEndAt().compareTo(p2.getEndAt()))).collect(toList());
         }
         return list;
     }

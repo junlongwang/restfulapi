@@ -169,12 +169,12 @@ public class UserRestfulApi {
             //logger.info("===========================================");
 
             //IOS上线验证，上线通过后，代码移除
-            if("15802488696".equals(dto.getMobile()) && "1234".equals(dto.getValidateCode()))
-            {
-                userInfo u = userRestfulService.getUserInfoByMobile(dto.getMobile());
-                UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
-                return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
-            }
+//            if("15802488696".equals(dto.getMobile()) && "1234".equals(dto.getValidateCode()))
+//            {
+//                userInfo u = userRestfulService.getUserInfoByMobile(dto.getMobile());
+//                UserDto userInfo = userRestfulService.getUserInfoById(u.getId());
+//                return ResponseEntity.ok(new Message<UserDto>(true, 0, null, userInfo));
+//            }
 
             String redisValue = RedixUtil.getString(dto.getMobile());
             //获取VALUE,进行验证

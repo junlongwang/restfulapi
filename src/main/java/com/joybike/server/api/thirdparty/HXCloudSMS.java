@@ -26,7 +26,9 @@ public class HXCloudSMS {
 	public static void main(String [] args) {
 
 		try {
-			sendsms();
+			//sendsms();
+
+			SMSHelper.sendValidateCode("15110184829","1234");
 
 		}catch (Exception e){
 			e.printStackTrace();

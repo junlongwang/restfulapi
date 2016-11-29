@@ -240,13 +240,13 @@ public class UnitTest {
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
         headers.add("MyRequestHeader","MyValue");
         String url="http://h5.joybike.com.cn/forward/service/pushMessage";
-        H5PostMessageDto dto = new H5PostMessageDto("0210XOfx1zozqd03qQex1mpQfx10XOfy","1","15110184829","2016","1.0",null,"39");
+        H5PostMessageDto dto = new H5PostMessageDto("oyPXcwVC_l2lBiRpCpZ748KGHtv8","1","15110184829","2016","2.0",null,"39");
 
         System.out.println(JSON.toJSONString(dto));
-//        HttpEntity<H5PostMessageDto> formEntity = new HttpEntity<H5PostMessageDto>(dto,headers);
-//        String result = restTemplate.postForObject(url, formEntity, String.class);
+        HttpEntity<H5PostMessageDto> formEntity = new HttpEntity<H5PostMessageDto>(dto,headers);
+        String result = restTemplate.postForObject(url, formEntity, String.class);
 
-        String result = HttpRequest.sendPost(url, JSON.toJSONString(dto));
+        //String result = HttpRequest.sendPost(url, JSON.toJSONString(dto));
 
         System.out.println(result+"++++++++++++++++++");
     }

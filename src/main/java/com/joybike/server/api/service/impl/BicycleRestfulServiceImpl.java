@@ -324,40 +324,29 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                 //车辆被预约时
                 if (vehicle.getUseStatus() == 1) {
 
-                    if (vehicle.getUseStatus() == 0) {
-                        subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+                    subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
+                    subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
 
-                        if (uInfo != null) {
-                            vehicleDao.updateVehicleUseStatus(uInfo.getVehicleId(), UseStatus.free);
-                            deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-
-                            vehicleSubscribe(userId, bicycleCode, beginAt);
-                            updateSubscribeInfo(userId, bicycleCode);
-                            //创建订单
-                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-                            //修改车的使用状态
-                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                            //订单信息
-                            dto = getOrderInfo(orderId);
-                        }
-
-                        if (uInfo == null) {
-                            vehicleSubscribe(userId, bicycleCode, beginAt);
-                            updateSubscribeInfo(userId, bicycleCode);
-                            //创建订单
-                            long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-                            //修改车的使用状态
-                            vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                            //订单信息
-                            dto = getOrderInfo(orderId);
-                        }
+                    if (uInfo.getUserId().equals(vinfo.getUserId())) {
+                        updateSubscribeInfo(userId, bicycleCode);
+                        //创建订单
+                        long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
+                        //修改车的使用状态
+                        vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
+                        //订单信息
+                        dto = getOrderInfo(orderId);
                     }
+                    if (!uInfo.getUserId().equals(vinfo.getUserId())) {
+                        if (vinfo.getEndAt() - UnixTimeUtils.now() > 0) {
+                            throw new RestfulException(ReturnEnum.BicycleUse_Error);
+                        } else {
+                            vehicleDao.updateVehicleUseStatus(vinfo.getVehicleId(), UseStatus.free);
+                            vehicleDao.updateVehicleUseStatus(uInfo.getVehicleId(), UseStatus.free);
 
-                    if (vehicle.getUseStatus() == 1) {
-                        subscribeInfo uInfo = getSubscribeInfoByUserId(userId, SubscribeStatus.subscribe);
-                        subscribeInfo vinfo = getSubscribeInfoByBicycleCode(bicycleCode, SubscribeStatus.subscribe);
+                            deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
+                            deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
 
-                        if (uInfo.getUserId().equals(vinfo.getUserId())) {
+                            vehicleSubscribe(userId, bicycleCode, beginAt);
                             updateSubscribeInfo(userId, bicycleCode);
                             //创建订单
                             long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
@@ -365,26 +354,6 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
                             vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
                             //订单信息
                             dto = getOrderInfo(orderId);
-                        }
-                        if (!uInfo.getUserId().equals(vinfo.getUserId())) {
-                            if (vinfo.getEndAt() - UnixTimeUtils.now() > 0) {
-                                throw new RestfulException(ReturnEnum.BicycleUse_Error);
-                            } else {
-                                vehicleDao.updateVehicleUseStatus(vinfo.getVehicleId(), UseStatus.free);
-                                vehicleDao.updateVehicleUseStatus(uInfo.getVehicleId(), UseStatus.free);
-
-                                deleteSubscribeInfo(uInfo.getUserId(), uInfo.getVehicleId());
-                                deleteSubscribeInfo(vinfo.getUserId(), vinfo.getVehicleId());
-
-                                vehicleSubscribe(userId, bicycleCode, beginAt);
-                                updateSubscribeInfo(userId, bicycleCode);
-                                //创建订单
-                                long orderId = orderRestfulService.addOrder(userId, bicycleCode, beginAt, beginLongitude, beginDimension);
-                                //修改车的使用状态
-                                vehicleDao.updateVehicleUseStatus(bicycleCode, UseStatus.use);
-                                //订单信息
-                                dto = getOrderInfo(orderId);
-                            }
                         }
                     }
                 }
@@ -535,7 +504,7 @@ public class BicycleRestfulServiceImpl implements BicycleRestfulService {
 
         vehicle vehicle = vehicleDao.getVehicleStatusByBicycleCode(bicycleCode);
 
-        Boolean isLock = null;
+        Boolean isLock = false;
 
         if (vehicle.getStatus() == 1 || vehicle.getStatus() == 2) {
             isLock = false;
